@@ -1,10 +1,8 @@
-import com.icloud.itfukui0922.AITWolf;
-import com.icloud.itfukui0922.Dammy;
-import com.icloud.itfukui0922.LocalHostStarter;
+package com.icloud.itfukui0922;
+
 import org.aiwolf.common.data.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Main {
@@ -20,7 +18,6 @@ public class Main {
                 add(new Dammy());
                 add(new Dammy());
                 add(new Dammy());
-                x1
             }
         };
 
