@@ -1,5 +1,6 @@
 /**
  * ゲームの盤面整理
+ * このクラスは
  */
 package com.icloud.itfukui0922.strategy;
 
@@ -9,17 +10,6 @@ public class BoardSurface {
 
     /* プレイヤ情報 */
 
-    /* 自分のプレイヤ情報 */
+    /* 自分のプレイヤ情報番号 */
     int myPlayerInfomation = 0;
-
-    /* シングルトン */
-    private static BoardSurface boardSurface = new BoardSurface();
-    private BoardSurface(){}
-    public static BoardSurface getInstance() {
-        return boardSurface;
-    }
-
-    public inisialize(){
-
-    }
 }

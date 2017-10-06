@@ -1,11 +1,13 @@
 package com.icloud.itfukui0922;
 
+import com.icloud.itfukui0922.strategy.BoardSurface;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AITWolf implements Player {
@@ -16,6 +18,8 @@ public class AITWolf implements Player {
     private GameSetting gameSetting;
     /* トークリストをどこまで読み込んだか */
     private int talkListHead;
+    /* BoardSurfaceリスト */
+    List<BoardSurface> boardSurfacesList = new ArrayList<>();
 
     @Override
     public String getName() {
@@ -40,11 +44,16 @@ public class AITWolf implements Player {
     public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
         this.gameInfo = gameInfo;
         this.gameSetting = gameSetting;
+
+        boardSurfacesList.add(new BoardSurface());  // 盤面初期化
     }
 
     @Override
     public void dayStart() {
-
+        // ----- 特定日時に実行させる処理 -----
+        // 0日目
+        // 1日目
+        // 2日目
     }
 
     @Override
