@@ -20,6 +20,8 @@ public class AITWolf implements Player {
     private int talkListHead;
     /* BoardSurfaceリスト */
     List<BoardSurface> boardSurfacesList = new ArrayList<>();
+    /* Actionリスト */
+    List<Action> actionList = new ArrayList<>();
 
     @Override
     public String getName() {
