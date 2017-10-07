@@ -6,8 +6,8 @@ package com.icloud.itfukui0922;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 
 public class SAKeypair {
-    BoardSurface state;
-    Action action;
+    BoardSurface state; // 盤面情報
+    Action action;  // 状態sにおいて取りうる行動a
 
     public SAKeypair(BoardSurface state, Action action) {
         this.state = state;

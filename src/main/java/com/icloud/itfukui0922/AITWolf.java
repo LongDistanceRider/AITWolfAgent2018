@@ -1,6 +1,12 @@
+/**
+ * AITWolfエージェント　メイン部分
+ *
+ * 可能な限り行数を減らしたい＝クラスの分化
+ */
 package com.icloud.itfukui0922;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
+import com.icloud.itfukui0922.strategy.PlayerInformation;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Talk;
@@ -12,10 +18,14 @@ import java.util.List;
 
 public class AITWolf implements Player {
 
+    /* 自然言語処理部門対応スイッチ */
+    private boolean NLSwitch = false;   // 自然言語処理部門に参加する場合はtrue，プロトコル部門はfalse
     /* ゲーム情報 */
     private GameInfo gameInfo;
     /* ゲーム設定情報 */
     private GameSetting gameSetting;
+    /* プレイヤ情報リスト（自分自身も含む） */
+    private List<PlayerInformation> playerInformationList = new ArrayList<>();
     /* トークリストをどこまで読み込んだか */
     private int talkListHead;
     /* BoardSurfaceリスト */
@@ -26,16 +36,23 @@ public class AITWolf implements Player {
     @Override
     public String getName() {
         return "AITWolf";
-    }
+    }   // プレイヤ名を返す
 
     @Override
     public void update(GameInfo gameInfo) {
-        this.gameInfo = gameInfo;
+        this.gameInfo = gameInfo;   // ゲーム情報更新
 
         // 発言内容取得
         for (int i = talkListHead; i < gameInfo.getTalkList().size(); i++) {
             Talk talk = gameInfo.getTalkList().get(i);  // 新規Talkを取得
             // TODO talkに対する処理をここに書く
+            if (NLSwitch) {
+                // TODO 自然言語処理をここに書く
+            } else {
+                // TODO プロトコル部門のみの処理をここに書く
+
+            }
+            // TODO NLPとプロトコル共通処理をここに書く
 
         }
         // talkListHeadの更新
@@ -44,10 +61,12 @@ public class AITWolf implements Player {
 
     @Override
     public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
-        this.gameInfo = gameInfo;
-        this.gameSetting = gameSetting;
-
-        boardSurfacesList.add(new BoardSurface());  // 盤面初期化
+        // ----- フィールド初期化処理 -----
+        this.gameInfo = gameInfo;   // ゲーム情報の初期化
+        this.gameSetting = gameSetting; // ゲーム設定の初期化
+        this.playerInformationList.clear(); // リスト初期化
+        boardSurfacesList.add(new BoardSurface());  // 盤面リストへ初期状態sを入れる
+        // -----  -----
     }
 
     @Override
