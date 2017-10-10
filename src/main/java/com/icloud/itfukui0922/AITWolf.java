@@ -26,6 +26,8 @@ public class AITWolf implements Player {
     private GameSetting gameSetting;
     /* プレイヤ情報リスト（自分自身も含む） */
     private List<PlayerInformation> playerInformationList = new ArrayList<>();
+    /* 役職固有の処理クラス */
+    private RoleSpecificProcessing roleSpecificProcessing = new RoleSpecificProcessing();
     /* トークリストをどこまで読み込んだか */
     private int talkListHead;
     /* BoardSurfaceリスト */
@@ -50,6 +52,8 @@ public class AITWolf implements Player {
                 // TODO 自然言語処理をここに書く
             } else {
                 // TODO プロトコル部門のみの処理をここに書く
+                // Talk内容を読み取り，BoardSurfaceへ保管する
+
 
             }
             // TODO NLPとプロトコル共通処理をここに書く
@@ -72,14 +76,31 @@ public class AITWolf implements Player {
     @Override
     public void dayStart() {
         // ----- 特定日時に実行させる処理 -----
-        // 0日目
-        // 1日目
-        // 2日目
+        switch (gameInfo.getDay()) {
+            case 0: // 0日目
+                break;
+            case 1: // 1日目
+                roleSpecificProcessing.setMyRole(gameInfo.getRole());
+                break;
+            case 2: // 2日目
+                break;
+            default:
+
+        }
+        // ----- 各役職ごとの処理 -----
+
     }
 
     @Override
     public String talk() {
-        return null;
+        // ----- 各役職ごとの処理 -----
+        
+        if (NLSwitch) {
+            // TODO 自然言語処理に関する処理をここに書く
+        } else {
+            // TODO プロトコル部門の処理に関する処理をここに書く
+
+        }
     }
 
     @Override
