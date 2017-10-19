@@ -113,6 +113,9 @@ public class AITWolf implements Player {
 
 
         }
+        if (!roleTalkQueue.isEmpty()) {
+            return roleTalkQueue.poll();
+        }
         return "OVER";
     }
 
