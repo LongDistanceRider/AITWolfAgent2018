@@ -11,6 +11,9 @@ public class ProtocolProcessing {
 
     public ProtocolProcessing(Talk talk) {
         this.talk = talk;
+
+        // ラベルごとに処理
+
     }
 
     public void update() {

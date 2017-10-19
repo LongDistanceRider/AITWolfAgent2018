@@ -7,6 +7,7 @@ package com.icloud.itfukui0922;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.PlayerInformation;
+import com.sun.jmx.remote.internal.ArrayQueue;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Talk;
@@ -14,7 +15,9 @@ import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 public class AITWolf implements Player {
 
@@ -31,9 +34,11 @@ public class AITWolf implements Player {
     /* トークリストをどこまで読み込んだか */
     private int talkListHead;
     /* BoardSurfaceリスト */
-    List<BoardSurface> boardSurfacesList = new ArrayList<>();
+    Stack<BoardSurface> boardSurfaceStack = new Stack<>();
     /* Actionリスト */
     List<Action> actionList = new ArrayList<>();
+    LinkedList<String> talkQueue = new LinkedList<>();
+
 
     @Override
     public String getName() {
@@ -53,6 +58,7 @@ public class AITWolf implements Player {
             } else {
                 // TODO プロトコル部門のみの処理をここに書く
                 // Talk内容を読み取り，BoardSurfaceへ保管する
+                ProtocolProcessing protocolProcessing = new ProtocolProcessing(talk);
 
 
             }
@@ -69,7 +75,7 @@ public class AITWolf implements Player {
         this.gameInfo = gameInfo;   // ゲーム情報の初期化
         this.gameSetting = gameSetting; // ゲーム設定の初期化
         this.playerInformationList.clear(); // リスト初期化
-        boardSurfacesList.add(new BoardSurface());  // 盤面リストへ初期状態sを入れる
+        boardSurfaceStack.add(new BoardSurface());  // 盤面リストへ初期状態sを入れる
         // -----  -----
     }
 
@@ -78,9 +84,13 @@ public class AITWolf implements Player {
         // ----- 特定日時に実行させる処理 -----
         switch (gameInfo.getDay()) {
             case 0: // 0日目
+                if (NLSwitch) {
+                    // 挨拶を返す
+                    talkQueue.add("0日目の挨拶です．");
+                }
                 break;
             case 1: // 1日目
-                roleSpecificProcessing.setMyRole(gameInfo.getRole());
+                roleSpecificProcessing.setMyRole(gameInfo.getRole());   // 自分自身の役職をセット
                 break;
             case 2: // 2日目
                 break;
@@ -88,19 +98,22 @@ public class AITWolf implements Player {
 
         }
         // ----- 各役職ごとの処理 -----
+        roleSpecificProcessing.dayStart(gameInfo, boardSurfaceStack.peek());
 
     }
 
     @Override
     public String talk() {
         // ----- 各役職ごとの処理 -----
-        
+        LinkedList<String> roleTalkQueue = roleSpecificProcessing.talk(boardSurfaceStack.peek());
         if (NLSwitch) {
             // TODO 自然言語処理に関する処理をここに書く
         } else {
             // TODO プロトコル部門の処理に関する処理をここに書く
 
+
         }
+        return "OVER";
     }
 
     @Override
