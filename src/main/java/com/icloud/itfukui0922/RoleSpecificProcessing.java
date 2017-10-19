@@ -56,6 +56,7 @@ public class RoleSpecificProcessing {
 
         switch (myRole) {
             case MEDIUM:
+                // TODO ここで自分自身の役職をカミングアウトする（PlayerInfomation周りの処理を実装ご)
                 for (Judge divination :
                         boardSurface.getDivinationList()) { // ここはnullのリストが来てもいいのか？
                     ContentBuilder builder = new DivinedResultContentBuilder(divination.getTarget(), divination.getResult());

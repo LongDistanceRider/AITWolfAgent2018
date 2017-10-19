@@ -18,6 +18,8 @@ public class BoardSurface {
 
     /* プレイヤ情報 */
 
+    /*  */
+
     /* 自分のプレイヤ情報番号 */
     int myPlayerInfomation = 0;
 
