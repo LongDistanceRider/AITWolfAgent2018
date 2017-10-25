@@ -7,7 +7,6 @@ package com.icloud.itfukui0922;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.PlayerInformation;
-import com.sun.jmx.remote.internal.ArrayQueue;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Talk;

@@ -9,7 +9,6 @@ import org.aiwolf.client.lib.ContentBuilder;
 import org.aiwolf.client.lib.DivinedResultContentBuilder;
 import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Role;
-import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
 
 import java.util.LinkedList;

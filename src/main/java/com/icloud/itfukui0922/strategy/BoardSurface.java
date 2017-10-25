@@ -5,28 +5,41 @@
  */
 package com.icloud.itfukui0922.strategy;
 
-import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Judge;
-import org.aiwolf.common.data.Role;
+import org.aiwolf.common.net.GameInfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class BoardSurface {
 
     /* プレイヤ情報 */
+    List<PlayerInformation> playerInformationList = new ArrayList<>();
+    /* 自分のプレイヤ情報 */
+    PlayerInformation myPlayerInfomation;
 
-    /*  */
+    /**
+     * constracter
+     * @param gameInfo
+     */
+    public BoardSurface(GameInfo gameInfo) {
+        // PlayerInfomationリストを作成
+        gameInfo.getAgentList();
+        // 自分自身のプレイヤ情報作成
+        myPlayerInfomation = new PlayerInformation(gameInfo.getAgent());
+    }
 
-    /* 自分のプレイヤ情報番号 */
-    int myPlayerInfomation = 0;
+    /**
+     * 占い結果を追加します．
+     * PlayerInfomationにも同じメソッドがありますが，
+     * 盤面状態の変更を伴う必要があるため，
+     * 外部クラスから占い結果を追加する時はこちらのメソッドを利用すること
+     * 
+     * @param divination
+     */
+    public void addDivinationList(Judge divination) {
+        myPlayerInfomation.addDivinationList(divination);
 
-    /* 占い結果 */
-    List<Judge> divinationList = new ArrayList<>();
 
-    public List<Judge> getDivinationList() {
-        return divinationList;
     }
 }
