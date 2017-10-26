@@ -75,7 +75,7 @@ public class AITWolf implements Player {
         this.gameInfo = gameInfo;   // ゲーム情報の初期化
         this.gameSetting = gameSetting; // ゲーム設定の初期化
         this.playerInformationList.clear(); // リスト初期化
-        boardSurfaceStack.add(new BoardSurface());  // 盤面リストへ初期状態sを入れる
+        boardSurfaceStack.add(new BoardSurface(gameInfo));  // 盤面リストへ初期状態sを入れる
         // -----  -----
     }
 
@@ -118,7 +118,7 @@ public class AITWolf implements Player {
         }
         // NNによるActionダイス実行
         // ランダム関数を用いた仮クラスで行う
-        DeepLearningTmp.
+        DeepLearningTmp.decisionMaking(boardSurfaceStack);
 
         return "OVER";
     }

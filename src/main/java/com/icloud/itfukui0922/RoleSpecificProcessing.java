@@ -36,7 +36,7 @@ public class RoleSpecificProcessing {
                     // 占い結果の取り込み
                     Judge divination = gameInfo.getDivineResult();
                     if (divination != null) {
-                        boardSurface.getDivinationList().add(divination);
+                        boardSurface.addDivinationList(divination);
                     } else {
                         System.err.println("占い結果取得失敗");
                     }
