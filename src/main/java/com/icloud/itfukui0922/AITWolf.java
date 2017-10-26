@@ -5,6 +5,7 @@
  */
 package com.icloud.itfukui0922;
 
+import com.icloud.itfukui0922.deep.DeepLearningTmp;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.PlayerInformation;
 import org.aiwolf.common.data.Agent;
@@ -115,6 +116,10 @@ public class AITWolf implements Player {
         if (!roleTalkQueue.isEmpty()) {
             return roleTalkQueue.poll();
         }
+        // NNによるActionダイス実行
+        // ランダム関数を用いた仮クラスで行う
+        DeepLearningTmp.
+
         return "OVER";
     }
 

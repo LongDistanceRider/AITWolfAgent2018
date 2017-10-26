@@ -23,6 +23,9 @@ public class PlayerInformation {
         this.agent = agent;
     }
 
+    public List<Judge> getDivinationList() {
+        return divinationList;
+    }
 
     /**
      * 占い結果を保存します．

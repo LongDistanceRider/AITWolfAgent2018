@@ -5,6 +5,7 @@
 package com.icloud.itfukui0922;
 
 public enum Action {
+    COMINGOUT,
     TALK,
     SKIP,
     OVER

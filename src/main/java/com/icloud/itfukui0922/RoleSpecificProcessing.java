@@ -12,6 +12,7 @@ import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.GameInfo;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class RoleSpecificProcessing {
     /* 自分自身の役職 */
@@ -56,10 +57,13 @@ public class RoleSpecificProcessing {
         switch (myRole) {
             case MEDIUM:
                 // TODO ここで自分自身の役職をカミングアウトする（PlayerInfomation周りの処理を実装ご)
-                for (Judge divination :
-                        boardSurface.getDivinationList()) { // ここはnullのリストが来てもいいのか？
-                    ContentBuilder builder = new DivinedResultContentBuilder(divination.getTarget(), divination.getResult());
-                    talkQueue.add(new Content(builder).getText());
+                List<Judge> divinationList = boardSurface.getMyPlayerInfomation().getDivinationList();
+                if (divinationList != null) {
+                    for (Judge divination :
+                            divinationList) {
+                        ContentBuilder builder = new DivinedResultContentBuilder(divination.getTarget(), divination.getResult());
+                        talkQueue.add(new Content(builder).getText());
+                    }
                 }
                 break;
             default:
