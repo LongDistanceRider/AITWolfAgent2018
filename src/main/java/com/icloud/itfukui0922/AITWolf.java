@@ -55,15 +55,14 @@ public class AITWolf implements Player {
             // TODO talkに対する処理をここに書く
             if (NLSwitch) {
                 // TODO 自然言語処理をここに書く
+                // 自然言語をプロトコル言語に変換したあと，共通処理で処理する
             } else {
                 // TODO プロトコル部門のみの処理をここに書く
-                // Talk内容を読み取り，BoardSurfaceへ保管する
-                ProtocolProcessing protocolProcessing = new ProtocolProcessing(talk);
-
 
             }
             // TODO NLPとプロトコル共通処理をここに書く
-
+            // Talk内容を読み取り，BoardSurfaceへ保管する
+            ProtocolProcessing protocolProcessing = new ProtocolProcessing(talk, boardSurfaceStack.peek());
         }
         // talkListHeadの更新
         talkListHead = gameInfo.getTalkList().size();

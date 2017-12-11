@@ -6,6 +6,7 @@ package com.icloud.itfukui0922;
 
 public enum Action {
     COMINGOUT,
+    DIVINATION_REPORT
     TALK,
     SKIP,
     OVER
