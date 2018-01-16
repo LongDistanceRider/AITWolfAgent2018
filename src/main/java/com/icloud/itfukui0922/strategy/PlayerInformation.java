@@ -54,4 +54,14 @@ public class PlayerInformation {
     public void setSelfCO(Role selfCO) {
         this.selfCO = selfCO;
     }
+
+    /**
+     * 霊能結果を保存します．
+     * このメソッドはBoardSurface
+     * @param target
+     * @param result
+     */
+    public void addIdentifiedMap(Agent target, Species result) {
+
+    }
 }

@@ -33,8 +33,19 @@ public class ProtocolProcessing {
         }
     }
 
-    public void update() {
+    public void update(Talk talk, BoardSurface boardSurface) {
+        Content content = new Content(talk.getText());  // Content型へ変換
+        PlayerInformation playerInformation = boardSurface.getPlayerInformation(talk.getAgent());   // 発言者のプレイヤー情報を取得
 
+        switch (content.getTopic()) {
+            case COMINGOUT:
+                playerInformation.setSelfCO(content.getRole()); // 宣言した役職を保管
+            case DIVINED:
+                playerInformation.addDivinationMap(content.getTarget(), content.getResult());   // ターゲットと結果を保管
+            case IDENTIFIED:
+                playerInformation.addIdentifiedMap(content.getTarget(), content.getResult());   // ターゲットと結果を保管
+
+        }
     }
 
 }

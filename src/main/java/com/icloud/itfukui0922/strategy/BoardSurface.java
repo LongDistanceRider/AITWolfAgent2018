@@ -42,16 +42,6 @@ public class BoardSurface {
     }
 
     /**
-     * 占い結果を追加します．
-     * PlayerInfomationにも同じメソッドがありますが，
-     * 盤面状態の変更を伴う必要があるため，
-     * 外部クラスから占い結果を追加する時はこちらのメソッドを利用すること
-     */
-    public void addDivinationMap(Agent agent, Species species) {
-        myPlayerInfomation.addDivinationMap(agent, species);
-    }
-
-    /**
      * プレイヤー情報リストからプレイヤー情報を返す
      * @param agent 欲しいプレイヤー情報
      * @return プレイヤー情報
