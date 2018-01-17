@@ -35,6 +35,7 @@ public class PlayerInformation {
     public Map<Agent, Species> getDivinationList() {
         return divinationMap;
     }
+    public Role getSelfCO() { return selfCO;}
 
     /**
      * 占い結果を保存します．
@@ -52,6 +53,7 @@ public class PlayerInformation {
      * @param selfCO
      */
     public void setSelfCO(Role selfCO) {
+        Annotation.comingoutCheck(this, selfCO);
         this.selfCO = selfCO;
     }
 
