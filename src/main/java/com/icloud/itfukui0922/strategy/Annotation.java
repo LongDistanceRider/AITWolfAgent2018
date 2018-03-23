@@ -10,13 +10,13 @@ import java.util.ArrayDeque;
 public class Annotation {
 
     // TODO AnnotationQueueがStringで管理されている問題を解決する
-    private ArrayDeque<String> annotationQueue = new ArrayDeque<>();
+    private static ArrayDeque<String> annotationQueue = new ArrayDeque<>();
 
     /**
      * アノテーションキューのゲッター
      * @return アノテーションキュー
      */
-    public ArrayDeque<String> getAnnotationQueue() {
+    public static ArrayDeque<String> getAnnotationQueue() {
         return annotationQueue;
     }
 
@@ -26,7 +26,7 @@ public class Annotation {
      * @param playerInformation
      * @param selfCO
      */
-    public void comingoutCheck(PlayerInformation playerInformation, Role selfCO) {
+    public static void comingoutCheck(PlayerInformation playerInformation, Role selfCO) {
         if (isCoSlide(playerInformation.getSelfCO(), selfCO)) {// COスライドチェック
             annotationQueue.add("coSlide");
         }
@@ -35,7 +35,7 @@ public class Annotation {
     /**
      * COスライドチェック
      */
-    private boolean isCoSlide(Role preSelfCO, Role selfCO) {
+    private static boolean isCoSlide(Role preSelfCO, Role selfCO) {
         if (preSelfCO != null && preSelfCO != selfCO ) {
             return true;
         }

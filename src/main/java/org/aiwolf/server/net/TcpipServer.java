@@ -354,9 +354,12 @@ public class TcpipServer implements GameServer {
 	        		
 			
 		}catch(InterruptedException | ExecutionException | IOException e){
+			System.out.println("TcpipServer 357行目発生");
 			throw new LostClientException("Lost connection with "+agent+"\t"+getName(agent), e, agent);
 		}catch(TimeoutException e){
-			throw new LostClientException(String.format("Timeout %s(%s) %s", agent, getName(agent), request), e, agent);
+			System.out.println("TcpipServer 359行目発生");
+			return null;
+//			throw new LostClientException(String.format("Timeout %s(%s) %s", agent, getName(agent), request), e, agent);
 		}
 	}
 	

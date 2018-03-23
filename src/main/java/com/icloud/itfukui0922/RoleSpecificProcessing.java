@@ -7,16 +7,19 @@ import com.icloud.itfukui0922.strategy.BoardSurface;
 import org.aiwolf.client.lib.Content;
 import org.aiwolf.client.lib.ContentBuilder;
 import org.aiwolf.client.lib.DivinedResultContentBuilder;
+import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Role;
+import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class RoleSpecificProcessing {
     /* 自分自身の役職 */
-    Role myRole;
+    Role myRole = Role.VILLAGER;
 
     /* 自分自身の役職をセットする */
     public void setMyRole(Role myRole) {
@@ -36,7 +39,7 @@ public class RoleSpecificProcessing {
                     // 占い結果の取り込み
                     Judge divination = gameInfo.getDivineResult();
                     if (divination != null) {
-                        boardSurface.addDivinationList(divination);
+                        boardSurface.getMyPlayerInfomation().addDivinationMap(divination.getTarget(), divination.getResult());
                     } else {
                         System.err.println("占い結果取得失敗");
                     }
@@ -57,11 +60,11 @@ public class RoleSpecificProcessing {
         switch (myRole) {
             case MEDIUM:
                 // TODO ここで自分自身の役職をカミングアウトする（PlayerInfomation周りの処理を実装ご)
-                List<Judge> divinationList = boardSurface.getMyPlayerInfomation().getDivinationList();
+                Map<Agent, Species> divinationList = boardSurface.getMyPlayerInfomation().getDivinationMap();
                 if (divinationList != null) {
-                    for (Judge divination :
-                            divinationList) {
-                        ContentBuilder builder = new DivinedResultContentBuilder(divination.getTarget(), divination.getResult());
+                    for (Map.Entry<Agent, Species> entry:
+                         divinationList.entrySet()) {
+                        ContentBuilder builder = new DivinedResultContentBuilder(entry.getKey(), entry.getValue());
                         talkQueue.add(new Content(builder).getText());
                     }
                 }

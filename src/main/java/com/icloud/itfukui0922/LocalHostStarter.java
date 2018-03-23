@@ -46,6 +46,9 @@ public class LocalHostStarter {
         this.gameNum = gameNum;
     }
 
+    /**
+     * ローカルホストで対戦開始
+     */
     public void start() {
         int participant_players = participantsPlayerList.size();    // 参加人数取得
         Starter.startServer(port, gameNum, participant_players);    // ローカルホストを立ち上げ
@@ -56,12 +59,12 @@ public class LocalHostStarter {
                 for (Role role :
                         requestRoleList) {
                     // 希望役職を提出してクライアント起動
-                    Starter.startClient(player.getClass().getName(), player.getName(), "localhost", port, participant_players, role);
+                    Starter.startClient(player.getClass().getName(), player.getName(), "localhost", port, role);
 
                 }
             } else {
                 // 希望役職なしでクライアント起動
-                Starter.startClient(player.getClass().getName(), player.getName(), "localhost", port, participant_players, null);
+                Starter.startClient(player.getClass().getName(), player.getName(), "localhost", port, null);
             }
         }
     }

@@ -11,10 +11,14 @@ import org.aiwolf.common.data.Talk;
 
 public class ProtocolProcessing {
 
-    Talk talk;
-
-    public ProtocolProcessing(Talk talk, BoardSurface boardSurface) {
-        this.talk = talk;   // フィールドへ保管
+    /**
+     * updateで呼び出されるプロトコル部門用の処理
+     * talkを引数にboardSurfaceへデータを格納する
+     *
+     * @param talk 発言内容
+     * @param boardSurface 現在の盤面状態
+     */
+    public static void updateTalkInfo(Talk talk, BoardSurface boardSurface) {
         Content content = new Content(talk.getText());  // StringからContent型へ変換
         PlayerInformation playerInformation = boardSurface.getPlayerInformation(talk.getAgent());   // 発言者のプレイヤー情報を取得
 
@@ -27,25 +31,10 @@ public class ProtocolProcessing {
                 playerInformation.addDivinationMap(content.getTarget(), content.getResult());   // 宣言したターゲットと結果を保管
                 break;
             case IDENTIFIED:
+                playerInformation.addIdentifiedMap(content.getTarget(), content.getResult());   // 宣言したターゲットと結果を保管
                 break;
             default:
                 break;
         }
     }
-
-    public void update(Talk talk, BoardSurface boardSurface) {
-        Content content = new Content(talk.getText());  // Content型へ変換
-        PlayerInformation playerInformation = boardSurface.getPlayerInformation(talk.getAgent());   // 発言者のプレイヤー情報を取得
-
-        switch (content.getTopic()) {
-            case COMINGOUT:
-                playerInformation.setSelfCO(content.getRole()); // 宣言した役職を保管
-            case DIVINED:
-                playerInformation.addDivinationMap(content.getTarget(), content.getResult());   // ターゲットと結果を保管
-            case IDENTIFIED:
-                playerInformation.addIdentifiedMap(content.getTarget(), content.getResult());   // ターゲットと結果を保管
-
-        }
-    }
-
 }

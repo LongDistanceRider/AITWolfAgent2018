@@ -14,6 +14,7 @@ import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,7 +63,7 @@ public class AITWolf implements Player {
             }
             // TODO NLPとプロトコル共通処理をここに書く
             // Talk内容を読み取り，BoardSurfaceへ保管する
-            ProtocolProcessing protocolProcessing = new ProtocolProcessing(talk, boardSurfaceStack.peek());
+            ProtocolProcessing.updateTalkInfo(talk, boardSurfaceStack.peek());
         }
         // talkListHeadの更新
         talkListHead = gameInfo.getTalkList().size();
@@ -86,10 +87,13 @@ public class AITWolf implements Player {
                 if (NLSwitch) {
                     // 挨拶を返す
                     talkQueue.add("0日目の挨拶です．");
+                    return;
                 }
                 break;
+
             case 1: // 1日目
-                roleSpecificProcessing.setMyRole(gameInfo.getRole());   // 自分自身の役職をセット
+                roleSpecificProcessing.setMyRole(gameInfo.getRole());   // 自分自身の役職を役職固有の処理にセット
+                boardSurfaceStack.peek().getMyPlayerInfomation().setEstimateRole(gameInfo.getRole());   // プレイヤ情報に保管
                 break;
             case 2: // 2日目
                 break;
@@ -109,8 +113,6 @@ public class AITWolf implements Player {
             // TODO 自然言語処理に関する処理をここに書く
         } else {
             // TODO プロトコル部門の処理に関する処理をここに書く
-
-
         }
         if (!roleTalkQueue.isEmpty()) {
             return roleTalkQueue.poll();
@@ -119,6 +121,11 @@ public class AITWolf implements Player {
         // ランダム関数を用いた仮クラスで行う
         DeepLearningTmp.decisionMaking(boardSurfaceStack);
 
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return "OVER";
     }
 

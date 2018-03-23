@@ -1,7 +1,5 @@
 /**
  * ローカルホストの立ち上げとクライアント接続をおこなうための処理をまとめたstaticクラス
- *
- *
  */
 
 package com.icloud.itfukui0922;
@@ -23,9 +21,9 @@ public class Starter {
      * ローカルホストのサーバを立ち上げます
      * また，ゲームログをlogディレクトリ下に保存します
      *
-     * @param port	接続先ポート番号
-     * @param gameNum	ゲーム試行回数
-     * @param participant_players	ゲーム参加者数
+     * @param port    接続先ポート番号
+     * @param gameNum    ゲーム試行回数
+     * @param participant_players    ゲーム参加者数
      */
     public static void startServer(int port, int gameNum, int participant_players) {
         GameSetting gameSetting = GameSetting.getDefaultGame(participant_players);
@@ -34,13 +32,13 @@ public class Starter {
         gameSetting.setTimeLimit(5000);
 
         new Thread(() -> {
-           try {
+            try {
                 TcpipServer gameServer = new TcpipServer(port, participant_players, gameSetting);
                 gameServer.waitForConnection();
                 AIWolfGame game = new AIWolfGame(gameSetting, gameServer);
-                game.setShowConsoleLog(false);		// サーバログ出力をfalseに
+                game.setShowConsoleLog(true);        // サーバログ出力をfalseに
 
-                for(int i = 0; i < gameNum; i++){
+                for (int i = 0; i < gameNum; i++) {
                     game.setRand(new Random(i));
                     Calendar calendar = Calendar.getInstance();
                     game.setGameLogger(new FileGameLogger(new File("log/" + calendar.getTime() + "ServerLog.txt")));
@@ -58,43 +56,42 @@ public class Starter {
     /**
      * クライアントを接続します
      *
-     * @param classPass	接続するエージェントのクラスパスを指定します（Playerインターフェースを実装しているクラス）
-     * @param playerName	プレイヤー名を指定します
-     * @param host	接続先ホスト名を指定します
-     * @param port	接続先ポート番号を指定します
-     * @param numConnectiuons	接続数を指定します
+     * @param classPass    接続するエージェントのクラスパスを指定します（Playerインターフェースを実装しているクラス）
+     * @param playerName    プレイヤー名を指定します
+     * @param host    接続先ホスト名を指定します
+     * @param port    接続先ポート番号を指定します
      */
-    public static void startClient(String classPass, String playerName, String host, int port, int numConnectiuons, org.aiwolf.common.data.Role role) {
-        for (int i = 0; i < numConnectiuons; i++) {
-            TcpipClient client;
+    public static void startClient(String classPass, String playerName, String host, int port, org.aiwolf.common.data.Role role) {
 
-            if (role != null) {
-                client = new TcpipClient(host, port);
-            } else {
-                client = new TcpipClient(host, port, role);
-            }
+        TcpipClient client;
 
-            Class<?> class1;
-            Player player = null;
-            try {
-                class1 = Class.forName(classPass);
-                player = (Player) class1.newInstance();
-            } catch (ClassNotFoundException e) {
-                System.err.println("接続するエージェントのクラスが見つかりません．クラスパスが正しいか確認してください．");
-                e.printStackTrace();
-                System.exit(-1);
-            } catch (IllegalAccessException e) {
-                System.err.println("クラスがロードできませんでした．クラスのアクセス修飾子を確認してください．");
-                e.printStackTrace();
-                System.exit(-1);
-            } catch (InstantiationException e) {
-                System.err.println("クラスのインスタンス作成に失敗しました．インターフェースまたはabstructクラスではないことを確認してください．");
-                e.printStackTrace();
-                System.exit(-1);
-            }
-            client.connect(player);
-            client.setName(playerName);
-            System.out.println(playerName + " is connected");
+        if (role != null) {
+            client = new TcpipClient(host, port);
+        } else {
+            client = new TcpipClient(host, port, role);
         }
+
+        Class<?> class1;
+        Player player = null;
+        try {
+            class1 = Class.forName(classPass);
+            player = (Player) class1.newInstance();
+        } catch (ClassNotFoundException e) {
+            System.err.println("接続するエージェントのクラスが見つかりません．クラスパスが正しいか確認してください．");
+            e.printStackTrace();
+            System.exit(-1);
+        } catch (IllegalAccessException e) {
+            System.err.println("クラスがロードできませんでした．クラスのアクセス修飾子を確認してください．");
+            e.printStackTrace();
+            System.exit(-1);
+        } catch (InstantiationException e) {
+            System.err.println("クラスのインスタンス作成に失敗しました．インターフェースまたはabstructクラスではないことを確認してください．");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        client.connect(player);
+        client.setName(playerName);
+        System.out.println(playerName + " is connected");
     }
+
 }

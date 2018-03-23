@@ -14,7 +14,7 @@ public class Dammy implements Player {
 
     @Override
     public String getName() {
-        return "AITWolf";
+        return "Dammy";
     }
 
     @Override
