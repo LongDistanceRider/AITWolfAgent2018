@@ -2,7 +2,7 @@
  * ローカルホストの立ち上げとクライアント接続をおこなうための処理をまとめたstaticクラス
  */
 
-package com.icloud.itfukui0922;
+package com.icloud.itfukui0922.starter;
 
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.net.GameSetting;

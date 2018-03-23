@@ -1,4 +1,4 @@
-package com.icloud.itfukui0922;
+package com.icloud.itfukui0922.player;
 
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;

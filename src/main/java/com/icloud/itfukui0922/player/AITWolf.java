@@ -3,8 +3,11 @@
  *
  * 可能な限り行数を減らしたい＝クラスの分化
  */
-package com.icloud.itfukui0922;
+package com.icloud.itfukui0922.player;
 
+import com.icloud.itfukui0922.Action;
+import com.icloud.itfukui0922.ProtocolProcessing;
+import com.icloud.itfukui0922.RoleSpecificProcessing;
 import com.icloud.itfukui0922.deep.DeepLearningTmp;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.PlayerInformation;
