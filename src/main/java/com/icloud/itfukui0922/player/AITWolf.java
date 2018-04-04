@@ -26,19 +26,17 @@ import java.util.Stack;
 public class AITWolf implements Player {
 
     /* 自然言語処理部門対応スイッチ */
-    private boolean NLSwitch = false;   // 自然言語処理部門に参加する場合はtrue，プロトコル部門はfalse
-    /* ゲーム情報 */
-    private GameInfo gameInfo;
-    /* ゲーム設定情報 */
-    private GameSetting gameSetting;
-    /* プレイヤ情報リスト（自分自身も含む） */
-    private List<PlayerInformation> playerInformationList = new ArrayList<>();// TODO 廃棄　盤面クラスへ移行するように
-    /* 役職固有の処理クラス */
-    private RoleSpecificProcessing roleSpecificProcessing = new RoleSpecificProcessing();
+    boolean NLSwitch = false;   // 自然言語処理部門に参加する場合はtrue，プロトコル部門はfalse
     /* トークリストをどこまで読み込んだか */
-    private int talkListHead;
-    /* BoardSurfaceリスト */
-    Stack<BoardSurface> boardSurfaceStack = new Stack<>();
+    int talkListHead;
+    /* ゲーム情報 */
+    GameInfo gameInfo;
+    /* ゲーム設定情報 */
+    GameSetting gameSetting;
+    /* 役職固有の処理クラス */
+    RoleSpecificProcessing roleSpecificProcessing;
+    /* 盤面クラス */
+    BoardSurface boardSurface;
     /* Actionリスト */
     List<Action> actionList = new ArrayList<>();
     LinkedList<String> talkQueue = new LinkedList<>();
@@ -66,7 +64,7 @@ public class AITWolf implements Player {
             }
             // TODO NLPとプロトコル共通処理をここに書く
             // Talk内容を読み取り，BoardSurfaceへ保管する
-            ProtocolProcessing.updateTalkInfo(talk, boardSurfaceStack.peek());
+            ProtocolProcessing.updateTalkInfo(talk, boardSurface);
         }
         // talkListHeadの更新
         talkListHead = gameInfo.getTalkList().size();
@@ -77,9 +75,8 @@ public class AITWolf implements Player {
         // ----- フィールド初期化処理 -----
         this.gameInfo = gameInfo;   // ゲーム情報の初期化
         this.gameSetting = gameSetting; // ゲーム設定の初期化
-        this.playerInformationList.clear(); // リスト初期化
-        boardSurfaceStack.add(new BoardSurface(gameInfo));  // 盤面リストへ初期状態sを入れる
-        // -----  -----
+        this.roleSpecificProcessing = new RoleSpecificProcessing(); // 役職固有のクラスの初期化
+        this.boardSurface = new BoardSurface(gameInfo); // 盤面クラスの初期化
     }
 
     @Override
@@ -96,7 +93,7 @@ public class AITWolf implements Player {
 
             case 1: // 1日目
                 roleSpecificProcessing.setMyRole(gameInfo.getRole());   // 自分自身の役職を役職固有の処理にセット
-                boardSurfaceStack.peek().getMyPlayerInfomation().setEstimateRole(gameInfo.getRole());   // プレイヤ情報に保管
+                boardSurface.getMyInformation().setMyRole(gameInfo.getRole());   // プレイヤ情報に保管
                 break;
             case 2: // 2日目
                 break;
@@ -104,14 +101,14 @@ public class AITWolf implements Player {
 
         }
         // ----- 各役職ごとの処理 -----
-        roleSpecificProcessing.dayStart(gameInfo, boardSurfaceStack.peek());
+        roleSpecificProcessing.dayStart(gameInfo, boardSurface);
 
     }
 
     @Override
     public String talk() {
         // ----- 各役職ごとの処理 -----
-        LinkedList<String> roleTalkQueue = roleSpecificProcessing.talk(boardSurfaceStack.peek());
+        LinkedList<String> roleTalkQueue = roleSpecificProcessing.talk(boardSurface);
         if (NLSwitch) {
             // TODO 自然言語処理に関する処理をここに書く
         } else {
@@ -122,7 +119,7 @@ public class AITWolf implements Player {
         }
         // NNによるActionダイス実行
         // ランダム関数を用いた仮クラスで行う
-        DeepLearningTmp.decisionMaking(boardSurfaceStack);
+        //DeepLearningTmp.decisionMaking(boardSurfaceStack);
 
         try {
             System.in.read();
