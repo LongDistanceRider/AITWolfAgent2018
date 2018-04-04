@@ -41,7 +41,6 @@ public class AITWolf implements Player {
     List<Action> actionList = new ArrayList<>();
     LinkedList<String> talkQueue = new LinkedList<>();
 
-
     @Override
     public String getName() {
         return "AITWolf";

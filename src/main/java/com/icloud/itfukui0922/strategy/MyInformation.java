@@ -12,7 +12,7 @@ public class MyInformation {
     /* 自分の役職 */
     Role myRole;
     /* 占い（霊能）結果リスト */
-    Map<Agent, Species> divinationMap = new LinkedHashMap<>();
+    Map<Agent, Species> divIdenMap = new LinkedHashMap<>();
 
     public Role getMyRole() {
         return myRole;
@@ -22,11 +22,11 @@ public class MyInformation {
         this.myRole = myRole;
     }
 
-    public Map<Agent, Species> getDivinationMap() {
-        return divinationMap;
+    public Map<Agent, Species> getDivIdenMap() {
+        return divIdenMap;
     }
 
-    public void setDivinationMap(Map<Agent, Species> divinationMap) {
-        this.divinationMap = divinationMap;
+    public void setDivIdenMap(Map<Agent, Species> divinationMap) {
+        this.divIdenMap = divinationMap;
     }
 }

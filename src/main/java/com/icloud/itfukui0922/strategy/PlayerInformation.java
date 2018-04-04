@@ -22,8 +22,16 @@ public class PlayerInformation {
     /* 確信した役職 */
     Role convictionRole;
 
+    /* 占い（霊能）結果リスト */
+    Map<Agent, Species> divIdenMap = new LinkedHashMap<>();
+
+
     public Agent getAgent() {
         return agent;
+    }
+
+    public Map<Agent, Species> getDivIdenMap() {
+        return divIdenMap;
     }
 
     public void setAgent(Agent agent) {
@@ -60,5 +68,12 @@ public class PlayerInformation {
      */
     public PlayerInformation(Agent agent) {
         this.agent = agent;
+    }
+
+    /**
+     * 占い結果リストへ追加
+     */
+    public void putDivIdenMap (Agent target, Species species) {
+        divIdenMap.put(target, species);
     }
 }
