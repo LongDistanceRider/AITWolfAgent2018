@@ -3,6 +3,7 @@
  * ゲームの盤面整理
  * このクラスはQ学習における状態sになる
  * 状態集合SはAITWolfクラスで管理する
+ * プレイヤ情報は盤面クラスで管理するように
  *
  */
 package com.icloud.itfukui0922.strategy;
@@ -10,6 +11,7 @@ package com.icloud.itfukui0922.strategy;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Species;
+import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 
 import java.util.ArrayList;
@@ -20,14 +22,25 @@ public class BoardSurface {
     /* プレイヤ情報 */
     List<PlayerInformation> playerInformationList = new ArrayList<>();
     /* 自分のプレイヤ情報 */
-    PlayerInformation myPlayerInfomation;
+    MyInformation myInformation;
+    /* 会話情報 */
+    List<Talk> talkList = new ArrayList<>();
 
-    public PlayerInformation getMyPlayerInfomation() {
-        return myPlayerInfomation;
+    public List<Talk> getTalkList() {
+        return talkList;
+    }
+
+    public MyInformation getMyInformation() {
+        return myInformation;
+    }
+
+    public void setMyInformation(MyInformation myInformation) {
+        this.myInformation = myInformation;
     }
 
     /**
-     * constracter
+     * コンストラクタ
+     *
      * @param gameInfo
      */
     public BoardSurface(GameInfo gameInfo) {
@@ -38,7 +51,7 @@ public class BoardSurface {
             playerInformationList.add(new PlayerInformation(agent));
         }
         // 自分自身のプレイヤ情報作成
-        myPlayerInfomation = new PlayerInformation(gameInfo.getAgent());
+        myInformation = new MyInformation();
     }
 
     /**
@@ -52,5 +65,15 @@ public class BoardSurface {
             if (playerInformation.getAgent().equals(agent)) return playerInformation;
         }
         return null;
+    }
+
+    /**
+     * talkListへtalkを追加する
+     *
+     * @param talk 追加するtalk
+     * @return 追加できた=true
+     */
+    public boolean setTalkList(Talk talk) {
+        return talkList.add(talk);
     }
 }

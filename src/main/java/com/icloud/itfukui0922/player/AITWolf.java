@@ -32,7 +32,7 @@ public class AITWolf implements Player {
     /* ゲーム設定情報 */
     private GameSetting gameSetting;
     /* プレイヤ情報リスト（自分自身も含む） */
-    private List<PlayerInformation> playerInformationList = new ArrayList<>();
+    private List<PlayerInformation> playerInformationList = new ArrayList<>();// TODO 廃棄　盤面クラスへ移行するように
     /* 役職固有の処理クラス */
     private RoleSpecificProcessing roleSpecificProcessing = new RoleSpecificProcessing();
     /* トークリストをどこまで読み込んだか */

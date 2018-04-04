@@ -19,18 +19,39 @@ public class PlayerInformation {
     Role selfCO;
     /* 自分が予測した役職 */
     Role estimateRole;
-
     /* 確信した役職 */
-
     Role convictionRole;
-    /* 占い師の時の占い結果リスト */
 
-    Map<Agent, Species> divinationMap = new LinkedHashMap<>();
-    /* 霊能者の時の霊能結果リスト */
-    Map<Agent, Species> identifiedMap = new LinkedHashMap<>();
+    public Agent getAgent() {
+        return agent;
+    }
 
-    public void setEstimateRole(Role role) {
-        this.estimateRole = role;
+    public void setAgent(Agent agent) {
+        this.agent = agent;
+    }
+
+    public Role getSelfCO() {
+        return selfCO;
+    }
+
+    public void setSelfCO(Role selfCO) {
+        this.selfCO = selfCO;
+    }
+
+    public Role getEstimateRole() {
+        return estimateRole;
+    }
+
+    public void setEstimateRole(Role estimateRole) {
+        this.estimateRole = estimateRole;
+    }
+
+    public Role getConvictionRole() {
+        return convictionRole;
+    }
+
+    public void setConvictionRole(Role convictionRole) {
+        this.convictionRole = convictionRole;
     }
 
     /**
@@ -39,42 +60,5 @@ public class PlayerInformation {
      */
     public PlayerInformation(Agent agent) {
         this.agent = agent;
-    }
-
-    /* GETTER */
-    public Agent getAgent() {
-        return agent;
-    }
-    public Map<Agent, Species> getDivinationMap() {
-        return divinationMap;
-    }
-    public Role getSelfCO() { return selfCO;}
-
-    /**
-     * 自身がCOした役職を保管する
-     * @param selfCO
-     */
-    public void setSelfCO(Role selfCO) {
-        Annotation.comingoutCheck(this, selfCO);
-        this.selfCO = selfCO;
-    }
-
-    /**
-     * 占い結果を保存します．
-     * @param target 占い対象
-     * @param result 占い結果
-     */
-    public void addDivinationMap (Agent target, Species result) {
-        divinationMap.put(target, result);
-    }
-
-    /**
-     * 霊能結果を保存します．
-     *
-     * @param target 霊能対象
-     * @param result 霊能結果
-     */
-    public void addIdentifiedMap(Agent target, Species result) {
-        identifiedMap.put(target, result);
     }
 }
