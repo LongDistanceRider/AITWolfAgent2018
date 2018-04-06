@@ -9,7 +9,6 @@
 package com.icloud.itfukui0922.strategy;
 
 import org.aiwolf.common.data.Agent;
-import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;

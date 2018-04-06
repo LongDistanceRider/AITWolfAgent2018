@@ -6,7 +6,6 @@ import org.aiwolf.common.data.Species;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class MyInformation {
 

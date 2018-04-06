@@ -8,9 +8,7 @@ package com.icloud.itfukui0922.player;
 import com.icloud.itfukui0922.Action;
 import com.icloud.itfukui0922.ProtocolProcessing;
 import com.icloud.itfukui0922.RoleSpecificProcessing;
-import com.icloud.itfukui0922.deep.DeepLearningTmp;
 import com.icloud.itfukui0922.strategy.BoardSurface;
-import com.icloud.itfukui0922.strategy.PlayerInformation;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Talk;
@@ -21,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 
 public class AITWolf implements Player {
 

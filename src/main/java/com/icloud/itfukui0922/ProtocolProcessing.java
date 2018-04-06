@@ -5,9 +5,7 @@ package com.icloud.itfukui0922;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.PlayerInformation;
-import com.sun.media.jfxmedia.logging.Logger;
 import org.aiwolf.client.lib.Content;
-import org.aiwolf.client.lib.IdentContentBuilder;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;
 

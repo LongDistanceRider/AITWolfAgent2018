@@ -14,7 +14,6 @@ import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class RoleSpecificProcessing {
