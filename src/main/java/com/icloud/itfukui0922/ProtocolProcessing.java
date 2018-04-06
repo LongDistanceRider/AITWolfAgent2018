@@ -30,7 +30,7 @@ public class ProtocolProcessing {
                 playerInformation.setSelfCO(content.getRole()); // 宣言した役職を保管
                 break;
             case ESTIMATE:
-
+                playerInformation.estimateOtherAgent(content.getTarget(), content.getRole());   // 他のプレイヤーの印象
                 break;
             /* --- 能力結果に関する文 --- */
             case DIVINED:
