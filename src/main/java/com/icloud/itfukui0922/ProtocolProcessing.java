@@ -48,12 +48,16 @@ public class ProtocolProcessing {
                 break;
             /* --- ルール行動・能力に関する文 --- */
             case DIVINATION:
+                playerInformation.setDivGuardPlanAgent(content.getTarget());
                 break;
             case GUARD:
+                playerInformation.setDivGuardPlanAgent(content.getTarget());
                 break;
             case VOTE:
+                playerInformation.setVotePlanAgent(content.getTarget());
                 break;
             case ATTACK:
+                playerInformation.setAgent(content.getTarget());
                 break;
             /* --- 同意・非同意に関する文 --- */
             case AGREE:

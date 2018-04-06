@@ -26,6 +26,36 @@ public class PlayerInformation {
     Map<Agent, Species> divIdenMap;
     /* 護衛結果リスト */
     List<Agent> guardList;
+    /* 占い・護衛予定Agent */
+    Agent divGuardPlanAgent;
+    /* 投票予定Agent */
+    Agent votePlanAgent;
+    /* 襲撃予定Agent */
+    Agent attackPlanAgent;
+
+    public Agent getAttackPlanAgent() {
+        return attackPlanAgent;
+    }
+
+    public void setAttackPlanAgent(Agent attackPlanAgent) {
+        this.attackPlanAgent = attackPlanAgent;
+    }
+
+    public Agent getVotePlanAgent() {
+        return votePlanAgent;
+    }
+
+    public void setVotePlanAgent(Agent votePlanAgent) {
+        this.votePlanAgent = votePlanAgent;
+    }
+
+    public Agent getDivGuardPlanAgent() {
+        return divGuardPlanAgent;
+    }
+
+    public void setDivGuardPlanAgent(Agent divGuardPlanAgent) {
+        this.divGuardPlanAgent = divGuardPlanAgent;
+    }
 
     public Agent getAgent() {
         return agent;
