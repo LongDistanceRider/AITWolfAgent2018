@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Random;
 
 public class Starter {
+
     /**
      * ローカルホストのサーバを立ち上げます
      * また，ゲームログをlogディレクトリ下に保存します
@@ -26,17 +27,13 @@ public class Starter {
      * @param participant_players    ゲーム参加者数
      */
     public static void startServer(int port, int gameNum, int participant_players) {
-        GameSetting gameSetting = GameSetting.getDefaultGame(participant_players);
-        gameSetting.setValidateUtterance(false);
-        gameSetting.setTalkOnFirstDay(true);
-        gameSetting.setTimeLimit(5000);
-
         new Thread(() -> {
             try {
+                GameSetting gameSetting = GameSetting.getCustomGame(System.getProperty("user.dir") + "/lib/Setting.cfg",participant_players);
                 TcpipServer gameServer = new TcpipServer(port, participant_players, gameSetting);
                 gameServer.waitForConnection();
                 AIWolfGame game = new AIWolfGame(gameSetting, gameServer);
-                game.setShowConsoleLog(true);        // サーバログ出力をfalseに
+                game.setShowConsoleLog(true);
 
                 for (int i = 0; i < gameNum; i++) {
                     game.setRand(new Random(i));
@@ -47,7 +44,7 @@ public class Starter {
                     game.start();
                 }
             } catch (IOException e) {
-                System.err.println("ローカルサーバ立ち上げでIOException発生．ログの出力に失敗した可能性があります．");
+                System.err.println("ローカルサーバ立ち上げでIOException発生．ログの出力に失敗，サーバ設定ファイル読み込み失敗した可能性があります．");
                 e.printStackTrace();
             }
         }).start();
@@ -89,6 +86,7 @@ public class Starter {
             e.printStackTrace();
             System.exit(-1);
         }
+
         client.connect(player);
         client.setName(playerName);
         System.out.println(playerName + " is connected");
