@@ -5,7 +5,6 @@
 
 package com.icloud.itfukui0922.starter;
 
-import com.icloud.itfukui0922.Starter;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Role;
 

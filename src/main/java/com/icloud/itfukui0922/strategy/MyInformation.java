@@ -6,6 +6,7 @@ import org.aiwolf.common.data.Species;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MyInformation {
 
@@ -22,11 +23,30 @@ public class MyInformation {
         this.myRole = myRole;
     }
 
-    public Map<Agent, Species> getDivIdenMap() {
-        return divIdenMap;
+    /**
+     * 占い霊能結果の追加
+     * @param target
+     * @param result
+     */
+    public void putDivIdenMap(Agent target, Species result) {
+        divIdenMap.put(target, result);
     }
 
-    public void setDivIdenMap(Map<Agent, Species> divinationMap) {
-        this.divIdenMap = divinationMap;
+    /**
+     * 占い霊能結果の最後の結果を返します
+     * @return 占い結果をMap.Entryで返します．
+     *         リストがnullの場合nullを返します．
+     */
+    public Map.Entry<Agent, Species> peekDivIdenMap() {
+        if (divIdenMap == null) {
+            return null;
+        }
+
+        Map.Entry<Agent, Species> lastSet = null;
+        for (Map.Entry<Agent, Species> set :
+                divIdenMap.entrySet()) {
+            lastSet = set;
+        }
+        return lastSet;
     }
 }

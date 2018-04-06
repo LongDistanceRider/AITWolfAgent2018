@@ -39,7 +39,7 @@ public class RoleSpecificProcessing {
                     // 占い結果の取り込み
                     Judge divination = gameInfo.getDivineResult();
                     if (divination != null) {
-                        boardSurface.getMyPlayerInfomation().addDivinationMap(divination.getTarget(), divination.getResult());
+                        boardSurface.putDivIdenMap(divination.getTarget(), divination.getResult());
                     } else {
                         System.err.println("占い結果取得失敗");
                     }
@@ -59,14 +59,10 @@ public class RoleSpecificProcessing {
 
         switch (myRole) {
             case MEDIUM:
-                // TODO ここで自分自身の役職をカミングアウトする（PlayerInfomation周りの処理を実装ご)
-                Map<Agent, Species> divinationList = boardSurface.getMyPlayerInfomation().getDivinationMap();
-                if (divinationList != null) {
-                    for (Map.Entry<Agent, Species> entry:
-                         divinationList.entrySet()) {
-                        ContentBuilder builder = new DivinedResultContentBuilder(entry.getKey(), entry.getValue());
-                        talkQueue.add(new Content(builder).getText());
-                    }
+                Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap();
+                if (divinationResult != null) {
+                    ContentBuilder builder = new DivinedResultContentBuilder(divinationResult.getKey(), divinationResult.getValue());
+                    talkQueue.add(new Content(builder).getText());  // 占い結果報告
                 }
                 break;
             default:

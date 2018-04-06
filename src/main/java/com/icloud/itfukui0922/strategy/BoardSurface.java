@@ -16,6 +16,7 @@ import org.aiwolf.common.net.GameInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BoardSurface {
 
@@ -75,5 +76,22 @@ public class BoardSurface {
      */
     public boolean setTalkList(Talk talk) {
         return talkList.add(talk);
+    }
+
+    /**
+     * 占い霊能結果の追加
+     * @param target
+     * @param result
+     */
+    public void putDivIdenMap(Agent target, Species result) {
+        myInformation.putDivIdenMap(target, result);
+    }
+
+    /**
+     * 占い霊能結果の最後の結果を返す
+     * @return リストがからの場合はnullが返却される
+     */
+    public Map.Entry<Agent, Species> peekDivIdenMap() {
+        return myInformation.peekDivIdenMap();
     }
 }
