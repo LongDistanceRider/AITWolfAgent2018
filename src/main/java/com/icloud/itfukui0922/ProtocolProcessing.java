@@ -8,6 +8,7 @@ import com.icloud.itfukui0922.strategy.PlayerInformation;
 import com.sun.media.jfxmedia.logging.Logger;
 import org.aiwolf.client.lib.Content;
 import org.aiwolf.client.lib.IdentContentBuilder;
+import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;
 
 public class ProtocolProcessing {
@@ -35,11 +36,15 @@ public class ProtocolProcessing {
             /* --- 能力結果に関する文 --- */
             case DIVINED:
                 playerInformation.putDivIdenMap(content.getTarget(), content.getResult()); // 宣言したターゲットと結果を保管
+                playerInformation.setSelfCO(Role.SEER); // 事実上のComing out
                 break;
             case IDENTIFIED:
                 playerInformation.putDivIdenMap(content.getTarget(), content.getResult());   // 宣言したターゲットと結果を保管
+                playerInformation.setSelfCO(Role.MEDIUM); // 事実上のComing out
                 break;
             case GUARDED:
+                playerInformation.addGuardList(content.getTarget());    // 護衛結果を保管
+                playerInformation.setSelfCO(Role.BODYGUARD); // 事実上のComing out
                 break;
             /* --- ルール行動・能力に関する文 --- */
             case DIVINATION:

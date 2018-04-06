@@ -8,9 +8,7 @@ import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Species;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PlayerInformation {
 
@@ -24,10 +22,10 @@ public class PlayerInformation {
     Role convictionRole;
     /* 他プレイヤーへの印象 */
     Map<Agent, Role> estimateOtherAgentRole;
-
     /* 占い（霊能）結果リスト */
-
-    Map<Agent, Species> divIdenMap = new LinkedHashMap<>();
+    Map<Agent, Species> divIdenMap;
+    /* 護衛結果リスト */
+    List<Agent> guardList;
 
     public Agent getAgent() {
         return agent;
@@ -73,6 +71,8 @@ public class PlayerInformation {
     public PlayerInformation(Agent agent) {
         this.agent = agent;
         this.estimateOtherAgentRole = new HashMap<>();
+        this.divIdenMap = new LinkedHashMap<>();
+        this.guardList = new LinkedList<>();
     }
 
     /**
@@ -88,5 +88,9 @@ public class PlayerInformation {
 
     public void estimateOtherAgent(Agent agent, Role estimateRole) {
         estimateOtherAgentRole.put(agent, estimateRole);
+    }
+
+    public void addGuardList(Agent target) {
+        guardList.add(target);
     }
 }
