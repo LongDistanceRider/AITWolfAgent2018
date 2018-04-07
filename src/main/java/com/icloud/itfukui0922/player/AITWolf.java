@@ -160,11 +160,16 @@ public class AITWolf implements Player {
     @Override
     public Agent guard() {
         // ◯-◯進行をチェック
+        // 占い師1ならその占い師を，2以上なら霊能者を護衛（霊能者が二人の時は適当に選ぶ），霊能者が不在なら適当に選ぶ
+        int numberOfSeer = boardSurface.aNumberOfComingoutSeer();
+        int numberOfMedium = boardSurface.aNumberOfComingoutMedium();
 
-        // 戦略：1-1なら
-        // 占い師がCOしていれば占い師を護衛する
-
-        return null;
+        if (numberOfSeer == 1) {
+            return boardSurface.comingoutSeerAgentList().get(0);    // 占い師護衛
+        } else if (numberOfSeer > 1 && numberOfMedium == 1) {
+            return boardSurface.comingoutMediumAgentList().get(0);  // 霊能者護衛
+        }
+        return ramdomElementSelect(aliveAgentListRemoveMe());   // 適当なプレイヤーを返す
     }
 
     @Override
