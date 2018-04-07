@@ -9,6 +9,7 @@ import com.icloud.itfukui0922.Action;
 import com.icloud.itfukui0922.ProtocolProcessing;
 import com.icloud.itfukui0922.RoleSpecificProcessing;
 import com.icloud.itfukui0922.strategy.BoardSurface;
+import com.icloud.itfukui0922.strategy.FlagManagement;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Talk;
@@ -37,6 +38,8 @@ public class AITWolf implements Player {
     /* Actionリスト */
     List<Action> actionList = new ArrayList<>();
     LinkedList<String> talkQueue = new LinkedList<>();
+    /* Switchクラス */
+    FlagManagement flagManagement;
 
     @Override
     public String getName() {
@@ -50,6 +53,7 @@ public class AITWolf implements Player {
         // 発言内容取得
         for (int i = talkListHead; i < gameInfo.getTalkList().size(); i++) {
             Talk talk = gameInfo.getTalkList().get(i);  // 新規Talkを取得
+            boardSurface.addTalkList(talk);     // 盤面クラスへtalkを保管
             // TODO talkに対する処理をここに書く
             if (NLSwitch) {
                 // TODO 自然言語処理をここに書く
@@ -73,6 +77,7 @@ public class AITWolf implements Player {
         this.gameSetting = gameSetting; // ゲーム設定の初期化
         this.roleSpecificProcessing = new RoleSpecificProcessing(); // 役職固有のクラスの初期化
         this.boardSurface = new BoardSurface(gameInfo); // 盤面クラスの初期化
+        this.flagManagement = new FlagManagement(); // フラグ管理クラスの初期化
     }
 
     @Override
@@ -82,7 +87,10 @@ public class AITWolf implements Player {
             case 0: // 0日目
                 if (NLSwitch) {
                     // 挨拶を返す
-                    talkQueue.add("0日目の挨拶です．");
+                    if (!flagManagement.isGreeting()) {
+                        talkQueue.add("0日目の挨拶です．");
+                        flagManagement.setGreeting(true);
+                    }
                     return;
                 }
                 break;
@@ -151,7 +159,11 @@ public class AITWolf implements Player {
 
     @Override
     public Agent guard() {
-        // このメソッドは利用されない
+        // ◯-◯進行をチェック
+
+        // 戦略：1-1なら
+        // 占い師がCOしていれば占い師を護衛する
+
         return null;
     }
 

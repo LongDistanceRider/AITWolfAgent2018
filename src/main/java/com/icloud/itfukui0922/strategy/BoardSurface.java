@@ -9,6 +9,7 @@
 package com.icloud.itfukui0922.strategy;
 
 import org.aiwolf.common.data.Agent;
+import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
@@ -73,7 +74,7 @@ public class BoardSurface {
      * @param talk 追加するtalk
      * @return 追加できた=true
      */
-    public boolean setTalkList(Talk talk) {
+    public boolean addTalkList(Talk talk) {
         return talkList.add(talk);
     }
 
@@ -93,4 +94,51 @@ public class BoardSurface {
     public Map.Entry<Agent, Species> peekDivIdenMap() {
         return myInformation.peekDivIdenMap();
     }
+
+    /**
+     * 占い師COしたエージェントのリストを返す
+     * @return エージェントがいない場合nullが返却される
+     */
+    public List<Agent> comingoutSeerAgentList() {
+        List<Agent> comingoutAgentList = new ArrayList<>();
+        for (PlayerInformation info :
+                playerInformationList) {
+            if (info.getSelfCO() == Role.SEER) {
+                comingoutAgentList.add(info.getAgent());
+            }
+        }
+        return comingoutAgentList;
+    }
+
+    /**
+     * 占い師COした人数を返す
+     * @return
+     */
+    public int aNumberOfComingoutSeer() {
+        return comingoutSeerAgentList().size();
+    }
+
+    /**
+     * 霊能者COしたエージェントのリストを返す
+     * @return エージェントがいない場合nullが返却される
+     */
+    public List<Agent> comingoutMediumAgentList() {
+        List<Agent> comingoutAgentList = new ArrayList<>();
+        for (PlayerInformation info :
+                playerInformationList) {
+            if (info.getSelfCO() == Role.MEDIUM) {
+                comingoutAgentList.add(info.getAgent());
+            }
+        }
+        return comingoutAgentList;
+    }
+
+    /**
+     * 霊能者COした人数を返す
+     * @return
+     */
+    public int aNumberOfComingoutMedium() {
+        return comingoutMediumAgentList().size();
+    }
+
 }
