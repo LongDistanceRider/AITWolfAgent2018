@@ -26,20 +26,20 @@ import java.util.List;
 public class AITWolf implements Player {
 
     /* 自然言語処理部門対応スイッチ */
-    boolean NLSwitch = false;   // 自然言語処理部門に参加する場合はtrue，プロトコル部門はfalse
+    private boolean NLSwitch = false;   // 自然言語処理部門に参加する場合はtrue，プロトコル部門はfalse
     /* トークリストをどこまで読み込んだか */
-    int talkListHead;
+    private int talkListHead;
     /* ゲーム情報 */
-    GameInfo gameInfo;
+    private GameInfo gameInfo;
     /* ゲーム設定情報 */
-    GameSetting gameSetting;
+    private GameSetting gameSetting;
     /* 役職固有の処理クラス */
-    RoleSpecificProcessing roleSpecificProcessing;
+    private RoleSpecificProcessing roleSpecificProcessing;
     /* 盤面クラス */
-    BoardSurface boardSurface;
+    private BoardSurface boardSurface;
     /* Actionリスト */
-    List<Action> actionList = new ArrayList<>();
-    LinkedList<String> talkQueue = new LinkedList<>();
+    private List<Action> actionList = new ArrayList<>();
+    private LinkedList<String> talkQueue = new LinkedList<>();
 
     @Override
     public String getName() {
@@ -105,7 +105,8 @@ public class AITWolf implements Player {
         }
         // ----- 各役職ごとの処理 -----
         roleSpecificProcessing.dayStart(gameInfo, boardSurface);
-
+        // ----- 日をまたぐごとに初期化するフラグ -----
+        FlagManagement.getInstance().setResultReport(false);
     }
 
     @Override

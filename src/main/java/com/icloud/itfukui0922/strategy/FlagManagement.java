@@ -2,9 +2,19 @@ package com.icloud.itfukui0922.strategy;
 
 public class FlagManagement {
     /* 0日目の挨拶 */
-    boolean isGreeting = false;
+    private boolean isGreeting = false;
     /* coming outしたか */
-    boolean isComingOut = false;
+    private boolean isComingOut = false;
+    /* 占い（霊能・かたり）結果報告したか */
+    private boolean isResultReport = false;
+
+    public boolean isResultReport() {
+        return isResultReport;
+    }
+
+    public void setResultReport(boolean resultReport) {
+        isResultReport = resultReport;
+    }
 
     public boolean isComingOut() {
         return isComingOut;

@@ -15,6 +15,7 @@ import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
+import sun.jvm.hotspot.runtime.VM;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -106,9 +107,13 @@ public class RoleSpecificProcessing {
      * @return 占い結果がなければnull返却
      */
     private String divinedResult(BoardSurface boardSurface) {
+        if (!FlagManagement.getInstance().isResultReport()) {
+            return null;
+        }
         Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap();
         if (divinationResult != null) {
             ContentBuilder builder = new DivinedResultContentBuilder(divinationResult.getKey(), divinationResult.getValue());
+            FlagManagement.getInstance().setResultReport(true);
             return new Content(builder).getText();  // 占い結果報告
         }
         return null;
