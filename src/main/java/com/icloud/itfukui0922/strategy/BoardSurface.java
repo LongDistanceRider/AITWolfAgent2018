@@ -96,49 +96,18 @@ public class BoardSurface {
     }
 
     /**
-     * 占い師COしたエージェントのリストを返す
-     * @return エージェントがいない場合nullが返却される
+     * 特定の役職をCOしたエージェントのリストを返す
+     * @param role　調べたい役職
+     * @return COしたエージェントのリスト
      */
-    public List<Agent> comingoutSeerAgentList() {
+    public List<Agent> comingoutRoleAgentList(Role role) {
         List<Agent> comingoutAgentList = new ArrayList<>();
         for (PlayerInformation info :
                 playerInformationList) {
-            if (info.getSelfCO() == Role.SEER) {
+            if (info.getSelfCO() == role) {
                 comingoutAgentList.add(info.getAgent());
             }
         }
         return comingoutAgentList;
     }
-
-    /**
-     * 占い師COした人数を返す
-     * @return
-     */
-    public int aNumberOfComingoutSeer() {
-        return comingoutSeerAgentList().size();
-    }
-
-    /**
-     * 霊能者COしたエージェントのリストを返す
-     * @return エージェントがいない場合nullが返却される
-     */
-    public List<Agent> comingoutMediumAgentList() {
-        List<Agent> comingoutAgentList = new ArrayList<>();
-        for (PlayerInformation info :
-                playerInformationList) {
-            if (info.getSelfCO() == Role.MEDIUM) {
-                comingoutAgentList.add(info.getAgent());
-            }
-        }
-        return comingoutAgentList;
-    }
-
-    /**
-     * 霊能者COした人数を返す
-     * @return
-     */
-    public int aNumberOfComingoutMedium() {
-        return comingoutMediumAgentList().size();
-    }
-
 }

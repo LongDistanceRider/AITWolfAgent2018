@@ -12,12 +12,14 @@ import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
+import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -135,41 +137,52 @@ public class AITWolf implements Player {
 
     @Override
     public String whisper() {
-        // このメソッドは利用されない
         return null;
     }
 
     @Override
     public Agent vote() {
         // 生存プレイヤー内（自分自身を除く）からランダムに投票
-        return ramdomElementSelect(aliveAgentListRemoveMe());
+        return randomElementSelect(aliveAgentListRemoveMe());
     }
 
     @Override
     public Agent attack() {
-        // 生存プレイヤー内（自分自身を除く）からランダムにアタック
-        return ramdomElementSelect(aliveAgentListRemoveMe());
+        // とりあえず占い師COした人物を対象に，いない場合は霊能者，次に狩人の順で対象を決定する
+        List<Role> checkRole = new ArrayList<>(Arrays.asList(Role.SEER, Role.BODYGUARD, Role.BODYGUARD));
+        List<Agent> coming_outAgentList;    // 初期化してないけどいいのかな
+        for (Role role :
+                checkRole) {
+            coming_outAgentList = boardSurface.comingoutRoleAgentList(role);
+            if(!coming_outAgentList.isEmpty()) {
+                return randomElementSelect(coming_outAgentList);    // リストが空でなければリストからランダムに返す
+            }
+        }
+        return randomElementSelect(aliveAgentListRemoveMe());   // 誰もいなければランダムに返す
     }
 
     @Override
     public Agent divine() {
         // 生存プレイヤー内（自分自身を除く）からランダムに占う
-        return ramdomElementSelect(aliveAgentListRemoveMe());
+        return randomElementSelect(aliveAgentListRemoveMe());
     }
 
     @Override
     public Agent guard() {
         // ◯-◯進行をチェック
         // 占い師1ならその占い師を，2以上なら霊能者を護衛（霊能者が二人の時は適当に選ぶ），霊能者が不在なら適当に選ぶ
-        int numberOfSeer = boardSurface.aNumberOfComingoutSeer();
-        int numberOfMedium = boardSurface.aNumberOfComingoutMedium();
+        List<Agent> comingoutSeerAgentList = boardSurface.comingoutRoleAgentList(Role.SEER);
+        List<Agent> comingoutMediumAgentList = boardSurface.comingoutRoleAgentList(Role.MEDIUM);
+
+        int numberOfSeer = comingoutSeerAgentList.size();
+        int numberOfMedium = comingoutMediumAgentList.size();
 
         if (numberOfSeer == 1) {
-            return boardSurface.comingoutSeerAgentList().get(0);    // 占い師護衛
+            return comingoutSeerAgentList.get(0);    // 占い師護衛
         } else if (numberOfSeer > 1 && numberOfMedium == 1) {
-            return boardSurface.comingoutMediumAgentList().get(0);  // 霊能者護衛
+            return comingoutMediumAgentList.get(0);  // 霊能者護衛
         }
-        return ramdomElementSelect(aliveAgentListRemoveMe());   // 適当なプレイヤーを返す
+        return randomElementSelect(aliveAgentListRemoveMe());   // 適当なプレイヤーを返す
     }
 
     @Override
@@ -184,7 +197,7 @@ public class AITWolf implements Player {
      * @param <T>
      * @return
      */
-    private <T> T ramdomElementSelect(List<T> list) {
+    private <T> T randomElementSelect(List<T> list) {
         if (list.isEmpty()) return null;
         else return list.get((int) (Math.random() * list.size()));
     }
