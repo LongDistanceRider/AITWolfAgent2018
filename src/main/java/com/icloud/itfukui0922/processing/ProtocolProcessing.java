@@ -1,7 +1,7 @@
 /**
  * プロトコル部門の処理
  */
-package com.icloud.itfukui0922;
+package com.icloud.itfukui0922.processing;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.PlayerInformation;
