@@ -1,6 +1,3 @@
-/**
- * 役職固有の処理
- */
 package com.icloud.itfukui0922.processing;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
@@ -15,10 +12,12 @@ import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
-import sun.jvm.hotspot.runtime.VM;
-
 import java.util.LinkedList;
 import java.util.Map;
+
+/**
+ * 役職固有の処理
+ */
 
 public class RoleSpecificProcessing {
     /* 自分自身の役職 */

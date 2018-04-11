@@ -1,6 +1,3 @@
-/**
- * プロトコル部門の処理
- */
 package com.icloud.itfukui0922.processing;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
@@ -8,6 +5,10 @@ import com.icloud.itfukui0922.strategy.PlayerInformation;
 import org.aiwolf.client.lib.Content;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;
+
+/**
+ * プロトコル部門の処理
+ */
 
 public class ProtocolProcessing {
 

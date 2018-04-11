@@ -8,9 +8,9 @@ import org.aiwolf.common.net.GameSetting;
 public class Dammy implements Player {
 
     /* ゲーム情報 */
-    GameInfo gameInfo;
+    private GameInfo gameInfo;
     /* ゲーム設定情報 */
-    GameSetting gameSetting;
+    private GameSetting gameSetting;
 
     @Override
     public String getName() {

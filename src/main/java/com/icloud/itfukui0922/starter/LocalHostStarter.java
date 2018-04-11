@@ -14,13 +14,13 @@ import java.util.List;
 public class LocalHostStarter {
 
     /* 参加プレイヤー */
-    List<Player> participantsPlayerList = new ArrayList<>();
+    private List<Player> participantsPlayerList = new ArrayList<>();
     /* 希望役職 */
-    List<Role> requestRoleList = null;
+    private List<Role> requestRoleList = null;
     /* 対戦回数 */
-    int gameNum = 1;
+    private int gameNum = 1;
     /* ポート番号 */
-    int port = 10000;
+    private int port = 10000;
 
     /**
      * コンストラクタ

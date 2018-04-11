@@ -1,13 +1,7 @@
-/**
- * AITWolfエージェント　メイン部分
- *
- * 可能な限り行数を減らしたい＝クラスの分化
- */
 package com.icloud.itfukui0922.player;
 
-import com.icloud.itfukui0922.Action;
-import com.icloud.itfukui0922.ProtocolProcessing;
-import com.icloud.itfukui0922.RoleSpecificProcessing;
+import com.icloud.itfukui0922.processing.ProtocolProcessing;
+import com.icloud.itfukui0922.processing.RoleSpecificProcessing;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import com.icloud.itfukui0922.util.Util;
@@ -23,6 +17,12 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * AITWolfエージェント　メイン部分
+ *
+ * 可能な限り行数を減らしたい＝クラスの分化
+ */
+
 public class AITWolf implements Player {
 
     /* 自然言語処理部門対応スイッチ */
@@ -37,8 +37,7 @@ public class AITWolf implements Player {
     private RoleSpecificProcessing roleSpecificProcessing;
     /* 盤面クラス */
     private BoardSurface boardSurface;
-    /* Actionリスト */
-    private List<Action> actionList = new ArrayList<>();
+    /* 発言リスト */
     private LinkedList<String> talkQueue = new LinkedList<>();
 
     @Override
