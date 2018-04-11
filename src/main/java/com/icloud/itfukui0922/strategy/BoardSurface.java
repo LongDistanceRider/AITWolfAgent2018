@@ -52,7 +52,7 @@ public class BoardSurface {
             playerInformationList.add(new PlayerInformation(agent));
         }
         // 自分自身のプレイヤ情報作成
-        myInformation = new MyInformation();
+        myInformation = new MyInformation(gameInfo.getAgent());
     }
 
     /**

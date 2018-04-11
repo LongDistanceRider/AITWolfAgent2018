@@ -4,6 +4,8 @@
 package com.icloud.itfukui0922;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
+import com.icloud.itfukui0922.strategy.FlagManagement;
+import org.aiwolf.client.lib.ComingoutContentBuilder;
 import org.aiwolf.client.lib.Content;
 import org.aiwolf.client.lib.ContentBuilder;
 import org.aiwolf.client.lib.DivinedResultContentBuilder;
@@ -58,6 +60,13 @@ public class RoleSpecificProcessing {
 
         switch (myRole) {
             case MEDIUM:
+                // ----- coming out -----
+                if (!FlagManagement.getInstance().isComingOut()) {  // まだcoming　outしていなければ
+                    ContentBuilder builder = new ComingoutContentBuilder(boardSurface.getMyInformation().getAgent(), Role.SEER);
+                    talkQueue.add(new Content(builder).getText());
+                    FlagManagement.getInstance().setComingOut(true);    // フラグセット
+                }
+                // ----- 占い結果報告 -----
                 Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap();
                 if (divinationResult != null) {
                     ContentBuilder builder = new DivinedResultContentBuilder(divinationResult.getKey(), divinationResult.getValue());

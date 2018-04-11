@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class MyInformation {
 
+    /* 自分自身 */
+    Agent agent;
     /* 自分の役職 */
     Role myRole;
     /* 占い（霊能）結果リスト */
@@ -20,6 +22,18 @@ public class MyInformation {
 
     public void setMyRole(Role myRole) {
         this.myRole = myRole;
+    }
+
+    public Agent getAgent() {
+        return agent;
+    }
+
+    /**
+     * コンストラクタ
+     * @param agent
+     */
+    public MyInformation(Agent agent) {
+        this.agent = agent;
     }
 
     /**

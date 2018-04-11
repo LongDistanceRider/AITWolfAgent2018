@@ -17,7 +17,6 @@ import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -40,8 +39,6 @@ public class AITWolf implements Player {
     /* Actionリスト */
     List<Action> actionList = new ArrayList<>();
     LinkedList<String> talkQueue = new LinkedList<>();
-    /* Switchクラス */
-    FlagManagement flagManagement;
 
     @Override
     public String getName() {
@@ -79,7 +76,6 @@ public class AITWolf implements Player {
         this.gameSetting = gameSetting; // ゲーム設定の初期化
         this.roleSpecificProcessing = new RoleSpecificProcessing(); // 役職固有のクラスの初期化
         this.boardSurface = new BoardSurface(gameInfo); // 盤面クラスの初期化
-        this.flagManagement = new FlagManagement(); // フラグ管理クラスの初期化
     }
 
     @Override
@@ -89,9 +85,9 @@ public class AITWolf implements Player {
             case 0: // 0日目
                 if (NLSwitch) {
                     // 挨拶を返す
-                    if (!flagManagement.isGreeting()) {
+                    if (!FlagManagement.getInstance().isGreeting()) {
                         talkQueue.add("0日目の挨拶です．");
-                        flagManagement.setGreeting(true);
+                        FlagManagement.getInstance().setGreeting(true);
                     }
                     return;
                 }
@@ -122,15 +118,6 @@ public class AITWolf implements Player {
         }
         if (!roleTalkQueue.isEmpty()) {
             return roleTalkQueue.poll();
-        }
-        // NNによるActionダイス実行
-        // ランダム関数を用いた仮クラスで行う
-        //DeepLearningTmp.decisionMaking(boardSurfaceStack);
-
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return "OVER";
     }
