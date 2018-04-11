@@ -59,12 +59,11 @@ public class RoleSpecificProcessing {
         LinkedList<String> talkQueue = new LinkedList<>();
 
         switch (myRole) {
-            case MEDIUM:
+            case SEER:
                 // ----- coming out -----
-                if (!FlagManagement.getInstance().isComingOut()) {  // まだcoming　outしていなければ
-                    ContentBuilder builder = new ComingoutContentBuilder(boardSurface.getMyInformation().getAgent(), Role.SEER);
-                    talkQueue.add(new Content(builder).getText());
-                    FlagManagement.getInstance().setComingOut(true);    // フラグセット
+                String comingOutSeerString = coming_out(boardSurface.getMyInformation().getAgent(), myRole);
+                if (comingOutSeerString != null) {
+                    talkQueue.add(comingOutSeerString);
                 }
                 // ----- 占い結果報告 -----
                 Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap();
@@ -73,8 +72,36 @@ public class RoleSpecificProcessing {
                     talkQueue.add(new Content(builder).getText());  // 占い結果報告
                 }
                 break;
+            case MEDIUM:
+                // ----- coming out -----
+                String comingOutMediumString = coming_out(boardSurface.getMyInformation().getAgent(), myRole);
+                if (comingOutMediumString != null) {
+                    talkQueue.add(comingOutMediumString);
+                }
+                break;
+            case POSSESSED:
+                // ----- coming out -----
+                String comingOutPosessedString = coming_out(boardSurface.getMyInformation().getAgent(), Role.SEER);
+                if (comingOutPosessedString != null) {
+                    talkQueue.add(comingOutPosessedString);
+                }
+                break;
             default:
         }
         return talkQueue;
+    }
+
+    /**
+     * coming out処理
+     * @param agent　自分自身
+     * @return
+     */
+    private String coming_out (Agent agent, Role role) {
+        if (!FlagManagement.getInstance().isComingOut()) {  // まだcoming　outしていなければ
+            ContentBuilder builder = new ComingoutContentBuilder(agent, role);
+            FlagManagement.getInstance().setComingOut(true);    // フラグセット
+            return new Content(builder).getText();
+        }
+        return null;
     }
 }
