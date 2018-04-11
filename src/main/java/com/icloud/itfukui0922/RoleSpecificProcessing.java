@@ -22,9 +22,8 @@ import java.util.Map;
 
 public class RoleSpecificProcessing {
     /* 自分自身の役職 */
-    Role myRole = Role.VILLAGER;
+    private Role myRole = Role.VILLAGER;
 
-    /* 自分自身の役職をセットする */
     public void setMyRole(Role myRole) {
         this.myRole = myRole;
     }
@@ -49,6 +48,10 @@ public class RoleSpecificProcessing {
                 }
                 break;
             case POSSESSED:
+                // 偽占い結果を作成
+                boardSurface.getMyInformation().putDivIdenMap(Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo)), Species.HUMAN);
+                break;
+            case WEREWOLF:
                 // 偽占い結果を作成
                 boardSurface.getMyInformation().putDivIdenMap(Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo)), Species.HUMAN);
                 break;
@@ -96,6 +99,18 @@ public class RoleSpecificProcessing {
                     talkQueue.add(divinedLierResultString);
                 }
                 break;
+            case WEREWOLF:
+                // ----- coming out -----
+                String comingOutWerewolfString = coming_out(boardSurface.getMyInformation().getAgent(), Role.SEER);
+                if (comingOutWerewolfString != null) {
+                    talkQueue.add(comingOutWerewolfString);
+                }
+                // ----- 占い結果報告 -----
+                String divinedLierWResultString = divinedResult(boardSurface);
+                if (divinedLierWResultString != null) {
+                    talkQueue.add(divinedLierWResultString);
+                }
+                break;
             default:
         }
         return talkQueue;
@@ -104,13 +119,13 @@ public class RoleSpecificProcessing {
     /**
      * 占い結果報告処理
      * @param boardSurface
-     * @return 占い結果がなければnull返却
+     * @return 一度結果報告をしているか，占い結果がなければnull返却
      */
     private String divinedResult(BoardSurface boardSurface) {
-        if (!FlagManagement.getInstance().isResultReport()) {
+        if (!FlagManagement.getInstance().isResultReport()) {   // 一度結果報告していたらnull返却
             return null;
         }
-        Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap();
+        Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap(); // 占い結果取得
         if (divinationResult != null) {
             ContentBuilder builder = new DivinedResultContentBuilder(divinationResult.getKey(), divinationResult.getValue());
             FlagManagement.getInstance().setResultReport(true);

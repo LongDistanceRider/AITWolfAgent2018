@@ -21,11 +21,11 @@ import java.util.Map;
 public class BoardSurface {
 
     /* プレイヤ情報 */
-    List<PlayerInformation> playerInformationList = new ArrayList<>();
+    private List<PlayerInformation> playerInformationList = new ArrayList<>();
     /* 自分のプレイヤ情報 */
-    MyInformation myInformation;
+    private MyInformation myInformation;
     /* 会話情報 */
-    List<Talk> talkList = new ArrayList<>();
+    private List<Talk> talkList = new ArrayList<>();
 
     public List<Talk> getTalkList() {
         return talkList;
