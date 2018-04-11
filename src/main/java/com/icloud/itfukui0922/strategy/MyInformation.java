@@ -13,7 +13,7 @@ public class MyInformation {
     Agent agent;
     /* 自分の役職 */
     Role myRole;
-    /* 占い（霊能）結果リスト */
+    /* 占い（霊能・騙り）結果リスト */
     Map<Agent, Species> divIdenMap = new LinkedHashMap<>();
 
     public Role getMyRole() {

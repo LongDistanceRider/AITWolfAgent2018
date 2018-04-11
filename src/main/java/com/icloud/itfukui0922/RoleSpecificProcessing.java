@@ -5,6 +5,7 @@ package com.icloud.itfukui0922;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
+import com.icloud.itfukui0922.util.Util;
 import org.aiwolf.client.lib.ComingoutContentBuilder;
 import org.aiwolf.client.lib.Content;
 import org.aiwolf.client.lib.ContentBuilder;
@@ -46,6 +47,10 @@ public class RoleSpecificProcessing {
                     }
                 }
                 break;
+            case POSSESSED:
+                // 偽占い結果を作成
+                boardSurface.getMyInformation().putDivIdenMap(Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo)), Species.HUMAN);
+                break;
             default:
         }
     }
@@ -66,10 +71,9 @@ public class RoleSpecificProcessing {
                     talkQueue.add(comingOutSeerString);
                 }
                 // ----- 占い結果報告 -----
-                Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap();
-                if (divinationResult != null) {
-                    ContentBuilder builder = new DivinedResultContentBuilder(divinationResult.getKey(), divinationResult.getValue());
-                    talkQueue.add(new Content(builder).getText());  // 占い結果報告
+                String divinedResultString = divinedResult(boardSurface);
+                if (divinedResultString != null) {
+                    talkQueue.add(divinedResultString);
                 }
                 break;
             case MEDIUM:
@@ -85,10 +89,29 @@ public class RoleSpecificProcessing {
                 if (comingOutPosessedString != null) {
                     talkQueue.add(comingOutPosessedString);
                 }
+                // ----- 占い結果報告 -----
+                String divinedLierResultString = divinedResult(boardSurface);
+                if (divinedLierResultString != null) {
+                    talkQueue.add(divinedLierResultString);
+                }
                 break;
             default:
         }
         return talkQueue;
+    }
+
+    /**
+     * 占い結果報告処理
+     * @param boardSurface
+     * @return 占い結果がなければnull返却
+     */
+    private String divinedResult(BoardSurface boardSurface) {
+        Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap();
+        if (divinationResult != null) {
+            ContentBuilder builder = new DivinedResultContentBuilder(divinationResult.getKey(), divinationResult.getValue());
+            return new Content(builder).getText();  // 占い結果報告
+        }
+        return null;
     }
 
     /**

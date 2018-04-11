@@ -10,6 +10,7 @@ import com.icloud.itfukui0922.ProtocolProcessing;
 import com.icloud.itfukui0922.RoleSpecificProcessing;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
+import com.icloud.itfukui0922.util.Util;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Role;
@@ -130,7 +131,7 @@ public class AITWolf implements Player {
     @Override
     public Agent vote() {
         // 生存プレイヤー内（自分自身を除く）からランダムに投票
-        return randomElementSelect(aliveAgentListRemoveMe());
+        return Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo));
     }
 
     @Override
@@ -142,16 +143,16 @@ public class AITWolf implements Player {
                 checkRole) {
             coming_outAgentList = boardSurface.comingoutRoleAgentList(role);
             if(!coming_outAgentList.isEmpty()) {
-                return randomElementSelect(coming_outAgentList);    // リストが空でなければリストからランダムに返す
+                return Util.randomElementSelect(coming_outAgentList);    // リストが空でなければリストからランダムに返す
             }
         }
-        return randomElementSelect(aliveAgentListRemoveMe());   // 誰もいなければランダムに返す
+        return Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo));   // 誰もいなければランダムに返す
     }
 
     @Override
     public Agent divine() {
         // 生存プレイヤー内（自分自身を除く）からランダムに占う
-        return randomElementSelect(aliveAgentListRemoveMe());
+        return Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo));
     }
 
     @Override
@@ -169,34 +170,12 @@ public class AITWolf implements Player {
         } else if (numberOfSeer > 1 && numberOfMedium == 1) {
             return comingoutMediumAgentList.get(0);  // 霊能者護衛
         }
-        return randomElementSelect(aliveAgentListRemoveMe());   // 適当なプレイヤーを返す
+        return Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo));   // 適当なプレイヤーを返す
     }
 
     @Override
     public void finish() {
         // TODO メモリ，フィールドの初期化
-    }
-
-    /**
-     * リストから要素を一つランダムに返す
-     *
-     * @param list
-     * @param <T>
-     * @return
-     */
-    private <T> T randomElementSelect(List<T> list) {
-        if (list.isEmpty()) return null;
-        else return list.get((int) (Math.random() * list.size()));
-    }
-
-    /**
-     * 生存プレイヤーリストから自分自身を除いたリストを返す
-     * @return 生存プレイヤーリスト（自分自身を除く）
-     */
-    private List<Agent> aliveAgentListRemoveMe() {
-        List<Agent> aliveAgentList = gameInfo.getAliveAgentList();
-        aliveAgentList.remove(gameInfo.getAgent());
-        return aliveAgentList;
     }
 
 }
