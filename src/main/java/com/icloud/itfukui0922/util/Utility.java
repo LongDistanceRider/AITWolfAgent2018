@@ -8,7 +8,7 @@ import org.aiwolf.common.net.GameInfo;
 
 import java.util.List;
 
-public class Util {
+public class Utility {
     /**
      * リストから要素を一つランダムに返す
      *

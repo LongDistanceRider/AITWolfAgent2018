@@ -4,7 +4,7 @@ import com.icloud.itfukui0922.processing.ProtocolProcessing;
 import com.icloud.itfukui0922.processing.RoleSpecificProcessing;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
-import com.icloud.itfukui0922.util.Util;
+import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Role;
@@ -131,7 +131,7 @@ public class AITWolf implements Player {
     @Override
     public Agent vote() {
         // 生存プレイヤー内（自分自身を除く）からランダムに投票
-        return Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo));
+        return Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));
     }
 
     @Override
@@ -143,16 +143,16 @@ public class AITWolf implements Player {
                 checkRole) {
             coming_outAgentList = boardSurface.comingoutRoleAgentList(role);
             if(!coming_outAgentList.isEmpty()) {
-                return Util.randomElementSelect(coming_outAgentList);    // リストが空でなければリストからランダムに返す
+                return Utility.randomElementSelect(coming_outAgentList);    // リストが空でなければリストからランダムに返す
             }
         }
-        return Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo));   // 誰もいなければランダムに返す
+        return Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));   // 誰もいなければランダムに返す
     }
 
     @Override
     public Agent divine() {
         // 生存プレイヤー内（自分自身を除く）からランダムに占う
-        return Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo));
+        return Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));
     }
 
     @Override
@@ -170,7 +170,7 @@ public class AITWolf implements Player {
         } else if (numberOfSeer > 1 && numberOfMedium == 1) {
             return comingoutMediumAgentList.get(0);  // 霊能者護衛
         }
-        return Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo));   // 適当なプレイヤーを返す
+        return Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));   // 適当なプレイヤーを返す
     }
 
     @Override

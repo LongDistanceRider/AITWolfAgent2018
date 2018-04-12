@@ -2,7 +2,7 @@ package com.icloud.itfukui0922.processing;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
-import com.icloud.itfukui0922.util.Util;
+import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.client.lib.ComingoutContentBuilder;
 import org.aiwolf.client.lib.Content;
 import org.aiwolf.client.lib.ContentBuilder;
@@ -48,11 +48,11 @@ public class RoleSpecificProcessing {
                 break;
             case POSSESSED:
                 // 偽占い結果を作成
-                boardSurface.getMyInformation().putDivIdenMap(Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo)), Species.HUMAN);
+                boardSurface.getMyInformation().putDivIdenMap(Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo)), Species.HUMAN);
                 break;
             case WEREWOLF:
                 // 偽占い結果を作成
-                boardSurface.getMyInformation().putDivIdenMap(Util.randomElementSelect(Util.aliveAgentListRemoveMe(gameInfo)), Species.HUMAN);
+                boardSurface.getMyInformation().putDivIdenMap(Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo)), Species.HUMAN);
                 break;
             default:
         }
