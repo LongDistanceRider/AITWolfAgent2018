@@ -1,7 +1,7 @@
 package com.icloud.itfukui0922.player;
 
 import com.icloud.itfukui0922.processing.ProtocolProcessing;
-import com.icloud.itfukui0922.processing.RoleSpecificProcessing;
+import com.icloud.itfukui0922.processing.state.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import com.icloud.itfukui0922.util.Utility;
@@ -33,12 +33,12 @@ public class AITWolf implements Player {
     private GameInfo gameInfo;
     /* ゲーム設定情報 */
     private GameSetting gameSetting;
-    /* 役職固有の処理クラス */
-    private RoleSpecificProcessing roleSpecificProcessing;
     /* 盤面クラス */
     private BoardSurface boardSurface;
     /* 発言リスト */
     private LinkedList<String> talkQueue = new LinkedList<>();
+    /* 自分自身の役職 */
+    private RoleState roleState = null;
 
     @Override
     public String getName() {
@@ -59,7 +59,6 @@ public class AITWolf implements Player {
                 // 自然言語をプロトコル言語に変換したあと，共通処理で処理する
             } else {
                 // TODO プロトコル部門のみの処理をここに書く
-
             }
             // TODO NLPとプロトコル共通処理をここに書く
             // Talk内容を読み取り，BoardSurfaceへ保管する
@@ -74,7 +73,6 @@ public class AITWolf implements Player {
         // ----- フィールド初期化処理 -----
         this.gameInfo = gameInfo;   // ゲーム情報の初期化
         this.gameSetting = gameSetting; // ゲーム設定の初期化
-        this.roleSpecificProcessing = new RoleSpecificProcessing(); // 役職固有のクラスの初期化
         this.boardSurface = new BoardSurface(gameInfo); // 盤面クラスの初期化
     }
 
@@ -94,16 +92,33 @@ public class AITWolf implements Player {
                 break;
 
             case 1: // 1日目
-                roleSpecificProcessing.setMyRole(gameInfo.getRole());   // 自分自身の役職を役職固有の処理にセット
+                roleSet();  // 役職セット
                 boardSurface.getMyInformation().setMyRole(gameInfo.getRole());   // プレイヤ情報に保管
                 break;
             case 2: // 2日目
+                // 被投票者
+                Agent executedAgent = gameInfo.getExecutedAgent();
+                boardSurface.getExecutedAgentList().add(executedAgent);
+                // 被噛み　null の場合はGJ発生
+                Agent attackedAgent = null;
+                for (Agent agent :
+                        gameInfo.getLastDeadAgentList()) {  // ここには前日の追放者と被害者の2つのAgentが入ってくると思っているが正しいか？
+                    if (!agent.equals(executedAgent)) {
+                        attackedAgent = agent;
+                    }
+                }
+                if (attackedAgent != null) {
+                    boardSurface.getBiteAgentList().add(attackedAgent);
+                } else {
+                    // TODO GJ発生時の処理を書くこと
+                }
+
                 break;
             default:
 
         }
         // ----- 各役職ごとの処理 -----
-        roleSpecificProcessing.dayStart(gameInfo, boardSurface);
+        roleState.dayStart(gameInfo, boardSurface);
         // ----- 日をまたぐごとに初期化するフラグ -----
         FlagManagement.getInstance().setResultReport(false);
     }
@@ -111,7 +126,7 @@ public class AITWolf implements Player {
     @Override
     public String talk() {
         // ----- 各役職ごとの処理 -----
-        LinkedList<String> roleTalkQueue = roleSpecificProcessing.talk(boardSurface);
+        LinkedList<String> roleTalkQueue = roleState.talk(boardSurface, gameInfo.getDay());
         if (NLSwitch) {
             // TODO 自然言語処理に関する処理をここに書く
         } else {
@@ -176,6 +191,43 @@ public class AITWolf implements Player {
     @Override
     public void finish() {
         // TODO メモリ，フィールドの初期化
+
+
+        // 役職finish()時の処理
+        roleState.finish(gameInfo, boardSurface);
     }
 
+    /**
+     * 役職セット
+     */
+    private void roleSet() {
+        switch (gameInfo.getRole()) {
+            case SEER:
+                roleState = new SeerState(gameMaxDay());
+                break;
+            case MEDIUM:
+                roleState = new MediumState();
+                break;
+            case BODYGUARD:
+                roleState = new BodyguardState();
+                break;
+            case POSSESSED:
+                roleState = new PossessedState();
+                break;
+            case WEREWOLF:
+                roleState = new WerewolfState();
+                break;
+            default:
+                roleState = new VillagerState();
+        }
+    }
+
+    /**
+     * ゲーム参加者数からゲーム最大日数を取得
+     */
+    private int gameMaxDay() {
+        int numPlayer = gameInfo.getAgentList().size();
+        int maxDay = (numPlayer-1) / 2;
+        return maxDay;
+    }
 }

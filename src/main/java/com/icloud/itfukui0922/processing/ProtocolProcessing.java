@@ -28,6 +28,7 @@ public class ProtocolProcessing {
             /* --- 意図表明に関する文 --- */
             case COMINGOUT:
                 playerInformation.setSelfCO(content.getRole()); // 宣言した役職を保管
+                // coming out した役職によって
                 break;
             case ESTIMATE:
                 playerInformation.estimateOtherAgent(content.getTarget(), content.getRole());   // 他のプレイヤーの印象

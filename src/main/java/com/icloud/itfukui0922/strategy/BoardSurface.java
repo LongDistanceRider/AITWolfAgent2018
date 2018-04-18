@@ -26,17 +26,29 @@ public class BoardSurface {
     private MyInformation myInformation;
     /* 会話情報 */
     private List<Talk> talkList = new ArrayList<>();
+    /* 追放されたエージェントリスト */
+    private List<Agent> executedAgentList = new ArrayList<>();
+    /* 被害者エージェントリスト */
+    private List<Agent> biteAgentList = new ArrayList<>();
 
-    public List<Talk> getTalkList() {
-        return talkList;
+    public List<Agent> getExecutedAgentList() {
+        return executedAgentList;
+    }
+
+    public void setExecutedAgentList(List<Agent> executedAgentList) {
+        this.executedAgentList = executedAgentList;
+    }
+
+    public List<Agent> getBiteAgentList() {
+        return biteAgentList;
+    }
+
+    public void setBiteAgentList(List<Agent> biteAgentList) {
+        this.biteAgentList = biteAgentList;
     }
 
     public MyInformation getMyInformation() {
         return myInformation;
-    }
-
-    public void setMyInformation(MyInformation myInformation) {
-        this.myInformation = myInformation;
     }
 
     /**
@@ -49,6 +61,7 @@ public class BoardSurface {
         gameInfo.getAgentList();
         for (Agent agent :
                 gameInfo.getAgentList()) {
+            if (agent == gameInfo.getAgent()) continue; // 自分自身の場合はスキップ
             playerInformationList.add(new PlayerInformation(agent));
         }
         // 自分自身のプレイヤ情報作成
