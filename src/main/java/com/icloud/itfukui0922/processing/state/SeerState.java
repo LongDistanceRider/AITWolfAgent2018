@@ -3,10 +3,6 @@ package com.icloud.itfukui0922.processing.state;
 import com.icloud.itfukui0922.processing.state.dice.SeerDice;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
-import org.aiwolf.client.lib.ComingoutContentBuilder;
-import org.aiwolf.client.lib.Content;
-import org.aiwolf.client.lib.ContentBuilder;
-import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Species;
@@ -98,7 +94,7 @@ public class SeerState implements RoleState{
      */
     public void finish (GameInfo gameInfo, BoardSurface boardSurface) {
         // 占い師ダイスのQテーブル更新
-        seerDice.updateQTable();
+        seerDice.updateQTable(gameInfo, boardSurface);
     }
 
 

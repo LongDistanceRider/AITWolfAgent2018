@@ -3,7 +3,6 @@ package com.icloud.itfukui0922.processing.state.dice;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
-import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
 
 import java.util.*;
@@ -91,18 +90,23 @@ public class SeerDice extends Dice {
     /**
      * Qテーブルの更新
      */
-    public void updateQTable() {
+    public void updateQTable(GameInfo gameInfo, BoardSurface boardSurface) {
         /* 報酬適用計画
          *
          *　モンテカルロ法を持ちいる
          */
-        // TODO モンテカルロ
-        // 学習ルートを逆順に
-        Collections.reverse(route);
-        for (Map<String, Integer> map :
-                route) {
-            // 状態s'で行った時にQ値が最大となるような行動を調べる
-
+        int reward = reward(gameInfo, boardSurface);
+        double total_reward_t = 0.0;    // 現時点を含めたその先で得られた報酬
+        Collections.reverse(route); // ルートを逆順に
+        for (Map<String, Integer> map:
+                route){
+            total_reward_t = GAMMA * total_reward_t;    // 時間割引率
+            // Q値を取得
+            q[map.get("day")][map.get("oppositionCO")][map.get("mediumCO")][map.get("discoveryWolf")][map.get("action")] =
+                    q[map.get("day")][map.get("oppositionCO")][map.get("mediumCO")][map.get("discoveryWolf")][map.get("action")] +
+                            ALPHA * (reward + total_reward_t - q[map.get("day")][map.get("oppositionCO")][map.get("mediumCO")][map.get("discoveryWolf")][map.get("action")]);
+            // ステップtより先でもらえた報酬の合計を更新
+            total_reward_t += reward;
         }
     }
     /**
