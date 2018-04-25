@@ -52,7 +52,10 @@ public class AITWolf implements Player {
         // 発言内容取得
         for (int i = talkListHead; i < gameInfo.getTalkList().size(); i++) {
             Talk talk = gameInfo.getTalkList().get(i);  // 新規Talkを取得
-            boardSurface.addTalkList(talk);     // 盤面クラスへtalkを保管
+            boardSurface.addTalkList(talk);     // 盤面クラスへtalkを保管（自分自身の発言が入る）
+            if (talk.getAgent().equals(gameInfo.getAgent())) {  // 自分自身の発言はスキップ
+                continue;
+            }
             // TODO talkに対する処理をここに書く
             if (NLSwitch) {
                 // TODO 自然言語処理をここに書く
