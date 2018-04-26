@@ -1,5 +1,7 @@
 package com.icloud.itfukui0922;
 
+import com.icloud.itfukui0922.log.Log;
+import com.icloud.itfukui0922.log.LogLevel;
 import com.icloud.itfukui0922.player.AITWolf;
 import com.icloud.itfukui0922.player.Dammy;
 import com.icloud.itfukui0922.starter.LocalHostStarter;
@@ -11,7 +13,8 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-
+        // ----- ログ出力開始 -----
+        Log.init(LogLevel.INFO, LogLevel.INFO);
         // ----- ローカルホストで対戦開始 -----
         // 参加プレイヤーリスト作成
         List<Player> participantsPlayerList = new ArrayList<Player>() {
@@ -29,5 +32,7 @@ public class Main {
 
         LocalHostStarter localHostStarter = new LocalHostStarter(participantsPlayerList, gameNum);  // インスタンス生成
         localHostStarter.start();   // ローカルホストで対戦開始
+        // ----- ログ出力停止 -----
+        Log.endLog();
     }
 }

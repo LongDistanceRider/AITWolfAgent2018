@@ -1,5 +1,8 @@
 package com.icloud.itfukui0922.player;
 
+import com.icloud.itfukui0922.log.Log;
+import com.icloud.itfukui0922.log.LogCategory;
+import com.icloud.itfukui0922.log.LogLevel;
 import com.icloud.itfukui0922.processing.ProtocolProcessing;
 import com.icloud.itfukui0922.processing.state.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
@@ -53,15 +56,19 @@ public class AITWolf implements Player {
         for (int i = talkListHead; i < gameInfo.getTalkList().size(); i++) {
             Talk talk = gameInfo.getTalkList().get(i);  // 新規Talkを取得
             boardSurface.addTalkList(talk);     // 盤面クラスへtalkを保管（自分自身の発言が入る）
+            Log.info("発言内容 : " + talk.getAgent() + " > " + talk.getText()); // 発言者 > 発言内容
             if (talk.getAgent().equals(gameInfo.getAgent())) {  // 自分自身の発言はスキップ
                 continue;
             }
             // TODO talkに対する処理をここに書く
             if (NLSwitch) {
                 // TODO 自然言語処理をここに書く
+                // ログに受け取った発言を出力する
+                Log.submit(LogLevel.INFO, LogCategory.NATURAL, "発言内容 : " + talk.getAgent() + " > " + talk.getText());
                 // 自然言語をプロトコル言語に変換したあと，共通処理で処理する
             } else {
                 // TODO プロトコル部門のみの処理をここに書く
+                // ログに受け取った発言を出力する
             }
             // TODO NLPとプロトコル共通処理をここに書く
             // Talk内容を読み取り，BoardSurfaceへ保管する
@@ -73,6 +80,7 @@ public class AITWolf implements Player {
 
     @Override
     public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
+        Log.debug("initialize実行");
         // ----- フィールド初期化処理 -----
         this.gameInfo = gameInfo;   // ゲーム情報の初期化
         this.gameSetting = gameSetting; // ゲーム設定の初期化
@@ -81,6 +89,9 @@ public class AITWolf implements Player {
 
     @Override
     public void dayStart() {
+        Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        Log.info("\t\t" + gameInfo.getDay() + "day start");
+        Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         // ----- 特定日時に実行させる処理 -----
         switch (gameInfo.getDay()) {
             case 0: // 0日目
@@ -102,6 +113,7 @@ public class AITWolf implements Player {
                 // 被投票者
                 Agent executedAgent = gameInfo.getExecutedAgent();
                 boardSurface.getExecutedAgentList().add(executedAgent);
+                Log.info("追放者 : " + executedAgent);
                 // 被噛み　null の場合はGJ発生
                 Agent attackedAgent = null;
                 for (Agent agent :
@@ -112,8 +124,10 @@ public class AITWolf implements Player {
                 }
                 if (attackedAgent != null) {
                     boardSurface.getBiteAgentList().add(attackedAgent);
+                    Log.info("被害者 : " + executedAgent);
                 } else {
                     // TODO GJ発生時の処理を書くこと
+                    Log.info("被害者 : なし（GJ発生）");
                 }
 
                 break;
@@ -149,11 +163,14 @@ public class AITWolf implements Player {
     @Override
     public Agent vote() {
         // 生存プレイヤー内（自分自身を除く）からランダムに投票
-        return Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));
+        Agent voteAgent = Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));
+        Log.info("投票先 : " + voteAgent);
+        return voteAgent;
     }
 
     @Override
     public Agent attack() {
+        Agent attackAgent;
         // とりあえず占い師COした人物を対象に，いない場合は霊能者，次に狩人の順で対象を決定する
         List<Role> checkRole = new ArrayList<>(Arrays.asList(Role.SEER, Role.BODYGUARD, Role.BODYGUARD));
         List<Agent> coming_outAgentList;    // 初期化してないけどいいのかな
@@ -161,20 +178,27 @@ public class AITWolf implements Player {
                 checkRole) {
             coming_outAgentList = boardSurface.comingoutRoleAgentList(role);
             if(!coming_outAgentList.isEmpty()) {
-                return Utility.randomElementSelect(coming_outAgentList);    // リストが空でなければリストからランダムに返す
+                attackAgent = Utility.randomElementSelect(coming_outAgentList);    // リストが空でなければリストからランダムに返す
+                Log.info("襲撃先 : " + attackAgent);
+                return attackAgent;
             }
         }
-        return Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));   // 誰もいなければランダムに返す
+        attackAgent = Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));   // 誰もいなければランダムに返す
+        Log.info("襲撃先 : " + attackAgent);
+        return attackAgent;
     }
 
     @Override
     public Agent divine() {
         // 生存プレイヤー内（自分自身を除く）からランダムに占う
-        return Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));
+        Agent divineAgent = Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));
+        Log.info("占い先 : " + divineAgent);
+        return divineAgent;
     }
 
     @Override
     public Agent guard() {
+        Agent guardAgent;
         // ◯-◯進行をチェック
         // 占い師1ならその占い師を，2以上なら霊能者を護衛（霊能者が二人の時は適当に選ぶ），霊能者が不在なら適当に選ぶ
         List<Agent> comingoutSeerAgentList = boardSurface.comingoutRoleAgentList(Role.SEER);
@@ -184,15 +208,22 @@ public class AITWolf implements Player {
         int numberOfMedium = comingoutMediumAgentList.size();
 
         if (numberOfSeer == 1) {
-            return comingoutSeerAgentList.get(0);    // 占い師護衛
+            guardAgent = comingoutSeerAgentList.get(0);    // 占い師護衛
+            Log.info("護衛先 : " + guardAgent);
+            return guardAgent;
         } else if (numberOfSeer > 1 && numberOfMedium == 1) {
-            return comingoutMediumAgentList.get(0);  // 霊能者護衛
+            guardAgent = comingoutMediumAgentList.get(0);  // 霊能者護衛
+            Log.info("護衛先 : " + guardAgent);
+            return guardAgent;
         }
-        return Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));   // 適当なプレイヤーを返す
+        guardAgent = Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));   // 適当なプレイヤーを返す
+        Log.info("護衛先 : " + guardAgent);
+        return guardAgent;
     }
 
     @Override
     public void finish() {
+        Log.debug("finish実行");
         // TODO メモリ，フィールドの初期化
 
 
