@@ -73,7 +73,6 @@ public class NaturalLanguageProcessing implements Callable<Boolean> {
 //        // 単語と特徴量
 //        Map<String, String> mecabMap = new LinkedHashMap<>();
 //        for (; node != null; node.getNext()) {
-//            // TODO: BOS/EOSが混ざるんじゃないかなって懸念．テスト必要
 //            mecabMap.put(node.getSurface(), node.getFeature()); // keyには単語，valueには特徴量が入る memo:key=太郎	value=名詞,固有名詞,人名,名,*,*,太郎,タロウ,タロー
 //        }
 
