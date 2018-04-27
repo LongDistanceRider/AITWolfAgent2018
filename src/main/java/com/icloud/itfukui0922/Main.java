@@ -13,8 +13,6 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        // ----- ログ出力開始 -----
-        Log.init(LogLevel.INFO, LogLevel.INFO);
         // ----- ローカルホストで対戦開始 -----
         // 参加プレイヤーリスト作成
         List<Player> participantsPlayerList = new ArrayList<Player>() {

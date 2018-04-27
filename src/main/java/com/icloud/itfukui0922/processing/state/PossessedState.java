@@ -19,7 +19,7 @@ public class PossessedState implements RoleState {
     public LinkedList<String> talk(BoardSurface boardSurface, int day) {
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- coming out -----
-        String comingOutPosessedString = UtilState.coming_out(boardSurface.getMyInformation().getAgent(), Role.POSSESSED);
+        String comingOutPosessedString = UtilState.coming_out(boardSurface.getMyInformation().getAgent(), Role.SEER);
         if (comingOutPosessedString != null) {
             talkQueue.add(comingOutPosessedString);
         }

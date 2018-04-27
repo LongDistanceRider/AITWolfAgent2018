@@ -15,10 +15,7 @@ import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * AITWolfエージェント　メイン部分
@@ -80,11 +77,14 @@ public class AITWolf implements Player {
 
     @Override
     public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
+        // ----- ログ出力開始 -----
+        Log.init(LogLevel.DEBUG, LogLevel.DEBUG);   // コンソール出力レベル, ファイル出力レベル
         Log.debug("initialize実行");
         // ----- フィールド初期化処理 -----
         this.gameInfo = gameInfo;   // ゲーム情報の初期化
         this.gameSetting = gameSetting; // ゲーム設定の初期化
         this.boardSurface = new BoardSurface(gameInfo); // 盤面クラスの初期化
+        FlagManagement.getInstance().setFinish(false);  // フィニッシュフラグをリセット
     }
 
     @Override
@@ -145,13 +145,15 @@ public class AITWolf implements Player {
     @Override
     public String talk() {
         // ----- 各役職ごとの処理 -----
-        LinkedList<String> roleTalkQueue = roleState.talk(boardSurface, gameInfo.getDay());
+        LinkedList<String> roleTalkQueue = new LinkedList<>();
+        roleTalkQueue = roleState.talk(boardSurface, gameInfo.getDay()); // nullが入ってくることがある
+
         if (NLSwitch) {
             // TODO 自然言語処理に関する処理をここに書く
         } else {
             // TODO プロトコル部門の処理に関する処理をここに書く
         }
-        if (!roleTalkQueue.isEmpty()) {
+        if (roleTalkQueue != null &&!roleTalkQueue.isEmpty()) {
             return roleTalkQueue.poll();
         }
         return "OVER";
@@ -225,12 +227,23 @@ public class AITWolf implements Player {
 
     @Override
     public void finish() {
+        if (FlagManagement.getInstance().isFinish()) {  // finishが2回目に呼び出されるとき，処理をしない
+            return;
+        }
+        FlagManagement.getInstance().setFinish(true);
         Log.debug("finish実行");
         // TODO メモリ，フィールドの初期化
 
 
         // 役職finish()時の処理
         roleState.finish(gameInfo, boardSurface);
+
+        // 参加プレイヤのリザルト出力
+        Map<Agent, Role> agentMap = gameInfo.getRoleMap();
+        for (Agent agent:
+                agentMap.keySet()){
+            Log.info("Agent : " + agent + " Role : " + agentMap.get(agent));
+        }
         // ----- ログ出力停止 -----
         Log.endLog();
     }

@@ -7,6 +7,16 @@ public class FlagManagement {
     private boolean isComingOut = false;
     /* 占い（霊能・かたり）結果報告したか */
     private boolean isResultReport = false;
+    /* finishフラグ管理（finishが2回呼ばれるため） */
+    private boolean isFinish = false;
+
+    public boolean isFinish() {
+        return isFinish;
+    }
+
+    public void setFinish(boolean finish) {
+        isFinish = finish;
+    }
 
     public boolean isResultReport() {
         return isResultReport;

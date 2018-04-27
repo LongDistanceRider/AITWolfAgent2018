@@ -4,6 +4,7 @@
 
 package com.icloud.itfukui0922.starter;
 
+import com.icloud.itfukui0922.log.Log;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.net.GameSetting;
 import org.aiwolf.common.net.TcpipClient;
@@ -88,7 +89,7 @@ public class Starter {
 
         client.connect(player);
         client.setName(playerName);
-        System.out.println(playerName + " is connected");
+        Log.info(playerName + " is connected");
     }
 
 }
