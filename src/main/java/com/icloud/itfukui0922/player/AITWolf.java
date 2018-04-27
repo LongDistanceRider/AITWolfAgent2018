@@ -235,7 +235,9 @@ public class AITWolf implements Player {
      * 役職セット
      */
     private void roleSet() {
-        switch (gameInfo.getRole()) {
+        Role role = gameInfo.getRole();
+        Log.info("自分の役職 : " + role);
+        switch (role) {
             case SEER:
                 roleState = new SeerState(gameMaxDay());
                 break;
