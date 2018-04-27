@@ -242,7 +242,7 @@ public class AITWolf implements Player {
         Map<Agent, Role> agentMap = gameInfo.getRoleMap();
         for (Agent agent:
                 agentMap.keySet()){
-            Log.info("Agent : " + agent + " Role : " + agentMap.get(agent));
+            Log.info(agent + " Role : " + agentMap.get(agent));
         }
         // ----- ログ出力停止 -----
         Log.endLog();

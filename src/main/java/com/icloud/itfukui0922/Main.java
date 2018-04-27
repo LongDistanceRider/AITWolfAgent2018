@@ -6,6 +6,7 @@ import com.icloud.itfukui0922.player.AITWolf;
 import com.icloud.itfukui0922.player.Dammy;
 import com.icloud.itfukui0922.starter.LocalHostStarter;
 import org.aiwolf.common.data.Player;
+import org.aiwolf.common.data.Role;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,13 @@ public class Main {
             }
         };
 
+        // 役職希望提出
+        Role requestRole = Role.SEER;
+
         // 対戦回数を指定
         int gameNum = 1;
 
-        LocalHostStarter localHostStarter = new LocalHostStarter(participantsPlayerList, gameNum);  // インスタンス生成
+        LocalHostStarter localHostStarter = new LocalHostStarter(participantsPlayerList, requestRole, gameNum);  // インスタンス生成
         localHostStarter.start();   // ローカルホストで対戦開始
     }
 }

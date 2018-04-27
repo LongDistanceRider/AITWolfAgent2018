@@ -6,6 +6,7 @@ package com.icloud.itfukui0922.starter;
 
 import com.icloud.itfukui0922.log.Log;
 import org.aiwolf.common.data.Player;
+import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.GameSetting;
 import org.aiwolf.common.net.TcpipClient;
 import org.aiwolf.server.AIWolfGame;
@@ -60,6 +61,7 @@ public class Starter {
      */
     public static void startClient(String classPass, String playerName, String host, int port, org.aiwolf.common.data.Role role) {
 
+        System.out.println(("クライアントスタート" + playerName + ":" + role));
         TcpipClient client;
 
         if (role != null) {

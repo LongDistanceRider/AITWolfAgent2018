@@ -16,7 +16,7 @@ public class LocalHostStarter {
     /* 参加プレイヤー */
     private List<Player> participantsPlayerList = new ArrayList<>();
     /* 希望役職 */
-    private List<Role> requestRoleList = null;
+    Role requestRole = null;
     /* 対戦回数 */
     private int gameNum = 1;
     /* ポート番号 */
@@ -37,12 +37,12 @@ public class LocalHostStarter {
      * コンストラクタ　
      *
      * @param participantsPlayerList 参加プレイヤーリスト
-     * @param requestRoleList 希望役職リスト
+     * @param requestRole 希望役職リスト
      * @param gameNum 対戦回数
      */
-    public LocalHostStarter(List<Player> participantsPlayerList, List<Role>requestRoleList, int gameNum) {
+    public LocalHostStarter(List<Player> participantsPlayerList, Role requestRole, int gameNum) {
         this.participantsPlayerList = participantsPlayerList;
-        this.requestRoleList = requestRoleList;
+        this.requestRole = requestRole;
         this.gameNum = gameNum;
     }
 
@@ -63,13 +63,10 @@ public class LocalHostStarter {
 
         for (Player player :
                 participantsPlayerList) {
-            if (requestRoleList != null) {  // 希望役職リストが提出されている場合は希望役職リスト通りにクライアントへ
-                for (Role role :
-                        requestRoleList) {
-                    // 希望役職を提出してクライアント起動
-                    Starter.startClient(player.getClass().getName(), player.getName(), "localhost", port, role);
-
-                }
+            if (requestRole != null) {  // 希望役職リストが提出されている場合は希望役職リスト通りにクライアントへ
+                // 希望役職を提出してクライアント起動
+                Starter.startClient(player.getClass().getName(), player.getName(), "localhost", port, requestRole);
+                requestRole = null;
             } else {
                 // 希望役職なしでクライアント起動
                 Starter.startClient(player.getClass().getName(), player.getName(), "localhost", port, null);
