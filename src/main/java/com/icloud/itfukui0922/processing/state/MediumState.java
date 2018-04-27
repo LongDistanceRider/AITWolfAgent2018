@@ -14,7 +14,7 @@ public class MediumState implements RoleState {
     }
 
     @Override
-    public LinkedList<String> talk(BoardSurface boardSurface) {
+    public LinkedList<String> talk(BoardSurface boardSurface, int day) {
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- coming out -----
         String comingOutMediumString = UtilState.coming_out(boardSurface.getMyInformation().getAgent(), Role.MEDIUM);
@@ -22,5 +22,10 @@ public class MediumState implements RoleState {
             talkQueue.add(comingOutMediumString);
         }
         return talkQueue;
+    }
+
+    @Override
+    public void finish(GameInfo gameInfo, BoardSurface boardSurface) {
+
     }
 }

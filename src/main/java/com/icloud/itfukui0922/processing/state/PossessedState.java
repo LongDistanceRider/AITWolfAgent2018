@@ -16,7 +16,7 @@ public class PossessedState implements RoleState {
     }
 
     @Override
-    public LinkedList<String> talk(BoardSurface boardSurface) {
+    public LinkedList<String> talk(BoardSurface boardSurface, int day) {
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- coming out -----
         String comingOutPosessedString = UtilState.coming_out(boardSurface.getMyInformation().getAgent(), Role.POSSESSED);
@@ -29,5 +29,10 @@ public class PossessedState implements RoleState {
             talkQueue.add(divinedLierResultString);
         }
         return talkQueue;
+    }
+
+    @Override
+    public void finish(GameInfo gameInfo, BoardSurface boardSurface) {
+
     }
 }

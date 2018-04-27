@@ -16,7 +16,7 @@ public class WerewolfState implements RoleState {
     }
 
     @Override
-    public LinkedList<String> talk(BoardSurface boardSurface) {
+    public LinkedList<String> talk(BoardSurface boardSurface, int day) {
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- coming out -----
         String comingOutSeerString = UtilState.coming_out(boardSurface.getMyInformation().getAgent(), Role.SEER);
@@ -29,5 +29,10 @@ public class WerewolfState implements RoleState {
             talkQueue.add(divinedResultString);
         }
         return talkQueue;
+    }
+
+    @Override
+    public void finish(GameInfo gameInfo, BoardSurface boardSurface) {
+
     }
 }
