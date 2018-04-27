@@ -108,6 +108,8 @@ public class AITWolf implements Player {
             case 1: // 1日目
                 roleSet();  // 役職セット
                 boardSurface.getMyInformation().setMyRole(gameInfo.getRole());   // プレイヤ情報に保管
+                // ----- 各役職ごとの処理 -----
+                roleState.dayStart(gameInfo, boardSurface);
                 break;
             case 2: // 2日目
                 // 被投票者
@@ -129,13 +131,13 @@ public class AITWolf implements Player {
                     // TODO GJ発生時の処理を書くこと
                     Log.info("被害者 : なし（GJ発生）");
                 }
-
+                // ----- 各役職ごとの処理 -----
+                roleState.dayStart(gameInfo, boardSurface);
                 break;
             default:
 
         }
-        // ----- 各役職ごとの処理 -----
-        roleState.dayStart(gameInfo, boardSurface);
+
         // ----- 日をまたぐごとに初期化するフラグ -----
         FlagManagement.getInstance().setResultReport(false);
     }
@@ -229,6 +231,8 @@ public class AITWolf implements Player {
 
         // 役職finish()時の処理
         roleState.finish(gameInfo, boardSurface);
+        // ----- ログ出力停止 -----
+        Log.endLog();
     }
 
     /**

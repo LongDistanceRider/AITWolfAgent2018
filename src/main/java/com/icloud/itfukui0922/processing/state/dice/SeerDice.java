@@ -1,5 +1,6 @@
 package com.icloud.itfukui0922.processing.state.dice;
 
+import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
@@ -29,6 +30,7 @@ public class SeerDice extends Dice {
     public SeerDice(int maxGameDay) {
         q = new double[maxGameDay][2][2][2][2]; // Q値定義
         initQ(maxGameDay);    // Q値初期化
+        route = new ArrayList<>();  // routeの初期化
     }
 
     /**
@@ -68,20 +70,21 @@ public class SeerDice extends Dice {
 
         if (randNum > EPSILON * 100.0) {
             // εの確率　Q値が最大となるようなaを選択
+            Log.trace("day" + day + "opp" + oppositionCO + " med" + mediumCO + "dis" + discoveryWolf);
             if (q[day][oppositionCO][mediumCO][discoveryWolf][0] < q[day][oppositionCO][mediumCO][discoveryWolf][1]) {
-                routeRecoad(1);
+                routeRecord(1);
                 doCO = true;
             } else {
-                routeRecoad(0);
+                routeRecord(0);
             }
         } else {
             // (1-ε)の確率　ランダムにaを選択
             int randomInt = rand.nextInt(2);
             if (randomInt > 0) {
-                routeRecoad(1);
+                routeRecord(1);
                 doCO = true;
             } else {
-                routeRecoad(0);
+                routeRecord(0);
             }
         }
         return doCO;
@@ -148,7 +151,7 @@ public class SeerDice extends Dice {
      * ルート保管（辿ってきた状態を保管）
      * @param action
      */
-    private void routeRecoad(int action) {
+    private void routeRecord(int action) {
         route.add(new HashMap<String, Integer>() {{
             put("day", day);
             put("oppositionCO", oppositionCO);

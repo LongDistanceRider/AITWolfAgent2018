@@ -33,13 +33,12 @@ public class Starter {
                 TcpipServer gameServer = new TcpipServer(port, participant_players, gameSetting);
                 gameServer.waitForConnection();
                 AIWolfGame game = new AIWolfGame(gameSetting, gameServer);
-                game.setShowConsoleLog(true);
+                game.setShowConsoleLog(false);   // サーバのコンソールログ出力
 
                 for (int i = 0; i < gameNum; i++) {
                     game.setRand(new Random(i));
                     Calendar calendar = Calendar.getInstance();
-                    game.setGameLogger(new FileGameLogger(new File("log/" + calendar.getTime() + "ServerLog.txt")));
-                    System.out.println("\n----- Server ready -----\n");
+                    game.setGameLogger(new FileGameLogger(new File("log/serverLog/" + calendar.getTime() + ".log")));
 
                     game.start();
                 }

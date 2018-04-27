@@ -32,7 +32,5 @@ public class Main {
 
         LocalHostStarter localHostStarter = new LocalHostStarter(participantsPlayerList, gameNum);  // インスタンス生成
         localHostStarter.start();   // ローカルホストで対戦開始
-        // ----- ログ出力停止 -----
-        Log.endLog();
     }
 }
