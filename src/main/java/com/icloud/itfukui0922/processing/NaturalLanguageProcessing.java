@@ -1,5 +1,7 @@
 package com.icloud.itfukui0922.processing;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.mychaelstyle.nlp.KNP;
 import org.aiwolf.common.data.Talk;
 
 import java.io.*;
@@ -19,7 +21,6 @@ public class NaturalLanguageProcessing implements Callable<Boolean> {
     private static List<String> filterList = new ArrayList<>();
     /* Talk型 */
     private volatile Talk talk;
-
 
     static {
         // フィルタ情報の読み込み
@@ -67,6 +68,9 @@ public class NaturalLanguageProcessing implements Callable<Boolean> {
         String[] stringArray = text.split("[!?.。！？]");  // 引数に分割するキーワードを入れる
         List<String> one_sentence_List = new ArrayList<>(Arrays.asList(stringArray));   // 1文ずつリストへ　memo:一度に色々発言する人は少ないから大抵1つしか入らないと思う
 
+        // KNP
+        KNP knp = new KNP();
+        ObjectNode objectNode = knp.parse("test");
         // Mecab
 //        Tagger tagger = new Tagger();
 //        Node node = tagger.parseToNode(text);

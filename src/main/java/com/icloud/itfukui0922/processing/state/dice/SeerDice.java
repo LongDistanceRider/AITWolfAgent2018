@@ -2,6 +2,7 @@ package com.icloud.itfukui0922.processing.state.dice;
 
 import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.strategy.BoardSurface;
+import com.icloud.itfukui0922.util.DiceUtil;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.GameInfo;
@@ -44,16 +45,16 @@ public class SeerDice extends Dice {
     public boolean setDiceState (int day, boolean oppositionCO, boolean mediumCO, boolean discoveryWolf) {
         boolean isStateChenge = false;  // 状態が変化したか
         if (this.day == day ||
-                this.oppositionCO == convertInteger(oppositionCO) ||
-                this.mediumCO == convertInteger(mediumCO) ||
-                this.discoveryWolf == convertInteger(discoveryWolf)) {
+                this.oppositionCO == DiceUtil.convertInteger(oppositionCO) ||
+                this.mediumCO == DiceUtil.convertInteger(mediumCO) ||
+                this.discoveryWolf == DiceUtil.convertInteger(discoveryWolf)) {
             isStateChenge = true;
         }
 
         this.day = day;
-        this.oppositionCO = convertInteger(oppositionCO);
-        this.mediumCO = convertInteger(mediumCO);
-        this.discoveryWolf = convertInteger(discoveryWolf);
+        this.oppositionCO = DiceUtil.convertInteger(oppositionCO);
+        this.mediumCO = DiceUtil.convertInteger(mediumCO);
+        this.discoveryWolf = DiceUtil.convertInteger(discoveryWolf);
         return isStateChenge;
     }
 
@@ -159,18 +160,6 @@ public class SeerDice extends Dice {
             put("discoveryWolf", discoveryWolf);
             put("action", action);
         }});
-    }
-    /**
-     * booleanをintに変換
-     * @param boo
-     * @return
-     */
-    private int convertInteger (boolean boo) {
-        if (boo) {
-            return 1;
-        } else {
-            return 0;
-        }
     }
 
     /**

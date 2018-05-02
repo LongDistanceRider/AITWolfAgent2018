@@ -60,8 +60,7 @@ public class Starter {
      * @param port    接続先ポート番号を指定します
      */
     public static void startClient(String classPass, String playerName, String host, int port, org.aiwolf.common.data.Role role) {
-
-        System.out.println(("クライアントスタート" + playerName + ":" + role));
+        
         TcpipClient client;
 
         if (role != null) {

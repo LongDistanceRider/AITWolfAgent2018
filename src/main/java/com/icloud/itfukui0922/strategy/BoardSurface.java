@@ -123,4 +123,24 @@ public class BoardSurface {
         }
         return comingoutAgentList;
     }
+
+    /**
+     * 占われた人を返す
+     * @return
+     */
+    public List<Agent> getDivinedAgentList() {
+        List<Agent> divinedAgentList = new ArrayList<>();
+        // 全てのエージェントの中から，占い師COした人を取り出す
+        List<Agent> seerCOAgentList = comingoutRoleAgentList(Role.SEER);
+        for (Agent seerCOAgent :
+                seerCOAgentList) {
+            PlayerInformation playerInformation = getPlayerInformation(seerCOAgent); // 占い師COしたAgent情報
+            Map<Agent, Species> map = playerInformation.getDivIdenMap();
+            for (Agent divinedAgent :
+                    map.keySet()) {
+                divinedAgentList.add(divinedAgent);
+            }
+        }
+        return divinedAgentList;
+    }
 }

@@ -5,6 +5,7 @@ import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Species;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MyInformation {
@@ -62,4 +63,5 @@ public class MyInformation {
         }
         return lastSet;
     }
+
 }

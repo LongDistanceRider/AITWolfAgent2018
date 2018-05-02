@@ -41,12 +41,11 @@ public class SeerState implements RoleState{
     public LinkedList<String> talk(BoardSurface boardSurface, int day) {
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- COするかしないかをダイスで決める　状況が変化していない場合は，COしない CO済みならダイスを降らない-----
-        boolean doCO = false;
         // --- 状況チェック ---
         if (!FlagManagement.getInstance().isComingOut()) {  //CO していない
-            boolean oppositionCO = false;
-            boolean mediumCO = false;
-            boolean discoveryWolf = false;
+            boolean oppositionCO = false;   // 対抗COが出ているか
+            boolean mediumCO = false;       // 霊能者COが出ているか
+            boolean discoveryWolf = false;  // 人狼を発見しているか
             if (boardSurface.comingoutRoleAgentList(Role.SEER).size() > 0) {
                 oppositionCO = true;   // 対抗CO
             }
@@ -62,11 +61,9 @@ public class SeerState implements RoleState{
                 // ダイスを振る
                 if (seerDice.shakeTheDice()) {
                     // COする
-                    if (doCO) {
-                        String comingOutSeerString = UtilState.coming_out(boardSurface.getMyInformation().getAgent(), Role.SEER);   // すでにCOして入ればnull返却
-                        if (comingOutSeerString != null) {
-                            talkQueue.add(comingOutSeerString);
-                        }
+                    String comingOutSeerString = UtilState.coming_out(boardSurface.getMyInformation().getAgent(), Role.SEER);   // すでにCOして入ればnull返却
+                    if (comingOutSeerString != null) {
+                        talkQueue.add(comingOutSeerString);
                     }
                 }
             }
@@ -84,13 +81,6 @@ public class SeerState implements RoleState{
 
     /**
      * １ゲーム終了後に呼び出される予定
-     *
-     * 報酬の計算
-     * 報酬内容
-     * 勝敗
-     * 吊られた
-     * 噛まれた
-     * 生き残った
      */
     public void finish (GameInfo gameInfo, BoardSurface boardSurface) {
         // 占い師ダイスのQテーブル更新

@@ -1,5 +1,6 @@
 package com.icloud.itfukui0922.processing.state;
 
+import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import org.aiwolf.client.lib.ComingoutContentBuilder;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 public class UtilState {
 
+
     /**
      * coming out処理
      * @param agent　自分自身
@@ -25,6 +27,8 @@ public class UtilState {
             FlagManagement.getInstance().setComingOut(true);    // フラグセット
             return new Content(builder).getText();
         }
+        // ここでnullが返却されないように上部処理を施すことを遵守するため，warningを出す
+        Log.warn("予想しないnull返却");
         return null;
     }
 
