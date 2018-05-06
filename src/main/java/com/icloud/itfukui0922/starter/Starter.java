@@ -59,7 +59,7 @@ public class Starter {
      * @param host    接続先ホスト名を指定します
      * @param port    接続先ポート番号を指定します
      */
-    public static void startClient(String classPass, String playerName, String host, int port, org.aiwolf.common.data.Role role) {
+    public static void startClient(String classPass, String playerName, String host, int port, Role role) {
         
         TcpipClient client;
 
@@ -91,6 +91,28 @@ public class Starter {
         client.connect(player);
         client.setName(playerName);
         Log.info(playerName + " is connected");
+    }
+
+    /**
+     * クライアントを接続
+     *
+     * @param player　接続するプレイヤ
+     * @param host　接続先ホスト
+     * @param port　接続先ポート
+     * @param role　希望役職
+     */
+    public static void startClient(Player player, String host, int port, Role role) {
+        TcpipClient client;
+
+        if (role != null) {
+            client = new TcpipClient(host, port, role);
+        } else {
+            client = new TcpipClient(host, port);
+        }
+
+        client.connect(player);
+        client.setName(player.getName());
+        Log.info(player.getName() + " is connected");
     }
 
 }

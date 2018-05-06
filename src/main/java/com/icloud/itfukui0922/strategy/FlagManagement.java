@@ -1,6 +1,9 @@
 package com.icloud.itfukui0922.strategy;
 
 public class FlagManagement {
+
+    /* NLスイッチ */
+    private boolean NLSwitch = true;
     /* 0日目の挨拶 */
     private boolean isGreeting = false;
     /* coming outしたか */
@@ -12,6 +15,10 @@ public class FlagManagement {
 
     public boolean isFinish() {
         return isFinish;
+    }
+
+    public boolean isNLSwitch() {
+        return NLSwitch;
     }
 
     public void setFinish(boolean finish) {

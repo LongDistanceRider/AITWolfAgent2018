@@ -1,9 +1,17 @@
 package com.icloud.itfukui0922.processing.state.dice;
 
+import com.icloud.itfukui0922.strategy.BoardSurface;
+import org.aiwolf.common.net.GameInfo;
+
 import java.util.List;
 import java.util.Map;
 
-public class Dice {
+/**
+ * 強化学習「ダイス」の抽象化クラス
+ */
+public abstract class Dice {
+
+    DiceState diceState;
 
     /* Qランダム値の最大値 */
     protected static final int INIT_Q_MAX = 30;
@@ -13,4 +21,15 @@ public class Dice {
     protected static final double ALPHA = 0.1;
     /* 割引率 */
     protected static final double GAMMA = 0.9;
+
+    public Dice(DiceState diceState) {
+        this.diceState = diceState;
+    }
+
+    public abstract boolean setDiceState(GameInfo gameInfo, BoardSurface boardSurface); // ダイス状態セット
+    public abstract int shakeTheDice(); // ダイスを振る
+    public abstract void updateQTable(GameInfo gameInfo, BoardSurface boardSurface);
+    protected abstract int reward();
+    protected abstract void routeRecord(int action);
+    protected abstract void initQ();
 }

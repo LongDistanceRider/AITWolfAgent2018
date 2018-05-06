@@ -5,7 +5,11 @@ import org.aiwolf.common.net.GameInfo;
 
 import java.util.LinkedList;
 
-public class VillagerState implements RoleState {
+public class Villager extends Role {
+
+    public Villager(GameInfo gameInfo, BoardSurface boardSurface) {
+        super(gameInfo, boardSurface);
+    }
 
     @Override
     public void dayStart(GameInfo gameInfo, BoardSurface boardSurface) {
@@ -13,7 +17,7 @@ public class VillagerState implements RoleState {
     }
 
     @Override
-    public LinkedList<String> talk(BoardSurface boardSurface, int day) {
+    public LinkedList<String> talk(GameInfo gameInfo, BoardSurface boardSurface) {
         return null;
     }
 

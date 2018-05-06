@@ -4,13 +4,13 @@ import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.log.LogCategory;
 import com.icloud.itfukui0922.log.LogLevel;
 import com.icloud.itfukui0922.processing.ProtocolProcessing;
+import com.icloud.itfukui0922.processing.TransNL;
 import com.icloud.itfukui0922.processing.state.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
-import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
@@ -25,8 +25,10 @@ import java.util.*;
 
 public class AITWolf implements Player {
 
-    /* 自然言語処理部門対応スイッチ */
-    private boolean NLSwitch = false;   // 自然言語処理部門に参加する場合はtrue，プロトコル部門はfalse
+    /* コンソール出力レベル */
+    LogLevel consoleLevel;
+    /* ファイル出力レベル */
+    LogLevel writeLevel;
     /* トークリストをどこまで読み込んだか */
     private int talkListHead;
     /* ゲーム情報 */
@@ -38,7 +40,17 @@ public class AITWolf implements Player {
     /* 発言リスト */
     private LinkedList<String> talkQueue = new LinkedList<>();
     /* 自分自身の役職 */
-    private RoleState roleState = null;
+    private Role roleState = null;
+
+    /**
+     * コンストラクタ
+     * @param consoleLevel
+     * @param writeLevel
+     */
+    public AITWolf(LogLevel consoleLevel, LogLevel writeLevel) {
+        this.consoleLevel = consoleLevel;
+        this.writeLevel = writeLevel;
+    }
 
     @Override
     public String getName() {
@@ -58,7 +70,7 @@ public class AITWolf implements Player {
                 continue;
             }
             // TODO talkに対する処理をここに書く
-            if (NLSwitch) {
+            if (FlagManagement.getInstance().isNLSwitch()) {
                 // TODO 自然言語処理をここに書く
                 // ログに受け取った発言を出力する
                 Log.submit(LogLevel.INFO, LogCategory.NATURAL, "発言内容 : " + talk.getAgent() + " > " + talk.getText());
@@ -78,7 +90,7 @@ public class AITWolf implements Player {
     @Override
     public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
         // ----- ログ出力開始 -----
-        Log.init(LogLevel.DEBUG, LogLevel.DEBUG);   // コンソール出力レベル, ファイル出力レベル
+        Log.init(consoleLevel, writeLevel);   // コンソール出力レベル, ファイル出力レベル
         Log.debug("initialize実行");
         // ----- フィールド初期化処理 -----
         this.gameInfo = gameInfo;   // ゲーム情報の初期化
@@ -95,7 +107,7 @@ public class AITWolf implements Player {
         // ----- 特定日時に実行させる処理 -----
         switch (gameInfo.getDay()) {
             case 0: // 0日目
-                if (NLSwitch) {
+                if (FlagManagement.getInstance().isNLSwitch()) {
                     // 挨拶を返す
                     if (!FlagManagement.getInstance().isGreeting()) {
                         talkQueue.add("0日目の挨拶です．");
@@ -145,16 +157,16 @@ public class AITWolf implements Player {
     @Override
     public String talk() {
         // ----- 各役職ごとの処理 -----
-        LinkedList<String> roleTalkQueue = new LinkedList<>();
-        roleTalkQueue = roleState.talk(boardSurface, gameInfo.getDay()); // nullが入ってくることがある
+        LinkedList<String> roleTalkQueue = roleState.talk(gameInfo, boardSurface); // nullが入ってくることがある
+        talkQueue.addAll(roleTalkQueue);
 
-        if (NLSwitch) {
+        if (FlagManagement.getInstance().isNLSwitch()) {
             // TODO 自然言語処理に関する処理をここに書く
         } else {
             // TODO プロトコル部門の処理に関する処理をここに書く
         }
-        if (roleTalkQueue != null &&!roleTalkQueue.isEmpty()) {
-            return roleTalkQueue.poll();
+        if (talkQueue != null &&!talkQueue.isEmpty()) { // nullチェックいらないかも
+            return talkQueue.poll();
         }
         return "OVER";
     }
@@ -176,9 +188,9 @@ public class AITWolf implements Player {
     public Agent attack() {
         Agent attackAgent;
         // とりあえず占い師COした人物を対象に，いない場合は霊能者，次に狩人の順で対象を決定する
-        List<Role> checkRole = new ArrayList<>(Arrays.asList(Role.SEER, Role.BODYGUARD, Role.BODYGUARD));
+        List<org.aiwolf.common.data.Role> checkRole = new ArrayList<>(Arrays.asList(org.aiwolf.common.data.Role.SEER, org.aiwolf.common.data.Role.BODYGUARD, org.aiwolf.common.data.Role.BODYGUARD));
         List<Agent> coming_outAgentList;    // 初期化してないけどいいのかな
-        for (Role role :
+        for (org.aiwolf.common.data.Role role :
                 checkRole) {
             coming_outAgentList = boardSurface.comingoutRoleAgentList(role);
             if(!coming_outAgentList.isEmpty()) {
@@ -205,8 +217,8 @@ public class AITWolf implements Player {
         Agent guardAgent;
         // ◯-◯進行をチェック
         // 占い師1ならその占い師を，2以上なら霊能者を護衛（霊能者が二人の時は適当に選ぶ），霊能者が不在なら適当に選ぶ
-        List<Agent> comingoutSeerAgentList = boardSurface.comingoutRoleAgentList(Role.SEER);
-        List<Agent> comingoutMediumAgentList = boardSurface.comingoutRoleAgentList(Role.MEDIUM);
+        List<Agent> comingoutSeerAgentList = boardSurface.comingoutRoleAgentList(org.aiwolf.common.data.Role.SEER);
+        List<Agent> comingoutMediumAgentList = boardSurface.comingoutRoleAgentList(org.aiwolf.common.data.Role.MEDIUM);
 
         int numberOfSeer = comingoutSeerAgentList.size();
         int numberOfMedium = comingoutMediumAgentList.size();
@@ -239,7 +251,7 @@ public class AITWolf implements Player {
         roleState.finish(gameInfo, boardSurface);
 
         // 参加プレイヤのリザルト出力
-        Map<Agent, Role> agentMap = gameInfo.getRoleMap();
+        Map<Agent, org.aiwolf.common.data.Role> agentMap = gameInfo.getRoleMap();
         for (Agent agent:
                 agentMap.keySet()){
             Log.info(agent + " Role : " + agentMap.get(agent));
@@ -252,35 +264,28 @@ public class AITWolf implements Player {
      * 役職セット
      */
     private void roleSet() {
-        Role role = gameInfo.getRole();
+        org.aiwolf.common.data.Role role = gameInfo.getRole();
         Log.info("自分の役職 : " + role);
         switch (role) {
             case SEER:
-                roleState = new SeerState(gameMaxDay());
+                roleState = new Seer(gameInfo, boardSurface);
                 break;
             case MEDIUM:
-                roleState = new MediumState();
+                roleState = new Medium(gameInfo, boardSurface);
                 break;
             case BODYGUARD:
-                roleState = new BodyguardState();
+                roleState = new Bodyguard(gameInfo, boardSurface);
                 break;
             case POSSESSED:
-                roleState = new PossessedState();
+                roleState = new Possessed(gameInfo, boardSurface);
                 break;
             case WEREWOLF:
-                roleState = new WerewolfState();
+                roleState = new Werewolf(gameInfo, boardSurface);
                 break;
             default:
-                roleState = new VillagerState();
+                roleState = new Villager(gameInfo, boardSurface);
         }
     }
 
-    /**
-     * ゲーム参加者数からゲーム最大日数を取得
-     */
-    private int gameMaxDay() {
-        int numPlayer = gameInfo.getAgentList().size();
-        int maxDay = (numPlayer-1) / 2;
-        return maxDay;
-    }
+
 }

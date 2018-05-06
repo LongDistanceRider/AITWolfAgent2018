@@ -65,11 +65,11 @@ public class LocalHostStarter {
                 participantsPlayerList) {
             if (requestRole != null) {  // 希望役職リストが提出されている場合は希望役職リスト通りにクライアントへ
                 // 希望役職を提出してクライアント起動
-                Starter.startClient(player.getClass().getName(), player.getName(), "localhost", port, requestRole);
+                Starter.startClient(player, "localhost", port, requestRole);
                 requestRole = null;
             } else {
                 // 希望役職なしでクライアント起動
-                Starter.startClient(player.getClass().getName(), player.getName(), "localhost", port, null);
+                Starter.startClient(player, "localhost", port, null);
             }
         }
     }

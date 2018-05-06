@@ -3,6 +3,7 @@ package com.icloud.itfukui0922.processing.state.dice;
 import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.util.DiceUtil;
+import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.GameInfo;
@@ -23,33 +24,32 @@ public class WerewolfDice extends Dice  {
 
     /**
      * コンストラクタ
-     * @param maxGameDay　ゲーム最大日数
-     * @param playerNum プレイヤ参加者数（占い師COする最大人数が欲しい）
      */
-    public WerewolfDice(int maxGameDay, int playerNum) {
-        q = new double[maxGameDay][playerNum][2][2];    // Q値定義
-        initQ(maxGameDay, playerNum);   // Q値初期化
-        route = new ArrayList<>();
+    public WerewolfDice(DiceState diceState) {
+        super(diceState);
     }
 
     /**
      * 状態のセット
-     * @param day
-     * @param seerCONum
-     * @param mediumCO
      * @return
      */
-    public boolean setDiceState (int day, int seerCONum, boolean mediumCO) {
+    public boolean setDiceState (GameInfo gameInfo, BoardSurface boardSurface) {
+        int day = gameInfo.getDay();
+        int seerCONum = boardSurface.comingoutRoleAgentList(Role.SEER).size();
+        int mediumCO = 0;
+        if (boardSurface.comingoutRoleAgentList(Role.MEDIUM).size() > 0) {
+            mediumCO = 1;
+        }
         boolean isStateChenge = false;  // 状態が変化したか
-        if (this.day == day ||
-                this.seerCONum == seerCONum ||
-                this.mediumCO == DiceUtil.convertInteger(mediumCO)) {
+        if (this.day != day ||
+                this.seerCONum != seerCONum ||
+                this.mediumCO != mediumCO) {
             isStateChenge = true;
         }
 
         this.day = day;
         this.seerCONum = seerCONum;
-        this.mediumCO = DiceUtil.convertInteger(mediumCO);
+        this.mediumCO = mediumCO;
         return isStateChenge;
     }
 
@@ -58,8 +58,8 @@ public class WerewolfDice extends Dice  {
      * eGreedy法を用いて局所解を回避
      * @return COするtrueしないfalse
      */
-    public boolean shakeTheDice() {
-        boolean doCO = false;
+    public int shakeTheDice() {
+        int doCO = 0;
 
         Random rand = new Random();
         int randNum = rand.nextInt(100+1);
@@ -69,7 +69,7 @@ public class WerewolfDice extends Dice  {
             Log.trace("day" + day + "seerCONum" + seerCONum + " med" + mediumCO);
             if (q[day][seerCONum][mediumCO][0] < q[day][seerCONum][mediumCO][1]) {
                 routeRecord(1);
-                doCO = true;
+                doCO = 1;
             } else {
                 routeRecord(0);
             }
@@ -78,7 +78,7 @@ public class WerewolfDice extends Dice  {
             int randomInt = rand.nextInt(2);
             if (randomInt > 0) {
                 routeRecord(1);
-                doCO = true;
+                doCO = 1;
             } else {
                 routeRecord(0);
             }
@@ -92,7 +92,7 @@ public class WerewolfDice extends Dice  {
      * @param boardSurface
      */
     public void updateQTable(GameInfo gameInfo, BoardSurface boardSurface) {
-        int reward = reward(gameInfo, boardSurface);
+        int reward = reward();
         double total_reward_t = 0.0;
         Collections.reverse(route);
         for (Map<String, Integer> map:
@@ -109,46 +109,45 @@ public class WerewolfDice extends Dice  {
 
     /**
      * 報酬の計算
-     * @param gameInfo
-     * @param boardSurface
      * @return
      */
-    private int reward(GameInfo gameInfo, BoardSurface boardSurface) {
+    protected int reward() {
         // 報酬の計算
-        int reward = 0;
-        for (Agent agent :
-                gameInfo.getAliveAgentList()) {
-            Role role = gameInfo.getRoleMap().get(agent);
-            if (role == Role.WEREWOLF) {    // 狼が生存していたら，狼勝利
-                reward += 100;
-                break;
-            }
-            if (agent.equals(gameInfo.getAgent())) {    // 生存
-                reward += 50;
-            }
-        }
-
-        for (Agent agent :
-                boardSurface.getExecutedAgentList()) {
-            if (agent.equals(gameInfo.getAgent())) {    // 吊られた
-                reward -= 200;
-            }
-        }
-
-        for (Agent agent :
-                boardSurface.getDivinedAgentList()) {
-            if (agent.equals(gameInfo.getAgent())) {    // 占われた
-                reward -= 100;
-            }
-        }
-        return reward;
+//        int reward = 0;
+//        for (Agent agent :
+//                gameInfo.getAliveAgentList()) {
+//            Role role = gameInfo.getRoleMap().get(agent);
+//            if (role == Role.WEREWOLF) {    // 狼が生存していたら，狼勝利
+//                reward += 100;
+//                break;
+//            }
+//            if (agent.equals(gameInfo.getAgent())) {    // 生存
+//                reward += 50;
+//            }
+//        }
+//
+//        for (Agent agent :
+//                boardSurface.getExecutedAgentList()) {
+//            if (agent.equals(gameInfo.getAgent())) {    // 吊られた
+//                reward -= 200;
+//            }
+//        }
+//
+//        for (Agent agent :
+//                boardSurface.getDivinedAgentList()) {
+//            if (agent.equals(gameInfo.getAgent())) {    // 占われた
+//                reward -= 100;
+//            }
+//        }
+//        return reward;
+        return 0;
     }
 
     /**
      * ルート保管
      * @param action
      */
-    private void routeRecord(int action) {
+    protected void routeRecord(int action) {
         route.add(new HashMap<String, Integer>() {{
             put("day", day);
             put("seerCONum", seerCONum);
@@ -157,45 +156,51 @@ public class WerewolfDice extends Dice  {
         }});
     }
 
+    @Override
+    protected void initQ() {
+        return;
+    }
+
     /**
      * Q値初期化
      * @param maxGameDay
      */
-    private void initQ (int maxGameDay, int playerNum) {
-        Random rand = new Random();
-        for (int i = 0; i < maxGameDay; i++) {
-            for (int j = 0; j < playerNum; j++) {
-                for (int k = 0; k < 2; k++) {
-                    for (int a = 0; a < 2; a++) {
-                        int randNum = rand.nextInt(INIT_Q_MAX + 1);
-                        // 経験則に応じて加点をする
-                        int experiment = 0;
-                        // 1日目，2日目COは加点
-                        if (i == 0) {
-                            experiment += 100;  // 1日目
-                        } else if (i == 1) {
-                            experiment += 50;   // 2日目
-                        }
-                        // 占い師が1人しかCOしていないなら加点2人なら減点
-                        if (j == 1) {
-                            experiment += 100;
-                        } else if (j == 2) {
-                            experiment -= 50;
-                        }
-                        // 霊能者CO出た時は加点
-                        if (k == 1) {
-                            experiment += 100;
-                        }
-                        // 基本的にはCOするように加点
-                        if (a == 1) {
-                            experiment += 100;
-                        }
-                        q[i][j][k][a] = randNum + experiment;
-                    }
-                }
-            }
-        }
-    }
-
+//    private void initQ () {
+//
+//        Random rand = new Random();
+//        for (int i = 0; i < maxGameDay; i++) {
+//            for (int j = 0; j < playerNum; j++) {
+//                for (int k = 0; k < 2; k++) {
+//                    for (int a = 0; a < 2; a++) {
+//                        int randNum = rand.nextInt(INIT_Q_MAX + 1);
+//                        // 経験則に応じて加点をする
+//                        int experiment = 0;
+//                        // 1日目，2日目COは加点
+//                        if (i == 0) {
+//                            experiment += 100;  // 1日目
+//                        } else if (i == 1) {
+//                            experiment += 50;   // 2日目
+//                        }
+//                        // 占い師が1人しかCOしていないなら加点2人なら減点
+//                        if (j == 1) {
+//                            experiment += 100;
+//                        } else if (j == 2) {
+//                            experiment -= 50;
+//                        }
+//                        // 霊能者CO出た時は加点
+//                        if (k == 1) {
+//                            experiment += 100;
+//                        }
+//                        // 基本的にはCOするように加点
+//                        if (a == 1) {
+//                            experiment += 100;
+//                        }
+//                        q[i][j][k][a] = randNum + experiment;
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
 
 }

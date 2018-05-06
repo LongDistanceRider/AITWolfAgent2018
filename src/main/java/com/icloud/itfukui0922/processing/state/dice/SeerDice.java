@@ -3,6 +3,7 @@ package com.icloud.itfukui0922.processing.state.dice;
 import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.util.DiceUtil;
+import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.GameInfo;
@@ -14,48 +15,18 @@ import java.util.*;
  */
 public class SeerDice extends Dice {
 
-    // 状態S
-    private int day = 0;            // 日付
-    private int oppositionCO = 0;   // 対抗CO(boolean)
-    private int mediumCO = 0;       // 占い師CO(boolean)
-    private int discoveryWolf = 0;  // 黒判定(boolean)
-    /* Q値 */
-    private double q[][][][][];
-    /* 辿ってきた状態 */
-    private List<Map<String, Integer>> route;
-
     /**
      * コンストラクタ
-     * @param maxGameDay　ゲーム最大日数
      */
-    public SeerDice(int maxGameDay) {
-        q = new double[maxGameDay][2][2][2][2]; // Q値定義
-        initQ(maxGameDay);    // Q値初期化
-        route = new ArrayList<>();  // routeの初期化
+    public SeerDice(DiceState diceState) {
+        super(diceState);
     }
 
     /**
      * 状態のセット
-     * @param day
-     * @param oppositionCO
-     * @param mediumCO
-     * @param discoveryWolf
-     * @return 状態が変化した場合trueを返す
      */
-    public boolean setDiceState (int day, boolean oppositionCO, boolean mediumCO, boolean discoveryWolf) {
-        boolean isStateChenge = false;  // 状態が変化したか
-        if (this.day == day ||
-                this.oppositionCO == DiceUtil.convertInteger(oppositionCO) ||
-                this.mediumCO == DiceUtil.convertInteger(mediumCO) ||
-                this.discoveryWolf == DiceUtil.convertInteger(discoveryWolf)) {
-            isStateChenge = true;
-        }
-
-        this.day = day;
-        this.oppositionCO = DiceUtil.convertInteger(oppositionCO);
-        this.mediumCO = DiceUtil.convertInteger(mediumCO);
-        this.discoveryWolf = DiceUtil.convertInteger(discoveryWolf);
-        return isStateChenge;
+    public boolean setDiceState (GameInfo gameInfo, BoardSurface boardSurface) {
+        return diceState.setDiceState(gameInfo, boardSurface);
     }
 
     /**
@@ -63,7 +34,7 @@ public class SeerDice extends Dice {
      * eGreedy法を用いて局所解を回避
      * @return COするtrueしないfalse
      */
-    public boolean shakeTheDice() {
+    public int shakeTheDice() {
         boolean doCO = false;
 
         Random rand = new Random();
@@ -71,13 +42,13 @@ public class SeerDice extends Dice {
 
         if (randNum > EPSILON * 100.0) {
             // εの確率　Q値が最大となるようなaを選択
-            Log.trace("day" + day + "opp" + oppositionCO + " med" + mediumCO + "dis" + discoveryWolf);
-            if (q[day][oppositionCO][mediumCO][discoveryWolf][0] < q[day][oppositionCO][mediumCO][discoveryWolf][1]) {
-                routeRecord(1);
-                doCO = true;
-            } else {
-                routeRecord(0);
-            }
+//            Log.trace("day" + day + "opp" + oppositionCO + " med" + mediumCO + "dis" + discoveryWolf);
+//            if (q[day][oppositionCO][mediumCO][discoveryWolf][0] < q[day][oppositionCO][mediumCO][discoveryWolf][1]) {
+//                routeRecord(1);
+//                doCO = true;
+//            } else {
+//                routeRecord(0);
+//            }
         } else {
             // (1-ε)の確率　ランダムにaを選択
             int randomInt = rand.nextInt(2);
@@ -88,7 +59,8 @@ public class SeerDice extends Dice {
                 routeRecord(0);
             }
         }
-        return doCO;
+//        return doCO;
+        return 0;
     }
 
     /**
@@ -101,18 +73,24 @@ public class SeerDice extends Dice {
          */
         int reward = reward(gameInfo, boardSurface);
         double total_reward_t = 0.0;    // 現時点を含めたその先で得られた報酬
-        Collections.reverse(route); // ルートを逆順に
-        for (Map<String, Integer> map:
-                route){
-            total_reward_t = GAMMA * total_reward_t;    // 時間割引率
-            // Q値を取得
-            q[map.get("day")][map.get("oppositionCO")][map.get("mediumCO")][map.get("discoveryWolf")][map.get("action")] =
-                    q[map.get("day")][map.get("oppositionCO")][map.get("mediumCO")][map.get("discoveryWolf")][map.get("action")] +
-                            ALPHA * (reward + total_reward_t - q[map.get("day")][map.get("oppositionCO")][map.get("mediumCO")][map.get("discoveryWolf")][map.get("action")]);
-            // ステップtより先でもらえた報酬の合計を更新
-            total_reward_t += reward;
-        }
+//        Collections.reverse(route); // ルートを逆順に
+//        for (Map<String, Integer> map:
+//                route){
+//            total_reward_t = GAMMA * total_reward_t;    // 時間割引率
+//            // Q値を取得
+//            q[map.get("day")][map.get("oppositionCO")][map.get("mediumCO")][map.get("discoveryWolf")][map.get("action")] =
+//                    q[map.get("day")][map.get("oppositionCO")][map.get("mediumCO")][map.get("discoveryWolf")][map.get("action")] +
+//                            ALPHA * (reward + total_reward_t - q[map.get("day")][map.get("oppositionCO")][map.get("mediumCO")][map.get("discoveryWolf")][map.get("action")]);
+//            // ステップtより先でもらえた報酬の合計を更新
+//            total_reward_t += reward;
+//        }
     }
+
+    @Override
+    protected int reward() {
+        return 0;
+    }
+
     /**
      * 報酬の計算
      * @param gameInfo
@@ -152,14 +130,19 @@ public class SeerDice extends Dice {
      * ルート保管（辿ってきた状態を保管）
      * @param action
      */
-    private void routeRecord(int action) {
-        route.add(new HashMap<String, Integer>() {{
-            put("day", day);
-            put("oppositionCO", oppositionCO);
-            put("mediumCO", mediumCO);
-            put("discoveryWolf", discoveryWolf);
-            put("action", action);
-        }});
+    protected void routeRecord(int action) {
+//        route.add(new HashMap<String, Integer>() {{
+//            put("day", day);
+//            put("oppositionCO", oppositionCO);
+//            put("mediumCO", mediumCO);
+//            put("discoveryWolf", discoveryWolf);
+//            put("action", action);
+//        }});
+    }
+
+    @Override
+    protected void initQ() {
+
     }
 
     /**
@@ -198,7 +181,7 @@ public class SeerDice extends Dice {
                             if (a == 1) {
                                 experiment += 100;
                             }
-                            q[i][j][k][l][a] = randNum + experiment;
+//                            q[i][j][k][l][a] = randNum + experiment;
                         }
                     }
                 }

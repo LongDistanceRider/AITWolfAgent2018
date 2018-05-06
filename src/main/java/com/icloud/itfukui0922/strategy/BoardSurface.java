@@ -8,6 +8,7 @@
  */
 package com.icloud.itfukui0922.strategy;
 
+import com.icloud.itfukui0922.log.Log;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Species;

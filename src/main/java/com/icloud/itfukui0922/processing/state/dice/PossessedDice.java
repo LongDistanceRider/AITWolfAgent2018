@@ -23,13 +23,12 @@ public class PossessedDice extends Dice {
 
     /**
      * コンストラクタ
-     * @param maxGameDay　ゲーム最大日数
-     * @param playerNum プレイヤ参加者数（占い師COする最大人数が欲しい）
      */
-    public PossessedDice(int maxGameDay, int playerNum) {
-        q = new double[maxGameDay][playerNum][2][2];    // Q値定義
-        initQ(maxGameDay, playerNum);   // Q値初期化
-        route = new ArrayList<>();
+    public PossessedDice(DiceState diceState) {
+        super(diceState);
+//        q = new double[maxGameDay][playerNum][2][2];    // Q値定義
+//        initQ(maxGameDay, playerNum);   // Q値初期化
+//        route = new ArrayList<>();
     }
 
     /**
@@ -53,12 +52,17 @@ public class PossessedDice extends Dice {
         return isStateChenge;
     }
 
+    @Override
+    public boolean setDiceState(GameInfo gameInfo, BoardSurface boardSurface) {
+        return false;
+    }
+
     /**
      * ダイスを振る
      * eGreedy法を用いて局所解を回避
      * @return COするtrueしないfalse
      */
-    public boolean shakeTheDice() {
+    public int shakeTheDice() {
         boolean doCO = false;
 
         Random rand = new Random();
@@ -83,7 +87,8 @@ public class PossessedDice extends Dice {
                 routeRecord(0);
             }
         }
-        return doCO;
+//        return doCO;
+        return 0;
     }
 
     /**
@@ -105,6 +110,11 @@ public class PossessedDice extends Dice {
             // ステップtより先でもらえた報酬の合計を更新
             total_reward_t += reward;
         }
+    }
+
+    @Override
+    protected int reward() {
+        return 0;
     }
 
     /**
@@ -148,13 +158,18 @@ public class PossessedDice extends Dice {
      * ルート保管
      * @param action
      */
-    private void routeRecord(int action) {
+    protected void routeRecord(int action) {
         route.add(new HashMap<String, Integer>() {{
             put("day", day);
             put("seerCONum", seerCONum);
             put("mediumCO", mediumCO);
             put("action", action);
         }});
+    }
+
+    @Override
+    protected void initQ() {
+
     }
 
     /**

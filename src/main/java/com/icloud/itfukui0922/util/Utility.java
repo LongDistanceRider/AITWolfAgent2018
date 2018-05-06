@@ -30,4 +30,12 @@ public class Utility {
         aliveAgentList.remove(gameInfo.getAgent());
         return aliveAgentList;
     }
+
+    /**
+     * ゲーム参加者数からゲーム最大日数を取得
+     */
+    public static int gameMaxDay(int numPlayer) {
+        int maxDay = (numPlayer-1) / 2;
+        return maxDay;
+    }
 }
