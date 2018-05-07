@@ -14,6 +14,7 @@ import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
+import sun.jvm.hotspot.runtime.VM;
 
 import java.util.*;
 
@@ -106,17 +107,6 @@ public class AITWolf implements Player {
         Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         // ----- 特定日時に実行させる処理 -----
         switch (gameInfo.getDay()) {
-            case 0: // 0日目
-                if (FlagManagement.getInstance().isNLSwitch()) {
-                    // 挨拶を返す
-                    if (!FlagManagement.getInstance().isGreeting()) {
-                        talkQueue.add("0日目の挨拶です．");
-                        FlagManagement.getInstance().setGreeting(true);
-                    }
-                    return;
-                }
-                break;
-
             case 1: // 1日目
                 roleSet();  // 役職セット
                 boardSurface.getMyInformation().setMyRole(gameInfo.getRole());   // プレイヤ情報に保管
@@ -151,11 +141,20 @@ public class AITWolf implements Player {
         }
 
         // ----- 日をまたぐごとに初期化するフラグ -----
-        FlagManagement.getInstance().setResultReport(false);
+        FlagManagement.getInstance().dayReset();
     }
 
     @Override
     public String talk() {
+        // ----- 0日目挨拶 -----
+        if (gameInfo.getDay() == 0) {
+            if (FlagManagement.getInstance().isGreeting()) {
+                return "Over";
+            } else {
+                FlagManagement.getInstance().setGreeting(true);
+                return "こんにちは";
+            }
+        }
         // ----- 各役職ごとの処理 -----
         LinkedList<String> roleTalkQueue = roleState.talk(gameInfo, boardSurface); // nullが入ってくることがある
         talkQueue.addAll(roleTalkQueue);
@@ -168,7 +167,7 @@ public class AITWolf implements Player {
         if (talkQueue != null &&!talkQueue.isEmpty()) { // nullチェックいらないかも
             return talkQueue.poll();
         }
-        return "OVER";
+        return "Over";
     }
 
     @Override

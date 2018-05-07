@@ -35,7 +35,7 @@ public class Dammy implements Player {
 
     @Override
     public String talk() {
-        return null;
+        return "Over";
     }
 
     @Override

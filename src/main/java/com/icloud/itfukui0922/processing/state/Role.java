@@ -5,10 +5,7 @@ import com.icloud.itfukui0922.processing.TransNL;
 import com.icloud.itfukui0922.processing.state.dice.Dice;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
-import org.aiwolf.client.lib.ComingoutContentBuilder;
-import org.aiwolf.client.lib.Content;
-import org.aiwolf.client.lib.ContentBuilder;
-import org.aiwolf.client.lib.DivinedResultContentBuilder;
+import org.aiwolf.client.lib.*;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
@@ -93,6 +90,26 @@ public abstract class Role {
                 ContentBuilder builder = new DivinedResultContentBuilder(divinationResult.getKey(), divinationResult.getValue());
                 Log.trace("占い結果報告 target: " + divinationResult.getKey() + " result: " + divinationResult.getValue());
                 return new Content(builder).getText();  // 占い結果報告
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 投票先を発言
+     * @param target 投票先
+     * @return 過去に投票先発言をしている場合はnull返却
+     */
+    protected  static String voteUtterance (Agent target) {
+        if (!FlagManagement.getInstance().getVoteUtteranceMap(target)) { // 投票先発言をしたことがなければ
+            FlagManagement.getInstance().putVoteUtteranceMap(target, true);
+            if (FlagManagement.getInstance().isNLSwitch()) {
+                String voteString = target + "に投票しようと思う。";
+                return voteString;
+            } else {
+                ContentBuilder builder = new VoteContentBuilder(target);
+                Log.trace("投票先発言 target: " + target);
+                return new Content(builder).getText();  // 投票先発言
             }
         }
         return null;

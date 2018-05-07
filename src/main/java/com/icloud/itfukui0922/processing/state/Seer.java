@@ -4,6 +4,7 @@ import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.processing.state.dice.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
+import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
@@ -37,6 +38,10 @@ public class Seer extends Role {
             if (divination != null) {
                 boardSurface.putDivIdenMap(divination.getTarget(), divination.getResult());
                 Log.debug("占い結果 target: " + divination.getTarget() + " result: " + divination.getResult());
+
+                if (divination.getResult().equals(Species.WEREWOLF)) {  // 黒出ししたら，boardSurfaceに登録
+                    boardSurface.getPlayerInformation(divination.getTarget()).setConvictionRole(org.aiwolf.common.data.Role.WEREWOLF);   // 確信した役職に人狼を加える
+                }
             } else {
                 Log.warn("占い結果の取得に失敗");
             }
@@ -110,7 +115,18 @@ public class Seer extends Role {
             String divinedResultString = divinedResult(boardSurface);
             if (divinedResultString != null) {
                 Log.trace("talkQueueに追加: " + divinedResultString);
+
                 talkQueue.add(divinedResultString);
+            }
+        }
+
+        // ----- 占い結果で黒が出た場合に投票先発言をする -----
+        Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap(); // 占い結果取得
+        if (divinationResult.getValue().equals(Species.WEREWOLF)) {
+            String voteUtterance = voteUtterance(divinationResult.getKey());
+            if (voteUtterance != null) {
+                Log.trace("talkQueueに追加: " + voteUtterance);
+                talkQueue.add(voteUtterance);
             }
         }
         return talkQueue;

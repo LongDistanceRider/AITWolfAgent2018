@@ -1,5 +1,10 @@
 package com.icloud.itfukui0922.strategy;
 
+import org.aiwolf.common.data.Agent;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class FlagManagement {
 
     /* NLスイッチ */
@@ -12,6 +17,8 @@ public class FlagManagement {
     private boolean isResultReport = false;
     /* finishフラグ管理（finishが2回呼ばれるため） */
     private boolean isFinish = false;
+    /* あるエージェントに対して投票先発言をしたか */
+    private Map<Agent, Boolean> isVoteUtteranceMap = new HashMap<>();
 
     public boolean isFinish() {
         return isFinish;
@@ -49,6 +56,23 @@ public class FlagManagement {
         this.isGreeting = greeting;
     }
 
+    public void putVoteUtteranceMap (Agent agent, Boolean boo) {
+        isVoteUtteranceMap.put(agent, boo);
+    }
+
+    /**
+     * あるエージェントに対して投票先発言をしたか
+     * @param agent 投票対象
+     * @return isVoteUtteranceMapにある場合はその値を，ない場合はfalseを返す
+     */
+    public boolean getVoteUtteranceMap (Agent agent) {
+        if (isVoteUtteranceMap.containsKey(agent)) {
+            return isVoteUtteranceMap.get(agent);
+        } else {
+            return false;
+        }
+    }
+
     /* Singleton処理 */
     /**
      * コンストラクタ
@@ -57,5 +81,13 @@ public class FlagManagement {
     private FlagManagement() {}
     public static FlagManagement getInstance() {
         return flagManagement;
+    }
+
+    /**
+     * 日にちが変わるときにリセットするフィールドの処理
+     */
+    public void dayReset() {
+        isResultReport = false;
+        isVoteUtteranceMap.clear();
     }
 }
