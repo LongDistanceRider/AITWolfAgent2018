@@ -7,11 +7,6 @@ import org.aiwolf.common.net.GameSetting;
 
 public class Dammy implements Player {
 
-    /* ゲーム情報 */
-    private GameInfo gameInfo;
-    /* ゲーム設定情報 */
-    private GameSetting gameSetting;
-
     @Override
     public String getName() {
         return "Dammy";
@@ -19,13 +14,10 @@ public class Dammy implements Player {
 
     @Override
     public void update(GameInfo gameInfo) {
-        this.gameInfo = gameInfo;
     }
 
     @Override
     public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
-        this.gameInfo = gameInfo;
-        this.gameSetting = gameSetting;
     }
 
     @Override

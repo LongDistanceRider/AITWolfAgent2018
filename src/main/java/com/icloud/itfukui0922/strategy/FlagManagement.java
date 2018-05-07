@@ -7,8 +7,6 @@ import java.util.Map;
 
 public class FlagManagement {
 
-    /* NLスイッチ */
-    private boolean NLSwitch = true;
     /* 0日目の挨拶 */
     private boolean isGreeting = false;
     /* coming outしたか */
@@ -22,10 +20,6 @@ public class FlagManagement {
 
     public boolean isFinish() {
         return isFinish;
-    }
-
-    public boolean isNLSwitch() {
-        return NLSwitch;
     }
 
     public void setFinish(boolean finish) {
@@ -61,16 +55,20 @@ public class FlagManagement {
     }
 
     /**
+     * 自然言語処理部門用対戦か，プロトコル部門対戦か
+     * @return 自然言語処理部門対戦ならtrueをセット
+     */
+    public boolean isNLSwitch() {
+        return true;
+    }
+
+    /**
      * あるエージェントに対して投票先発言をしたか
      * @param agent 投票対象
      * @return isVoteUtteranceMapにある場合はその値を，ない場合はfalseを返す
      */
     public boolean getVoteUtteranceMap (Agent agent) {
-        if (isVoteUtteranceMap.containsKey(agent)) {
-            return isVoteUtteranceMap.get(agent);
-        } else {
-            return false;
-        }
+        return isVoteUtteranceMap.getOrDefault(agent, false);
     }
 
     /* Singleton処理 */

@@ -13,7 +13,7 @@ import java.util.*;
 
 public class Seer extends Role {
 
-    SeerDice seerDice;
+    private SeerDice seerDice;
 
     /**
      * コンストラクタ
