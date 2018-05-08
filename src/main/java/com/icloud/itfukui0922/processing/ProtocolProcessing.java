@@ -16,11 +16,12 @@ public class ProtocolProcessing {
      * updateで呼び出されるプロトコル部門用の処理
      * talkを引数にboardSurfaceへデータを格納する
      *
-     * @param talk 発言内容
+     * @param talk 発言内容（発言者，発言日など）
+     * @param text 発言内容（発言内容”COMINGOUT AGENT[01] SEER"など）
      * @param boardSurface 現在の盤面状態
      */
-    public static void updateTalkInfo(Talk talk, BoardSurface boardSurface) {
-        Content content = new Content(talk.getText());  // StringからContent型へ変換
+    public static void updateTalkInfo(Talk talk, String text, BoardSurface boardSurface) {
+        Content content = new Content(text);  // StringからContent型へ変換
         PlayerInformation playerInformation = boardSurface.getPlayerInformation(talk.getAgent());   // 発言者のプレイヤー情報を取得
 
         // ラベルごとに処理

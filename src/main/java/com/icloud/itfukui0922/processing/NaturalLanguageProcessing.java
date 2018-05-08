@@ -1,22 +1,32 @@
 package com.icloud.itfukui0922.processing;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.icloud.itfukui0922.log.Log;
+import com.icloud.itfukui0922.log.LogCategory;
+import com.icloud.itfukui0922.log.LogLevel;
 import com.mychaelstyle.nlp.KNP;
+import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Talk;
+import org.aiwolf.common.net.GameInfo;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
  * 自然言語処理部門
  * 別スレッドで処理が行われることに留意しプログラミングをすること
+ * (現状，マルチスレッドにする必要はないが，今後のことを考えてCallableを実装してプログラミングをすることとする
  *
  * フィルタリング：フィルタ情報にある単語が文中に含まれていない場合，雑談文として処理をしない
  */
-public class NaturalLanguageProcessing implements Callable<Boolean> {
+public class NaturalLanguageProcessing implements Callable<String> {
 
+    /* GameInfo */
+    GameInfo gameInfo;
     /* フィルタ情報 */
     private static List<String> filterList = new ArrayList<>();
     /* Talk型 */
@@ -44,7 +54,8 @@ public class NaturalLanguageProcessing implements Callable<Boolean> {
      * コンストラクタ
      * @param talk
      */
-    public NaturalLanguageProcessing(Talk talk) {
+    public NaturalLanguageProcessing(GameInfo gameInfo, Talk talk) {
+        this.gameInfo = gameInfo;
         this.talk = talk;
     }
 
@@ -54,13 +65,14 @@ public class NaturalLanguageProcessing implements Callable<Boolean> {
      * @throws Exception
      */
     @Override
-    public Boolean call() throws Exception {
+    public String call() throws Exception {
         String text = talk.getText();
+        String PROtext = "SKIP";
         // フィルタリング
         for (String filter :
                 filterList) {
-            if (text.indexOf(filter) == -1) {
-                return false;
+            if (!text.contains(filter)) {
+                return "SKIP";
             }
         }
 
@@ -70,7 +82,12 @@ public class NaturalLanguageProcessing implements Callable<Boolean> {
 
         // KNP
         KNP knp = new KNP();
-        ObjectNode objectNode = knp.parse("test");
+        ObjectNode objectNode = knp.parse(text);
+
+        // target取得
+
+
+        Log.submit(LogLevel.DEBUG, LogCategory.NATURAL, objectNode.toString());
         // Mecab
 //        Tagger tagger = new Tagger();
 //        Node node = tagger.parseToNode(text);
@@ -81,6 +98,60 @@ public class NaturalLanguageProcessing implements Callable<Boolean> {
 //        }
 
 
+        return PROtext;
+    }
+
+    /**
+     * 文中のtargetを取得
+     * 文中に”Agent”の形態素があった場合に，パターンマッチで数字を取り出して，Agent型を特定する
+     * Agentは00番から99番までに対応とする
+     * @param objectNode
+     * @return
+     */
+    private Agent getTarget (ObjectNode objectNode) {
+        List<String> morphemesList = morphemes(objectNode); // 形態素リストを取得
+        for (String morphemes :
+                morphemesList) {
+            if (morphemes.contains("Agent")) {  // Agent の文字があるか
+                Pattern pattern = Pattern.compile("[0-9]{2}");
+                Matcher matcher = pattern.matcher(morphemes);
+                if (matcher.find()) {   // 番号発見
+                    List<Agent> agentList = gameInfo.getAgentList();    // Agentリスト参照
+                    for (Agent agent :
+                            agentList) {
+                        if (Integer.parseInt(matcher.group()) == agent.getAgentIdx()) {
+                            Log.submit(LogLevel.DEBUG, LogCategory.NATURAL, "target取得: " + agent);
+                            return agent;   // target発見
+                        } else {
+                            Log.submit(LogLevel.WARN, LogCategory.NATURAL, "Agentリストにない番号を取得: " + matcher.group());
+                        }
+                    }
+                } else {
+                    Log.submit(LogLevel.WARN, LogCategory.NATURAL, "targetの番号取得に失敗");
+                }
+            }
+        }
         return null;
+    }
+    /**
+     * 形態素のリストを取得する
+     * ex: 私は占い師です => 私　は　占い　師　です
+     * @param objectNode KNP解析結果
+     * @return 形態素のリスト
+     */
+    private List<String> morphemes (ObjectNode objectNode) {
+        List<String> morphemesList = new ArrayList<>();
+        int clauseasNum = objectNode.get("clauseas").size();
+        for (int i = 0; i < clauseasNum; i++) {
+            int phrasesNum = objectNode.get("clauseas").get(i).get("phrases").size();
+            for (int j = 0; j < phrasesNum; j++) {
+                int morphemesNum = objectNode.get("clauseas").get(i).get("phrases").get(j).get("morphemes").size();
+                for (int k = 0; k < morphemesNum; k++) {
+                    String morphemeString = objectNode.get("clauseas").get(i).get("phrases").get(j).get("morphemes").get(k).get("signage").toString();
+                    morphemesList.add(morphemeString.replace("\"", ""));    // 形態素の前後にダブルクォーテーションが入るため，これを削除
+                }
+            }
+        }
+        return morphemesList;
     }
 }

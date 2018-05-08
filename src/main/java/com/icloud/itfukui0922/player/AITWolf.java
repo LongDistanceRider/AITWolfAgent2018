@@ -3,6 +3,7 @@ package com.icloud.itfukui0922.player;
 import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.log.LogCategory;
 import com.icloud.itfukui0922.log.LogLevel;
+import com.icloud.itfukui0922.processing.NaturalLanguageProcessing;
 import com.icloud.itfukui0922.processing.ProtocolProcessing;
 import com.icloud.itfukui0922.processing.TransNL;
 import com.icloud.itfukui0922.processing.state.*;
@@ -17,6 +18,10 @@ import org.aiwolf.common.net.GameSetting;
 import sun.jvm.hotspot.runtime.VM;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * AITWolfエージェント　メイン部分
@@ -70,11 +75,23 @@ public class AITWolf implements Player {
             if (talk.getAgent().equals(gameInfo.getAgent())) {  // 自分自身の発言はスキップ
                 continue;
             }
-            // TODO talkに対する処理をここに書く
+
+            String text = talk.getText();
             if (FlagManagement.getInstance().isNLSwitch()) {
                 // TODO 自然言語処理をここに書く
-                // ログに受け取った発言を出力する
-                Log.submit(LogLevel.INFO, LogCategory.NATURAL, "発言内容 : " + talk.getAgent() + " > " + talk.getText());
+                Log.submit(LogLevel.INFO, LogCategory.NATURAL, "NL発言内容 : " + talk.getAgent() + " > " + talk.getText());   // 処理前発言
+                // 別スレッド実行
+                ExecutorService ex = Executors.newSingleThreadExecutor();
+                Future<String> future = ex.submit(new NaturalLanguageProcessing(gameInfo, talk));
+
+                try {
+                    text = future.get();    // ここで同期する（talkメソッドに移動予定）
+                } catch (InterruptedException e) {
+                    Log.fatal("自然言語処理時にInterruptedExceptionが発生: " + e.getMessage());
+                } catch (ExecutionException e) {
+                    Log.fatal("自然言語処理時にExecutionExceptionが発生: " + e.getMessage());
+                }
+                Log.submit(LogLevel.INFO, LogCategory.NATURAL, "PRO発言内容 : " + talk.getAgent() + " > " + text);   // 処理前発言
                 // 自然言語をプロトコル言語に変換したあと，共通処理で処理する
             } else {
                 // TODO プロトコル部門のみの処理をここに書く
@@ -82,7 +99,7 @@ public class AITWolf implements Player {
             }
             // TODO NLPとプロトコル共通処理をここに書く
             // Talk内容を読み取り，BoardSurfaceへ保管する
-            ProtocolProcessing.updateTalkInfo(talk, boardSurface);
+            ProtocolProcessing.updateTalkInfo(talk, text, boardSurface);
         }
         // talkListHeadの更新
         talkListHead = gameInfo.getTalkList().size();
@@ -157,7 +174,9 @@ public class AITWolf implements Player {
         }
         // ----- 各役職ごとの処理 -----
         LinkedList<String> roleTalkQueue = roleState.talk(gameInfo, boardSurface); // nullが入ってくることがある
-        talkQueue.addAll(roleTalkQueue);
+        if (roleTalkQueue != null) {
+            talkQueue.addAll(roleTalkQueue);
+        }
 
         if (FlagManagement.getInstance().isNLSwitch()) {
             // TODO 自然言語処理に関する処理をここに書く

@@ -14,19 +14,28 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        // ----- ローカルホストで対戦 -----
-        Starter.startServer(10000, 1, 5 );
+        final String HOST = "localhost";  // localhostで対戦
+//        final String HOST = "49.212.130.102"; // kanolabで対戦
+        final int PORT = 10000;
+        // ----- ローカルサーバ立ち上げ -----
+        Starter.startServer(10000, 1, 5);
         // ここでスリープしないとサーバが立ち上がる前にクライアント接続する
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Starter.startClient(new AITWolf(LogLevel.TRACE, LogLevel.TRACE), "localhost", 10000, Role.SEER);
-        Starter.startClient(new Dammy(), "localhost", 10000, null);
-        Starter.startClient(new Dammy(), "localhost", 10000, null);
-        Starter.startClient(new Dammy(), "localhost", 10000, null);
-        Starter.startClient(new Dammy(), "localhost", 10000, null);
+
+        Starter.startClient(new AITWolf(LogLevel.TRACE, LogLevel.TRACE), HOST, PORT, Role.SEER);
+//        Starter.startClient(new AITWolf(LogLevel.TRACE, LogLevel.TRACE), HOST, PORT, null);
+//        Starter.startClient(new AITWolf(LogLevel.TRACE, LogLevel.TRACE), HOST, PORT, null);
+//        Starter.startClient(new AITWolf(LogLevel.TRACE, LogLevel.TRACE), HOST, PORT, null);
+//        Starter.startClient(new AITWolf(LogLevel.TRACE, LogLevel.TRACE), HOST, PORT, null);
+//        Starter.startClient(new Dammy(), HOST, PORT, null);
+        Starter.startClient(new Dammy(), HOST, PORT, null);
+        Starter.startClient(new Dammy(), HOST, PORT, null);
+        Starter.startClient(new Dammy(), HOST, PORT, null);
+        Starter.startClient(new Dammy(), HOST, PORT, null);
 //
 //        // ----- ローカルホストで対戦開始 -----
 //        // 参加プレイヤーリスト作成
