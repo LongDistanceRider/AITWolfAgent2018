@@ -10,8 +10,10 @@ import com.icloud.itfukui0922.processing.state.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import com.icloud.itfukui0922.util.Utility;
+import org.aiwolf.client.lib.*;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
+import org.aiwolf.common.data.Species;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
@@ -76,30 +78,37 @@ public class AITWolf implements Player {
                 continue;
             }
 
-            String text = talk.getText();
+            List<String> textList = new ArrayList<>();
             if (FlagManagement.getInstance().isNLSwitch()) {
                 // TODO 自然言語処理をここに書く
                 Log.submit(LogLevel.INFO, LogCategory.NATURAL, "NL発言内容 : " + talk.getAgent() + " > " + talk.getText());   // 処理前発言
                 // 別スレッド実行
                 ExecutorService ex = Executors.newSingleThreadExecutor();
-                Future<String> future = ex.submit(new NaturalLanguageProcessing(gameInfo, talk));
+                Future<List<String>> future = ex.submit(new NaturalLanguageProcessing(gameInfo, boardSurface, talk));
 
                 try {
-                    text = future.get();    // ここで同期する（talkメソッドに移動予定）
+                    textList.addAll(future.get());    // ここで同期する（talkメソッドに移動予定）
                 } catch (InterruptedException e) {
                     Log.fatal("自然言語処理時にInterruptedExceptionが発生: " + e.getMessage());
                 } catch (ExecutionException e) {
                     Log.fatal("自然言語処理時にExecutionExceptionが発生: " + e.getMessage());
                 }
-                Log.submit(LogLevel.INFO, LogCategory.NATURAL, "PRO発言内容 : " + talk.getAgent() + " > " + text);   // 処理前発言
+                for (String text :
+                        textList) {
+                    Log.submit(LogLevel.INFO, LogCategory.NATURAL, "PRO発言内容 : " + talk.getAgent() + " > " + text);   // 処理後発言
+                }
                 // 自然言語をプロトコル言語に変換したあと，共通処理で処理する
             } else {
                 // TODO プロトコル部門のみの処理をここに書く
+                textList.add(talk.getText());
                 // ログに受け取った発言を出力する
             }
             // TODO NLPとプロトコル共通処理をここに書く
             // Talk内容を読み取り，BoardSurfaceへ保管する
-            ProtocolProcessing.updateTalkInfo(talk, text, boardSurface);
+            for (String text :
+                    textList) {
+                ProtocolProcessing.updateTalkInfo(talk, text, boardSurface);
+            }
         }
         // talkListHeadの更新
         talkListHead = gameInfo.getTalkList().size();

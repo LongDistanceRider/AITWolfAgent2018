@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.log.LogCategory;
 import com.icloud.itfukui0922.log.LogLevel;
+import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.mychaelstyle.nlp.KNP;
 import org.aiwolf.common.data.Agent;
+import org.aiwolf.common.data.Role;
+import org.aiwolf.common.data.Species;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 
@@ -23,10 +26,12 @@ import java.util.regex.Pattern;
  *
  * フィルタリング：フィルタ情報にある単語が文中に含まれていない場合，雑談文として処理をしない
  */
-public class NaturalLanguageProcessing implements Callable<String> {
+public class NaturalLanguageProcessing implements Callable<List<String>> {
 
     /* GameInfo */
     GameInfo gameInfo;
+    /* BoardSurface */
+    BoardSurface boardSurface;
     /* フィルタ情報 */
     private static List<String> filterList = new ArrayList<>();
     /* Talk型 */
@@ -54,8 +59,9 @@ public class NaturalLanguageProcessing implements Callable<String> {
      * コンストラクタ
      * @param talk
      */
-    public NaturalLanguageProcessing(GameInfo gameInfo, Talk talk) {
+    public NaturalLanguageProcessing(GameInfo gameInfo, BoardSurface boardSurface, Talk talk) {
         this.gameInfo = gameInfo;
+        this.boardSurface = boardSurface;
         this.talk = talk;
     }
 
@@ -65,29 +71,56 @@ public class NaturalLanguageProcessing implements Callable<String> {
      * @throws Exception
      */
     @Override
-    public String call() throws Exception {
+    public List<String> call() throws Exception {
+        List<String> NLStringList = new ArrayList<>();
+
         String text = talk.getText();
-        String PROtext = "SKIP";
         // フィルタリング
         for (String filter :
                 filterList) {
             if (!text.contains(filter)) {
-                return "SKIP";
+                return NLStringList;
             }
         }
 
         // 複数文の分割
         String[] stringArray = text.split("[!?.。！？]");  // 引数に分割するキーワードを入れる
-        List<String> one_sentence_List = new ArrayList<>(Arrays.asList(stringArray));   // 1文ずつリストへ　memo:一度に色々発言する人は少ないから大抵1つしか入らないと思う
+        List<String> oneSentenceList = new ArrayList<>(Arrays.asList(stringArray));   // 1文ずつリストへ　memo:一度に色々発言する人は少ないから大抵1つしか入らないと思う
 
-        // KNP
-        KNP knp = new KNP();
-        ObjectNode objectNode = knp.parse(text);
+        // ----- 1文ずつ処理 -----
+        for (String oneSentence :
+                oneSentenceList) {
+            // KNP
+            KNP knp = new KNP();
+            ObjectNode objectNode = knp.parse(oneSentence);
+            // targetを取得
+            Agent target = getTarget(objectNode);
+            // Roleがあるか（あるならcomingoutとする）
+            Role role = getRole(oneSentence);
+            // Speciesがあるか（あるなら結果を話している（占い師COしていたらdivined 霊能COならiden）
+            Species species = getSpecies(oneSentence);
+            // 投票発言しているか
+            boolean isProvideVote = isProvideVote(oneSentence);
 
-        // target取得
+            // --- 話題判定 ---
+            if (target == null) {
+                continue;   // targetがないなら，どの話題にも当てはまらないため，コンティニュー
+            }
+            if (role != null) { // roleが発見されたらcomingout
+                NLStringList.add("COMINGOUT " + target + " " + role);
+            }
+            if (species != null) { // speciesが発見された上に占い師COしていたら結果報告
+                if (boardSurface.getPlayerInformation(target).getSelfCO().equals(Role.SEER)) {
+                    NLStringList.add("DIVINED " + target + " " + species);
+                }
+            }
+            if (isProvideVote) {    // 投票発言
+                NLStringList.add("VOTE " + target);
+            }
+        }
 
 
-        Log.submit(LogLevel.DEBUG, LogCategory.NATURAL, objectNode.toString());
+//        Log.submit(LogLevel.DEBUG, LogCategory.NATURAL, objectNode.toString());
         // Mecab
 //        Tagger tagger = new Tagger();
 //        Node node = tagger.parseToNode(text);
@@ -98,9 +131,70 @@ public class NaturalLanguageProcessing implements Callable<String> {
 //        }
 
 
-        return PROtext;
+        return NLStringList;
     }
 
+    /**
+     * 文中に投票を示す単語がある場合はtrueない場合はfalse
+     * @param oneSentence
+     * @return
+     */
+    private boolean isProvideVote(String oneSentence) {
+        boolean isProvideVote = false;
+        if (oneSentence.contains("投票")) {
+            isProvideVote = true;
+        }
+        Log.submit(LogLevel.DEBUG, LogCategory.NATURAL, "投票発言か: " + isProvideVote);
+        return isProvideVote;
+    }
+
+    /**
+     * 文中のSpeciesを取得
+     * 文中にSpeciesを示す単語があった場合にSpeciesを返す
+     * @param oneSentence
+     * @return
+     */
+    private Species getSpecies (String oneSentence) {
+        Species species = null;
+        if (oneSentence.contains("白") || oneSentence.contains("人間")) {
+            species = Species.HUMAN;
+        }
+        if (oneSentence.contains("黒") || oneSentence.contains("人狼")) {
+            species = Species.WEREWOLF;
+        }
+        Log.submit(LogLevel.DEBUG, LogCategory.NATURAL, "Species取得: " + species);
+        return species;
+    }
+
+    /**
+     * 文中のRoleを取得
+     * 文中に役職を示す単語があった場合にroleを返す
+     * @param oneSentence 解析文
+     * @return
+     */
+    private Role getRole (String oneSentence) {
+        Role role = null;
+        if (oneSentence.contains("占い師")) {
+            role = Role.SEER;
+        }
+        if (oneSentence.contains("霊能者")) {
+            role = Role.MEDIUM;
+        }
+        if (oneSentence.contains("狩人")) {
+            role = Role.BODYGUARD;
+        }
+        if (oneSentence.contains("裏切り者") || oneSentence.contains("狂人")) {
+            role = Role.POSSESSED;
+        }
+        if (oneSentence.contains("人狼")) {
+            role = Role.WEREWOLF;
+        }
+        if (oneSentence.contains("村人")) {
+            role = Role.VILLAGER;
+        }
+        Log.submit(LogLevel.DEBUG, LogCategory.NATURAL, "role取得: " + role);
+        return role;
+    }
     /**
      * 文中のtargetを取得
      * 文中に”Agent”の形態素があった場合に，パターンマッチで数字を取り出して，Agent型を特定する
