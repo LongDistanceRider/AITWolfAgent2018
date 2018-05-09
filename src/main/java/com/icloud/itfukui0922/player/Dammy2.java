@@ -6,9 +6,8 @@ import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
 import java.util.LinkedList;
-import java.util.Queue;
 
-public class Dammy implements Player {
+public class Dammy2 implements Player {
 
     GameInfo gameInfo;
 
@@ -32,9 +31,9 @@ public class Dammy implements Player {
         // 初日に喋らす発言
         day0Queue.add("こんにちは");
         day0Queue.add("これからよろしくね");
-        day1Queue.add("私は占い師です．");
-        day1Queue.add("Agent[2]は人狼でした．");
-        day1Queue.add("Agent[3]に投票します．");
+        day1Queue.add("私は役職ありませんよ");
+        day1Queue.add("Agent[2]が怪しいと思う");
+        day1Queue.add("Agent[4]に投票します．");
         this.gameInfo = gameInfo;
     }
 

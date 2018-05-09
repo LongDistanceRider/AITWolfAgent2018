@@ -5,25 +5,23 @@ import com.icloud.itfukui0922.log.LogCategory;
 import com.icloud.itfukui0922.log.LogLevel;
 import com.icloud.itfukui0922.processing.NaturalLanguageProcessing;
 import com.icloud.itfukui0922.processing.ProtocolProcessing;
-import com.icloud.itfukui0922.processing.TransNL;
 import com.icloud.itfukui0922.processing.state.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import com.icloud.itfukui0922.util.Utility;
-import org.aiwolf.client.lib.*;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
-import org.aiwolf.common.data.Species;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
-import sun.jvm.hotspot.runtime.VM;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import static com.icloud.itfukui0922.strategy.FlagManagement.*;
 
 /**
  * AITWolfエージェント　メイン部分
@@ -34,9 +32,9 @@ import java.util.concurrent.Future;
 public class AITWolf implements Player {
 
     /* コンソール出力レベル */
-    LogLevel consoleLevel;
+    private LogLevel consoleLevel;
     /* ファイル出力レベル */
-    LogLevel writeLevel;
+    private LogLevel writeLevel;
     /* トークリストをどこまで読み込んだか */
     private int talkListHead;
     /* ゲーム情報 */
@@ -52,8 +50,8 @@ public class AITWolf implements Player {
 
     /**
      * コンストラクタ
-     * @param consoleLevel
-     * @param writeLevel
+     * @param consoleLevel コンソール出力レベル
+     * @param writeLevel ファイル出力レベル
      */
     public AITWolf(LogLevel consoleLevel, LogLevel writeLevel) {
         this.consoleLevel = consoleLevel;
@@ -79,7 +77,7 @@ public class AITWolf implements Player {
             }
 
             List<String> textList = new ArrayList<>();
-            if (FlagManagement.getInstance().isNLSwitch()) {
+            if (getInstance().isNLSwitch()) {
                 // TODO 自然言語処理をここに書く
                 Log.submit(LogLevel.INFO, LogCategory.NATURAL, "NL発言内容 : " + talk.getAgent() + " > " + talk.getText());   // 処理前発言
                 // 別スレッド実行
@@ -123,7 +121,7 @@ public class AITWolf implements Player {
         this.gameInfo = gameInfo;   // ゲーム情報の初期化
         this.gameSetting = gameSetting; // ゲーム設定の初期化
         this.boardSurface = new BoardSurface(gameInfo); // 盤面クラスの初期化
-        FlagManagement.getInstance().setFinish(false);  // フィニッシュフラグをリセット
+        getInstance().setFinish(false);  // フィニッシュフラグをリセット
     }
 
     @Override
@@ -167,17 +165,17 @@ public class AITWolf implements Player {
         }
 
         // ----- 日をまたぐごとに初期化するフラグ -----
-        FlagManagement.getInstance().dayReset();
+        getInstance().dayReset();
     }
 
     @Override
     public String talk() {
         // ----- 0日目挨拶 -----
         if (gameInfo.getDay() == 0) {
-            if (FlagManagement.getInstance().isGreeting()) {
+            if (getInstance().isGreeting()) {
                 return "Over";
             } else {
-                FlagManagement.getInstance().setGreeting(true);
+                getInstance().setGreeting(true);
                 return "こんにちは";
             }
         }
@@ -266,10 +264,10 @@ public class AITWolf implements Player {
 
     @Override
     public void finish() {
-        if (FlagManagement.getInstance().isFinish()) {  // finishが2回目に呼び出されるとき，処理をしない
+        if (getInstance().isFinish()) {  // finishが2回目に呼び出されるとき，処理をしない
             return;
         }
-        FlagManagement.getInstance().setFinish(true);
+        getInstance().setFinish(true);
         Log.debug("finish実行");
         // TODO メモリ，フィールドの初期化
 

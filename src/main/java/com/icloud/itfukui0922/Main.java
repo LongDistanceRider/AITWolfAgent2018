@@ -3,13 +3,8 @@ package com.icloud.itfukui0922;
 import com.icloud.itfukui0922.log.LogLevel;
 import com.icloud.itfukui0922.player.AITWolf;
 import com.icloud.itfukui0922.player.Dammy;
-import com.icloud.itfukui0922.starter.LocalHostStarter;
 import com.icloud.itfukui0922.starter.Starter;
-import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Role;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
 
