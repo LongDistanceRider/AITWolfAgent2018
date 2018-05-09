@@ -30,7 +30,7 @@ public class Dammy3 implements Player {
 
     @Override
     public String talk() {
-        return "OVER";
+        return "Over";
     }
 
     @Override

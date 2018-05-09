@@ -3,6 +3,8 @@ package com.icloud.itfukui0922;
 import com.icloud.itfukui0922.log.LogLevel;
 import com.icloud.itfukui0922.player.AITWolf;
 import com.icloud.itfukui0922.player.Dammy;
+import com.icloud.itfukui0922.player.Dammy2;
+import com.icloud.itfukui0922.player.Dammy3;
 import com.icloud.itfukui0922.starter.Starter;
 import org.aiwolf.common.data.Role;
 
@@ -29,8 +31,8 @@ public class Main {
 //        Starter.startClient(new Dammy(), HOST, PORT, null);
         Starter.startClient(new Dammy(), HOST, PORT, null);
         Starter.startClient(new Dammy(), HOST, PORT, null);
-        Starter.startClient(new Dammy(), HOST, PORT, null);
-        Starter.startClient(new Dammy(), HOST, PORT, null);
+        Starter.startClient(new Dammy2(), HOST, PORT, null);
+        Starter.startClient(new Dammy3(), HOST, PORT, null);
 //
 //        // ----- ローカルホストで対戦開始 -----
 //        // 参加プレイヤーリスト作成

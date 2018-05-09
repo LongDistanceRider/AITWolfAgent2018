@@ -4,6 +4,7 @@
 package com.icloud.itfukui0922.util;
 
 import org.aiwolf.common.data.Agent;
+import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.GameInfo;
 
 import java.util.List;
@@ -38,4 +39,21 @@ public class Utility {
         int maxDay = (numPlayer-1) / 2;
         return maxDay;
     }
+
+    /**
+     * ゲームの勝敗を判定
+     * 現在生きているプレイヤを調べて，人狼が生きているかで判定する
+     * @param gameInfo
+     * @retrun 村人勝利か
+     */
+    public static boolean isVillageSideWin (GameInfo gameInfo) {
+        for (Agent agent :
+                gameInfo.getAliveAgentList()) {
+            if (gameInfo.getRoleMap().get(agent) == Role.WEREWOLF) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

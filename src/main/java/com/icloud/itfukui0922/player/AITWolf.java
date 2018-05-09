@@ -282,6 +282,13 @@ public class AITWolf implements Player {
             Log.info(agent + " Role : " + agentMap.get(agent));
         }
         // ----- ログ出力停止 -----
+        // 勝敗結果をログ出力
+        if (Utility.isVillageSideWin(gameInfo)) {
+            Log.info("勝敗結果: 村人陣営 勝利");
+        } else {
+            Log.info("勝敗結果: 人狼陣営 勝利");
+        }
+
         Log.endLog();
     }
 
