@@ -40,7 +40,7 @@ public class Starter {
                 for (int i = 0; i < gameNum; i++) {
                     game.setRand(new Random(i));
                     Calendar calendar = Calendar.getInstance();
-                    game.setGameLogger(new FileGameLogger(new File("log/serverLog/" + calendar.getTime() + ".log")));
+                    game.setGameLogger(new FileGameLogger(new File("log/00ServerLog/" + calendar.getTime() + ".log")));
 
                     game.start();
                 }

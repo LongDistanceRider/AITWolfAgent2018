@@ -77,7 +77,7 @@ public class AITWolf implements Player {
             }
 
             List<String> textList = new ArrayList<>();
-            if (getInstance().isNLSwitch()) {
+            if (FlagManagement.getInstance().isNLSwitch()) {
                 // TODO 自然言語処理をここに書く
                 Log.submit(LogLevel.INFO, LogCategory.NATURAL, "NL発言内容 : " + talk.getAgent() + " > " + talk.getText());   // 処理前発言
                 // 別スレッド実行
