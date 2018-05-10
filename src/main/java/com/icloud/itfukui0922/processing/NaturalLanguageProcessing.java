@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  *
  * フィルタリング：フィルタ情報にある単語が文中に含まれていない場合，雑談文として処理をしない
  */
-public class NaturalLanguageProcessing implements Callable<List<String>> {
+public class NaturalLanguageProcessing {
 
     /* GameInfo */
     GameInfo gameInfo;
@@ -70,52 +70,64 @@ public class NaturalLanguageProcessing implements Callable<List<String>> {
      * @return
      * @throws Exception
      */
-    @Override
-    public List<String> call() throws Exception {
+    public List<String> call() {
+        Log.submit(LogLevel.INFO, LogCategory.NATURAL, "NL発言内容 : " + talk.getAgent() + " > " + talk.getText());   // 処理前発言
         List<String> NLStringList = new ArrayList<>();
 
         String text = talk.getText();
         // フィルタリング
         for (String filter :
                 filterList) {
-            if (!text.contains(filter)) {
-                return NLStringList;
-            }
-        }
+            if (text.contains(filter)) {
+                // 複数文の分割
+                String[] stringArray = text.split("[!?.。！？]");  // 引数に分割するキーワードを入れる
+                List<String> oneSentenceList = new ArrayList<>(Arrays.asList(stringArray));   // 1文ずつリストへ　memo:一度に色々発言する人は少ないから大抵1つしか入らないと思う
 
-        // 複数文の分割
-        String[] stringArray = text.split("[!?.。！？]");  // 引数に分割するキーワードを入れる
-        List<String> oneSentenceList = new ArrayList<>(Arrays.asList(stringArray));   // 1文ずつリストへ　memo:一度に色々発言する人は少ないから大抵1つしか入らないと思う
+                // ----- 1文ずつ処理 -----
+                for (String oneSentence :
+                        oneSentenceList) {
+                    // KNP
+                    KNP knp = new KNP();
+                    ObjectNode objectNode = null;
+                    try {
+                        objectNode = knp.parse(oneSentence);
+                    } catch (IOException | InterruptedException e) {
+                        Log.submit(LogLevel.ERROR, LogCategory.NATURAL, "knpパース時にエラー発生: " + e);
+                        continue;
+                    }
+                    // submitを取得（私は，僕は，などの言葉）
+                    Agent target = getSubmit(oneSentence);
+                    // targetを取得
+                    Agent target = getTarget(objectNode);
+                    // Roleがあるか（あるならcomingoutとする）
+                    Role role = getRole(oneSentence);
+                    // Speciesがあるか（あるなら結果を話している（占い師COしていたらdivined 霊能COならiden）
+                    Species species = getSpecies(oneSentence);
+                    // 投票発言しているか
+                    boolean isProvideVote = isProvideVote(oneSentence);
 
-        // ----- 1文ずつ処理 -----
-        for (String oneSentence :
-                oneSentenceList) {
-            // KNP
-            KNP knp = new KNP();
-            ObjectNode objectNode = knp.parse(oneSentence);
-            // targetを取得
-            Agent target = getTarget(objectNode);
-            // Roleがあるか（あるならcomingoutとする）
-            Role role = getRole(oneSentence);
-            // Speciesがあるか（あるなら結果を話している（占い師COしていたらdivined 霊能COならiden）
-            Species species = getSpecies(oneSentence);
-            // 投票発言しているか
-            boolean isProvideVote = isProvideVote(oneSentence);
+                    // --- 話題判定 ---
+                    if (target == null) {
+                        continue;   // targetがないなら，どの話題にも当てはまらないため，コンティニュー
+                    }
+                    if (role != null) { // roleが発見されたらcomingout
+                        NLStringList.add("COMINGOUT " + target + " " + role);
+                    }
+                    if (species != null) { // speciesが発見された上に占い師COしていたら結果報告
+                        if (boardSurface.getPlayerInformation(target).getSelfCO().equals(Role.SEER)) {
+                            NLStringList.add("DIVINED " + target + " " + species);
+                        }
+                    }
+                    if (isProvideVote) {    // 投票発言
+                        NLStringList.add("VOTE " + target);
+                    }
 
-            // --- 話題判定 ---
-            if (target == null) {
-                continue;   // targetがないなら，どの話題にも当てはまらないため，コンティニュー
-            }
-            if (role != null) { // roleが発見されたらcomingout
-                NLStringList.add("COMINGOUT " + target + " " + role);
-            }
-            if (species != null) { // speciesが発見された上に占い師COしていたら結果報告
-                if (boardSurface.getPlayerInformation(target).getSelfCO().equals(Role.SEER)) {
-                    NLStringList.add("DIVINED " + target + " " + species);
                 }
             }
-            if (isProvideVote) {    // 投票発言
-                NLStringList.add("VOTE " + target);
+            // ログ出力
+            for (String NLString :
+                    NLStringList) {
+                Log.submit(LogLevel.INFO, LogCategory.NATURAL, "PRO発言内容 : " + talk.getAgent() + " > " + NLString);   // 処理後発言
             }
         }
 
@@ -134,6 +146,31 @@ public class NaturalLanguageProcessing implements Callable<List<String>> {
         return NLStringList;
     }
 
+    private Agent getSubmit(String oneSentence) {
+        List<String> morphemesList = phrases(objectNode); // 文節リストを取得
+        for (String morphemes :
+                morphemesList) {
+            if (morphemes.contains("Agent")) {  // Agent の文字があるか
+                Pattern pattern = Pattern.compile("[0-9]{2}");
+                Matcher matcher = pattern.matcher(morphemes);
+                if (matcher.find()) {   // 番号発見
+                    List<Agent> agentList = gameInfo.getAgentList();    // Agentリスト参照
+                    for (Agent agent :
+                            agentList) {
+                        if (Integer.parseInt(matcher.group()) == agent.getAgentIdx()) {
+                            Log.submit(LogLevel.DEBUG, LogCategory.NATURAL, "target取得: " + agent);
+                            return agent;   // target発見
+                        } else {
+                            Log.submit(LogLevel.WARN, LogCategory.NATURAL, "Agentリストにない番号を取得: " + matcher.group());
+                        }
+                    }
+                } else {
+                    Log.submit(LogLevel.WARN, LogCategory.NATURAL, "targetの番号取得に失敗");
+                }
+            }
+        }
+        return null;
+    }
     /**
      * 文中に投票を示す単語がある場合はtrueない場合はfalse
      * @param oneSentence
@@ -247,5 +284,21 @@ public class NaturalLanguageProcessing implements Callable<List<String>> {
             }
         }
         return morphemesList;
+    }
+
+    /**
+     * 文節のリストを取得
+     * @param objectNode
+     * @return 文節リスト
+     */
+    private List<String> phrases (ObjectNode objectNode) {
+        List<String> list = new ArrayList<>();
+
+        int clauseasNum = objectNode.get("clauseas").size();
+        for (int i = 0; i < clauseasNum; i++) {
+            String phraseString = objectNode.get("clauseas").get(i).get("clausea").toString();
+            list.add(phraseString);
+        }
+        return list;
     }
 }

@@ -79,22 +79,10 @@ public class AITWolf implements Player {
             List<String> textList = new ArrayList<>();
             if (FlagManagement.getInstance().isNLSwitch()) {
                 // TODO 自然言語処理をここに書く
-                Log.submit(LogLevel.INFO, LogCategory.NATURAL, "NL発言内容 : " + talk.getAgent() + " > " + talk.getText());   // 処理前発言
-                // 別スレッド実行
-                ExecutorService ex = Executors.newSingleThreadExecutor();
-                Future<List<String>> future = ex.submit(new NaturalLanguageProcessing(gameInfo, boardSurface, talk));
-
-                try {
-                    textList.addAll(future.get());    // ここで同期する（talkメソッドに移動予定）
-                } catch (InterruptedException e) {
-                    Log.fatal("自然言語処理時にInterruptedExceptionが発生: " + e.getMessage());
-                } catch (ExecutionException e) {
-                    Log.fatal("自然言語処理時にExecutionExceptionが発生: " + e.getMessage());
-                }
-                for (String text :
-                        textList) {
-                    Log.submit(LogLevel.INFO, LogCategory.NATURAL, "PRO発言内容 : " + talk.getAgent() + " > " + text);   // 処理後発言
-                }
+                // NLP処理
+                NaturalLanguageProcessing nlp = new NaturalLanguageProcessing(gameInfo, boardSurface, talk);
+                // NLP解析結果返却
+                textList.addAll(nlp.call());
                 // 自然言語をプロトコル言語に変換したあと，共通処理で処理する
             } else {
                 // TODO プロトコル部門のみの処理をここに書く
