@@ -96,7 +96,7 @@ public class NaturalLanguageProcessing {
                         continue;
                     }
                     // submitを取得（私は，僕は，などの言葉）
-                    Agent target = getSubmit(oneSentence);
+//                    Agent target = getSubmit(oneSentence);
                     // targetを取得
                     Agent target = getTarget(objectNode);
                     // Roleがあるか（あるならcomingoutとする）
@@ -146,31 +146,7 @@ public class NaturalLanguageProcessing {
         return NLStringList;
     }
 
-    private Agent getSubmit(String oneSentence) {
-        List<String> morphemesList = phrases(objectNode); // 文節リストを取得
-        for (String morphemes :
-                morphemesList) {
-            if (morphemes.contains("Agent")) {  // Agent の文字があるか
-                Pattern pattern = Pattern.compile("[0-9]{2}");
-                Matcher matcher = pattern.matcher(morphemes);
-                if (matcher.find()) {   // 番号発見
-                    List<Agent> agentList = gameInfo.getAgentList();    // Agentリスト参照
-                    for (Agent agent :
-                            agentList) {
-                        if (Integer.parseInt(matcher.group()) == agent.getAgentIdx()) {
-                            Log.submit(LogLevel.DEBUG, LogCategory.NATURAL, "target取得: " + agent);
-                            return agent;   // target発見
-                        } else {
-                            Log.submit(LogLevel.WARN, LogCategory.NATURAL, "Agentリストにない番号を取得: " + matcher.group());
-                        }
-                    }
-                } else {
-                    Log.submit(LogLevel.WARN, LogCategory.NATURAL, "targetの番号取得に失敗");
-                }
-            }
-        }
-        return null;
-    }
+
     /**
      * 文中に投票を示す単語がある場合はtrueない場合はfalse
      * @param oneSentence
