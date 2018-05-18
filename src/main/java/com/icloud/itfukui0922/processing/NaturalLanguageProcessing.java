@@ -13,6 +13,7 @@ import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 
 import java.io.*;
+import java.nio.Buffer;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
@@ -21,56 +22,55 @@ import java.util.regex.Pattern;
 
 /**
  * 自然言語処理部門
- * 別スレッドで処理が行われることに留意しプログラミングをすること
- * (現状，マルチスレッドにする必要はないが，今後のことを考えてCallableを実装してプログラミングをすることとする
+ * 自然言語処理を施し，自然言語文からプロトコル文へ変換する．
+ * プロトコル部門で処理できないものについても，このクラスで処理をする．
  *
  * フィルタリング：フィルタ情報にある単語が文中に含まれていない場合，雑談文として処理をしない
+ *
+ * @author fukurou
+ * @version 1.0
  */
 public class NaturalLanguageProcessing {
 
-    /* GameInfo */
-    GameInfo gameInfo;
-    /* BoardSurface */
-    BoardSurface boardSurface;
     /* フィルタ情報 */
     private static List<String> filterList = new ArrayList<>();
-    /* Talk型 */
-    private volatile Talk talk;
 
     static {
         // フィルタ情報の読み込み
+        BufferedReader bufferedReader = null;
         try {
             File csv = new File("lib/filterInformation.txt");
 
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(csv));
+            bufferedReader = new BufferedReader(new FileReader(csv));
             String readLine;
             while ((readLine = bufferedReader.readLine()) != null) {
                 filterList.add(readLine);
             }
-            bufferedReader.close();
-        } catch (FileNotFoundException e) {
-            System.err.println("フィルタ情報読み込みでエラー" + e);
-        } catch (IOException e) {
-            System.err.println("フィルタ情報読み込みでエラー" + e);
+            Log.trace("フィルタ情報が読み込まれました．");
+        } catch (FileNotFoundException e){
+            Log.fatal("フィルタ情報のファイルが存在しません．");
+        } catch (IOException e){
+            Log.fatal("フィルタ情報のファイル入力に失敗しました．");
+        } finally {
+            try {
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+            } catch (IOException e) {
+                Log.error("フィルタ情報のファイルを閉じる際にIOExceptionが発生しました．");
+            }
         }
     }
 
     /**
-     * コンストラクタ
-     * @param talk
+     * プロトコル文へ変換
+     *
+     * @param gameInfo ゲーム情報
+     * @param boardSurface 盤面情報
+     * @param talk 発言内容
+     * @return プロトコル文
      */
-    public NaturalLanguageProcessing(GameInfo gameInfo, BoardSurface boardSurface, Talk talk) {
-        this.gameInfo = gameInfo;
-        this.boardSurface = boardSurface;
-        this.talk = talk;
-    }
-
-    /**
-     * 別スレッド実行呼び出しCallメソッド
-     * @return
-     * @throws Exception
-     */
-    public List<String> call() {
+    public static List<String> convertPro(GameInfo gameInfo, BoardSurface boardSurface, Talk talk) {
         Log.submit(LogLevel.INFO, LogCategory.NATURAL, "NL発言内容 : " + talk.getAgent() + " > " + talk.getText());   // 処理前発言
         List<String> NLStringList = new ArrayList<>();
 
@@ -98,7 +98,7 @@ public class NaturalLanguageProcessing {
                     // submitを取得（私は，僕は，などの言葉）
 //                    Agent target = getSubmit(oneSentence);
                     // targetを取得
-                    Agent target = getTarget(objectNode);
+                    Agent target = getTarget(gameInfo, objectNode);
                     // Roleがあるか（あるならcomingoutとする）
                     Role role = getRole(oneSentence);
                     // Speciesがあるか（あるなら結果を話している（占い師COしていたらdivined 霊能COならiden）
@@ -152,7 +152,7 @@ public class NaturalLanguageProcessing {
      * @param oneSentence
      * @return
      */
-    private boolean isProvideVote(String oneSentence) {
+    private static boolean isProvideVote(String oneSentence) {
         boolean isProvideVote = false;
         if (oneSentence.contains("投票")) {
             isProvideVote = true;
@@ -167,7 +167,7 @@ public class NaturalLanguageProcessing {
      * @param oneSentence
      * @return
      */
-    private Species getSpecies (String oneSentence) {
+    private static Species getSpecies (String oneSentence) {
         Species species = null;
         if (oneSentence.contains("白") || oneSentence.contains("人間")) {
             species = Species.HUMAN;
@@ -185,7 +185,7 @@ public class NaturalLanguageProcessing {
      * @param oneSentence 解析文
      * @return
      */
-    private Role getRole (String oneSentence) {
+    private static Role getRole (String oneSentence) {
         Role role = null;
         if (oneSentence.contains("占い師")) {
             role = Role.SEER;
@@ -215,7 +215,7 @@ public class NaturalLanguageProcessing {
      * @param objectNode
      * @return
      */
-    private Agent getTarget (ObjectNode objectNode) {
+    private static Agent getTarget (GameInfo gameInfo, ObjectNode objectNode) {
         List<String> morphemesList = morphemes(objectNode); // 形態素リストを取得
         for (String morphemes :
                 morphemesList) {
@@ -246,7 +246,7 @@ public class NaturalLanguageProcessing {
      * @param objectNode KNP解析結果
      * @return 形態素のリスト
      */
-    private List<String> morphemes (ObjectNode objectNode) {
+    private static List<String> morphemes (ObjectNode objectNode) {
         List<String> morphemesList = new ArrayList<>();
         int clauseasNum = objectNode.get("clauseas").size();
         for (int i = 0; i < clauseasNum; i++) {
@@ -267,7 +267,7 @@ public class NaturalLanguageProcessing {
      * @param objectNode
      * @return 文節リスト
      */
-    private List<String> phrases (ObjectNode objectNode) {
+    private static List<String> phrases (ObjectNode objectNode) {
         List<String> list = new ArrayList<>();
 
         int clauseasNum = objectNode.get("clauseas").size();

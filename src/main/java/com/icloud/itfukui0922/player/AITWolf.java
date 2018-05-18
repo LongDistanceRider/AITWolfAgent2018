@@ -1,7 +1,6 @@
 package com.icloud.itfukui0922.player;
 
 import com.icloud.itfukui0922.log.Log;
-import com.icloud.itfukui0922.log.LogCategory;
 import com.icloud.itfukui0922.log.LogLevel;
 import com.icloud.itfukui0922.processing.NaturalLanguageProcessing;
 import com.icloud.itfukui0922.processing.ProtocolProcessing;
@@ -16,25 +15,15 @@ import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import static com.icloud.itfukui0922.strategy.FlagManagement.*;
 
 /**
  * AITWolfエージェント　メイン部分
- *
- * 可能な限り行数を減らしたい＝クラスの分化
  */
 
 public class AITWolf implements Player {
 
-    /* コンソール出力レベル */
-    private LogLevel consoleLevel;
-    /* ファイル出力レベル */
-    private LogLevel writeLevel;
     /* トークリストをどこまで読み込んだか */
     private int talkListHead;
     /* ゲーム情報 */
@@ -53,9 +42,11 @@ public class AITWolf implements Player {
      * @param consoleLevel コンソール出力レベル
      * @param writeLevel ファイル出力レベル
      */
-    public AITWolf(LogLevel consoleLevel, LogLevel writeLevel) {
-        this.consoleLevel = consoleLevel;
-        this.writeLevel = writeLevel;
+    public AITWolf(LogLevel consoleLevel, LogLevel writeLevel, boolean NLSwitch) {
+        // ----- ログ出力開始 -----
+        Log.init(consoleLevel, writeLevel);   // コンソール出力レベル, ファイル出力レベル
+        // ----- 自然言語処理実行か -----
+        FlagManagement.getInstance().setNLSwitch(NLSwitch);
     }
 
     @Override
@@ -71,29 +62,24 @@ public class AITWolf implements Player {
         for (int i = talkListHead; i < gameInfo.getTalkList().size(); i++) {
             Talk talk = gameInfo.getTalkList().get(i);  // 新規Talkを取得
             boardSurface.addTalkList(talk);     // 盤面クラスへtalkを保管（自分自身の発言が入る）
-            Log.info("発言内容 : " + talk.getAgent() + " > " + talk.getText()); // 発言者 > 発言内容
-            if (talk.getAgent().equals(gameInfo.getAgent())) {  // 自分自身の発言はスキップ
+            Log.info("発言内容 : " + talk.getAgent() + " > " + talk.getText()); // 「発言者 > 発言内容」をログ出力
+            if (talk.getAgent().equals(gameInfo.getAgent())) {  // 自分自身の発言は処理をしないため，スキップ
                 continue;
             }
 
-            List<String> textList = new ArrayList<>();
-            if (FlagManagement.getInstance().isNLSwitch()) {
-                // TODO 自然言語処理をここに書く
-                // NLP処理
-                NaturalLanguageProcessing nlp = new NaturalLanguageProcessing(gameInfo, boardSurface, talk);
-                // NLP解析結果返却
-                textList.addAll(nlp.call());
-                // 自然言語をプロトコル言語に変換したあと，共通処理で処理する
+            List<String> textList = new ArrayList<>();  // 処理をする文を保管（プロトコルの場合は1つ，自然言語処理の場合は2文受け取る場合があるため，2つ以上はいる）
+            if (FlagManagement.getInstance().isNLSwitch()) {    // 自然言語処理をするか
+                // ----- NLP処理 -----
+                textList.addAll(NaturalLanguageProcessing.convertPro(gameInfo, boardSurface, talk));    // プロトコル文を返却
             } else {
-                // TODO プロトコル部門のみの処理をここに書く
-                textList.add(talk.getText());
-                // ログに受け取った発言を出力する
+                // ----- プロトコル部門のみの処理 -----
+                textList.add(talk.getText());   // 文をそのまま追加
             }
-            // TODO NLPとプロトコル共通処理をここに書く
+            // NLPとプロトコルの共通処理
             // Talk内容を読み取り，BoardSurfaceへ保管する
             for (String text :
                     textList) {
-                ProtocolProcessing.updateTalkInfo(talk, text, boardSurface);
+                ProtocolProcessing.updateTalkInfo(talk, text, boardSurface);    // 処理する文を順々にいれていく
             }
         }
         // talkListHeadの更新
@@ -102,8 +88,7 @@ public class AITWolf implements Player {
 
     @Override
     public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
-        // ----- ログ出力開始 -----
-        Log.init(consoleLevel, writeLevel);   // コンソール出力レベル, ファイル出力レベル
+
         Log.debug("initialize実行");
         // ----- フィールド初期化処理 -----
         this.gameInfo = gameInfo;   // ゲーム情報の初期化

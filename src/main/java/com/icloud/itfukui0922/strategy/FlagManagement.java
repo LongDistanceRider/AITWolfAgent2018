@@ -17,6 +17,8 @@ public class FlagManagement {
     private boolean isFinish = false;
     /* あるエージェントに対して投票先発言をしたか */
     private Map<Agent, Boolean> isVoteUtteranceMap = new HashMap<>();
+    /* 自然言語処理対戦か */
+    private boolean NLSwitch = false;
 
     public boolean isFinish() {
         return isFinish;
@@ -54,12 +56,16 @@ public class FlagManagement {
         isVoteUtteranceMap.put(agent, boo);
     }
 
+
     /**
      * 自然言語処理部門用対戦か，プロトコル部門対戦か
      * @return 自然言語処理部門対戦ならtrueをセット
      */
     public boolean isNLSwitch() {
-        return true;
+        return NLSwitch;
+    }
+    public void setNLSwitch(boolean NLSwitch) {
+        this.NLSwitch = NLSwitch;
     }
 
     /**
