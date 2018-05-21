@@ -20,6 +20,13 @@ import static com.icloud.itfukui0922.strategy.FlagManagement.*;
 
 /**
  * AITWolfエージェント　メイン部分
+ *
+ * @author fukurou
+ * @version 1.0
+ *
+ * 更新内容
+ *  
+ *  1.0 バージョン管理開始
  */
 
 public class AITWolf implements Player {

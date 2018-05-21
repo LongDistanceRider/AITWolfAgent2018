@@ -14,6 +14,7 @@ public class Medium extends Role {
     @Override
     public void dayStart(GameInfo gameInfo, BoardSurface boardSurface) {
 
+
     }
 
     @Override
