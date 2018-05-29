@@ -1,7 +1,7 @@
-package com.icloud.itfukui0922.processing;
+package com.icloud.itfukui0922.processing.pro;
 
-import com.icloud.itfukui0922.strategy.BoardSurface;
-import com.icloud.itfukui0922.strategy.PlayerInformation;
+import com.icloud.itfukui0922.dice.BoardSurface;
+import com.icloud.itfukui0922.dice.PlayerInformation;
 import org.aiwolf.client.lib.Content;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;

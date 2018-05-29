@@ -1,10 +1,7 @@
 package com.icloud.itfukui0922.processing.state.dice;
 
 import com.icloud.itfukui0922.log.Log;
-import com.icloud.itfukui0922.strategy.BoardSurface;
-import com.icloud.itfukui0922.util.DiceUtil;
-import com.icloud.itfukui0922.util.Utility;
-import org.aiwolf.common.data.Agent;
+import com.icloud.itfukui0922.dice.BoardSurface;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.GameInfo;
 

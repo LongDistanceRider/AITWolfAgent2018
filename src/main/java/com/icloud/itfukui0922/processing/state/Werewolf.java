@@ -1,12 +1,10 @@
 package com.icloud.itfukui0922.processing.state;
 
-import com.icloud.itfukui0922.processing.state.dice.WerewolfDice;
-import com.icloud.itfukui0922.strategy.BoardSurface;
-import com.icloud.itfukui0922.strategy.FlagManagement;
+import com.icloud.itfukui0922.dice.BoardSurface;
+import com.icloud.itfukui0922.dice.FlagManagement;
 import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
-import sun.jvm.hotspot.ui.tree.BooleanTreeNodeAdapter;
 
 import java.util.LinkedList;
 

@@ -1,10 +1,10 @@
-package com.icloud.itfukui0922.processing;
+package com.icloud.itfukui0922.processing.nl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.log.LogCategory;
 import com.icloud.itfukui0922.log.LogLevel;
-import com.icloud.itfukui0922.strategy.BoardSurface;
+import com.icloud.itfukui0922.dice.BoardSurface;
 import com.mychaelstyle.nlp.KNP;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
@@ -13,9 +13,7 @@ import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 
 import java.io.*;
-import java.nio.Buffer;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

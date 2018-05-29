@@ -1,10 +1,7 @@
 package com.icloud.itfukui0922.processing.state.dice;
 
-import com.icloud.itfukui0922.strategy.BoardSurface;
+import com.icloud.itfukui0922.dice.BoardSurface;
 import org.aiwolf.common.net.GameInfo;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 強化学習「ダイス」の抽象化クラス

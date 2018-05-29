@@ -2,11 +2,11 @@ package com.icloud.itfukui0922.player;
 
 import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.log.LogLevel;
-import com.icloud.itfukui0922.processing.NaturalLanguageProcessing;
-import com.icloud.itfukui0922.processing.ProtocolProcessing;
+import com.icloud.itfukui0922.processing.nl.NaturalLanguageProcessing;
+import com.icloud.itfukui0922.processing.pro.ProtocolProcessing;
 import com.icloud.itfukui0922.processing.state.*;
-import com.icloud.itfukui0922.strategy.BoardSurface;
-import com.icloud.itfukui0922.strategy.FlagManagement;
+import com.icloud.itfukui0922.dice.BoardSurface;
+import com.icloud.itfukui0922.dice.FlagManagement;
 import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
@@ -16,7 +16,7 @@ import org.aiwolf.common.net.GameSetting;
 
 import java.util.*;
 
-import static com.icloud.itfukui0922.strategy.FlagManagement.*;
+import static com.icloud.itfukui0922.dice.FlagManagement.*;
 
 /**
  * AITWolfエージェント　メイン部分
@@ -48,6 +48,7 @@ public class AITWolf implements Player {
      * コンストラクタ
      * @param consoleLevel コンソール出力レベル
      * @param writeLevel ファイル出力レベル
+     * @param NLSwitch 自然言語処理部門参加か
      */
     public AITWolf(LogLevel consoleLevel, LogLevel writeLevel, boolean NLSwitch) {
         // ----- ログ出力開始 -----
@@ -165,11 +166,11 @@ public class AITWolf implements Player {
             talkQueue.addAll(roleTalkQueue);
         }
 
-        if (FlagManagement.getInstance().isNLSwitch()) {
-            // TODO 自然言語処理に関する処理をここに書く
-        } else {
-            // TODO プロトコル部門の処理に関する処理をここに書く
-        }
+//        if (FlagManagement.getInstance().isNLSwitch()) {
+//            // TODO 自然言語処理に関する処理をここに書く
+//        } else {
+//            // TODO プロトコル部門の処理に関する処理をここに書く
+//        }
         if (talkQueue != null &&!talkQueue.isEmpty()) { // nullチェックいらないかも
             return talkQueue.poll();
         }
@@ -218,7 +219,8 @@ public class AITWolf implements Player {
     }
 
     @Override
-    public Agent guard() {
+    public Agent guard()
+    {
         Agent guardAgent;
         // ◯-◯進行をチェック
         // 占い師1ならその占い師を，2以上なら霊能者を護衛（霊能者が二人の時は適当に選ぶ），霊能者が不在なら適当に選ぶ
