@@ -59,6 +59,7 @@ public class AITWolf implements Player {
 
     @Override
     public void update(GameInfo gameInfo) {
+        FlagManagement flagManagement = FlagManagement.getInstance();
         this.gameInfo = gameInfo;   // ゲーム情報更新
         BoardSurface boardSurface = BoardSurface.getInstance();
 
@@ -72,7 +73,7 @@ public class AITWolf implements Player {
             }
 
             List<String> textList = new ArrayList<>();  // 処理をする文を保管（プロトコルの場合は1つ，自然言語処理の場合は2文受け取る場合があるため，2つ以上はいる）
-            if (FlagManagement.getInstance().isNLSwitch()) {    // 自然言語処理をするか
+            if (flagManagement.isNLSwitch()) {    // 自然言語処理をするか
                 // ----- NLP処理 -----
                 textList.addAll(NaturalLanguageProcessing.convertPro(gameInfo, boardSurface, talk));    // プロトコル文を返却
             } else {
@@ -103,6 +104,7 @@ public class AITWolf implements Player {
 
     @Override
     public void dayStart() {
+        FlagManagement flagManagement = FlagManagement.getInstance();
         BoardSurface boardSurface = BoardSurface.getInstance();
         Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         Log.info("\t\t" + gameInfo.getDay() + "day start");
@@ -143,18 +145,19 @@ public class AITWolf implements Player {
         }
 
         // ----- 日をまたぐごとに初期化するフラグ -----
-        FlagManagement.getInstance().dayReset();
+        flagManagement.dayReset();
     }
 
     @Override
     public String talk() {
         BoardSurface boardSurface = BoardSurface.getInstance();
+        FlagManagement flagManagement = FlagManagement.getInstance();
         // ----- 0日目挨拶 -----
         if (gameInfo.getDay() == 0) {
-            if (FlagManagement.getInstance().isGreeting()) {
+            if (flagManagement.isGreeting()) {
                 return "Over";
             } else {
-                FlagManagement.getInstance().setGreeting(true);
+                flagManagement.setGreeting(true);
                 return "こんにちは";
             }
         }
@@ -164,7 +167,7 @@ public class AITWolf implements Player {
             talkQueue.addAll(roleTalkQueue);
         }
 
-//        if (FlagManagement.getInstance().isNLSwitch()) {
+//        if (flagManagement.isNLSwitch()) {
 //            // TODO 自然言語処理に関する処理をここに書く
 //        } else {
 //            // TODO プロトコル部門の処理に関する処理をここに書く
@@ -246,10 +249,11 @@ public class AITWolf implements Player {
     @Override
     public void finish() {
         BoardSurface boardSurface = BoardSurface.getInstance();
-        if (FlagManagement.getInstance().isFinish()) {  // finishが2回目に呼び出されるとき，処理をしない
+        FlagManagement flagManagement = FlagManagement.getInstance();
+        if (flagManagement.isFinish()) {  // finishが2回目に呼び出されるとき，処理をしない
             return;
         }
-        FlagManagement.getInstance().setFinish(true);
+        flagManagement.setFinish(true);
         Log.debug("finish実行");
         // TODO メモリ，フィールドの初期化
 

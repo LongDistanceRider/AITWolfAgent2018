@@ -32,7 +32,7 @@ public class Possessed extends RoleState {
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- COするかしないかをダイスで決める　状況が変化していない場合は，COしない CO済みならダイスを降らない-----
         // --- 状況チェック ---
-        if (!FlagManagement.getInstance().isComingOut()) {  //CO していない
+        if (!flagManagement.isComingOut()) {  //CO していない
             /* ################################################################
                 以下，大規模工事中
                 とりあえず，COしていなければCOするようにしておく
@@ -44,7 +44,7 @@ public class Possessed extends RoleState {
         }
 
         // ----- 占い結果報告 -----
-        if (FlagManagement.getInstance().isComingOut()) {   // COしていれば結果報告する
+        if (flagManagement.isComingOut()) {   // COしていれば結果報告する
             String divinedResultString = divinedResult(boardSurface);
             if (divinedResultString != null) {
                 talkQueue.add(divinedResultString);
