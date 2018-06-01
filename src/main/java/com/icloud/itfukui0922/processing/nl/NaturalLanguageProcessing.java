@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.log.LogCategory;
 import com.icloud.itfukui0922.log.LogLevel;
-import com.icloud.itfukui0922.dice.BoardSurface;
+import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.mychaelstyle.nlp.KNP;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;

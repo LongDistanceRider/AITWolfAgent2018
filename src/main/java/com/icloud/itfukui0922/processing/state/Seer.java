@@ -2,15 +2,14 @@ package com.icloud.itfukui0922.processing.state;
 
 import com.icloud.itfukui0922.log.Log;
 import com.icloud.itfukui0922.processing.state.dice.*;
-import com.icloud.itfukui0922.dice.BoardSurface;
-import com.icloud.itfukui0922.dice.FlagManagement;
+import com.icloud.itfukui0922.strategy.BoardSurface;
+import com.icloud.itfukui0922.strategy.FlagManagement;
 import org.aiwolf.client.lib.*;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Judge;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
-import sun.jvm.hotspot.runtime.VM;
 
 import java.util.*;
 

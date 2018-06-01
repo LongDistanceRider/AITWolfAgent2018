@@ -1,7 +1,7 @@
 package com.icloud.itfukui0922.processing.state.dice;
 
 import com.icloud.itfukui0922.log.Log;
-import com.icloud.itfukui0922.dice.BoardSurface;
+import com.icloud.itfukui0922.strategy.BoardSurface;
 import org.aiwolf.common.net.GameInfo;
 
 import java.util.HashMap;

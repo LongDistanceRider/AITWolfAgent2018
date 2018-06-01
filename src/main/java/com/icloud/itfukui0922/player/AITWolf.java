@@ -5,18 +5,15 @@ import com.icloud.itfukui0922.log.LogLevel;
 import com.icloud.itfukui0922.processing.nl.NaturalLanguageProcessing;
 import com.icloud.itfukui0922.processing.pro.ProtocolProcessing;
 import com.icloud.itfukui0922.processing.state.*;
-import com.icloud.itfukui0922.dice.BoardSurface;
-import com.icloud.itfukui0922.dice.FlagManagement;
+import com.icloud.itfukui0922.strategy.BoardSurface;
+import com.icloud.itfukui0922.strategy.FlagManagement;
 import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
-
 import java.util.*;
-
-import static com.icloud.itfukui0922.dice.FlagManagement.*;
 
 /**
  * AITWolfエージェント　メイン部分
@@ -37,8 +34,6 @@ public class AITWolf implements Player {
     private GameInfo gameInfo;
     /* ゲーム設定情報 */
     private GameSetting gameSetting;
-    /* 盤面クラス */
-    private BoardSurface boardSurface;
     /* 発言リスト */
     private LinkedList<String> talkQueue = new LinkedList<>();
     /* 自分自身の役職 */
@@ -65,6 +60,7 @@ public class AITWolf implements Player {
     @Override
     public void update(GameInfo gameInfo) {
         this.gameInfo = gameInfo;   // ゲーム情報更新
+        BoardSurface boardSurface = BoardSurface.getInstance();
 
         // 発言内容取得
         for (int i = talkListHead; i < gameInfo.getTalkList().size(); i++) {
@@ -101,12 +97,13 @@ public class AITWolf implements Player {
         // ----- フィールド初期化処理 -----
         this.gameInfo = gameInfo;   // ゲーム情報の初期化
         this.gameSetting = gameSetting; // ゲーム設定の初期化
-        this.boardSurface = new BoardSurface(gameInfo); // 盤面クラスの初期化
-        getInstance().setFinish(false);  // フィニッシュフラグをリセット
+        BoardSurface.initialize(gameInfo);  // 盤面クラスの初期化
+        FlagManagement.getInstance().setFinish(false);  // フィニッシュフラグをリセット
     }
 
     @Override
     public void dayStart() {
+        BoardSurface boardSurface = BoardSurface.getInstance();
         Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         Log.info("\t\t" + gameInfo.getDay() + "day start");
         Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
@@ -146,17 +143,18 @@ public class AITWolf implements Player {
         }
 
         // ----- 日をまたぐごとに初期化するフラグ -----
-        getInstance().dayReset();
+        FlagManagement.getInstance().dayReset();
     }
 
     @Override
     public String talk() {
+        BoardSurface boardSurface = BoardSurface.getInstance();
         // ----- 0日目挨拶 -----
         if (gameInfo.getDay() == 0) {
-            if (getInstance().isGreeting()) {
+            if (FlagManagement.getInstance().isGreeting()) {
                 return "Over";
             } else {
-                getInstance().setGreeting(true);
+                FlagManagement.getInstance().setGreeting(true);
                 return "こんにちは";
             }
         }
@@ -192,6 +190,7 @@ public class AITWolf implements Player {
 
     @Override
     public Agent attack() {
+        BoardSurface boardSurface = BoardSurface.getInstance();
         Agent attackAgent;
         // とりあえず占い師COした人物を対象に，いない場合は霊能者，次に狩人の順で対象を決定する
         List<org.aiwolf.common.data.Role> checkRole = new ArrayList<>(Arrays.asList(org.aiwolf.common.data.Role.SEER, org.aiwolf.common.data.Role.BODYGUARD, org.aiwolf.common.data.Role.BODYGUARD));
@@ -219,8 +218,8 @@ public class AITWolf implements Player {
     }
 
     @Override
-    public Agent guard()
-    {
+    public Agent guard() {
+        BoardSurface boardSurface = BoardSurface.getInstance();
         Agent guardAgent;
         // ◯-◯進行をチェック
         // 占い師1ならその占い師を，2以上なら霊能者を護衛（霊能者が二人の時は適当に選ぶ），霊能者が不在なら適当に選ぶ
@@ -246,10 +245,11 @@ public class AITWolf implements Player {
 
     @Override
     public void finish() {
-        if (getInstance().isFinish()) {  // finishが2回目に呼び出されるとき，処理をしない
+        BoardSurface boardSurface = BoardSurface.getInstance();
+        if (FlagManagement.getInstance().isFinish()) {  // finishが2回目に呼び出されるとき，処理をしない
             return;
         }
-        getInstance().setFinish(true);
+        FlagManagement.getInstance().setFinish(true);
         Log.debug("finish実行");
         // TODO メモリ，フィールドの初期化
 
@@ -278,6 +278,7 @@ public class AITWolf implements Player {
      * 役職セット
      */
     private void roleSet() {
+        BoardSurface boardSurface = BoardSurface.getInstance();
         org.aiwolf.common.data.Role role = gameInfo.getRole();
         Log.info("自分の役職 : " + role);
         switch (role) {

@@ -19,8 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 盤面状態を保持するクラス
+ * Singleton
+ */
 public class BoardSurface {
 
+    /* Initializeフラグ */
+    private static boolean isInit = false;
     /* プレイヤ情報 */
     private List<PlayerInformation> playerInformationList = new ArrayList<>();
     /* 自分のプレイヤ情報 */
@@ -52,22 +58,27 @@ public class BoardSurface {
         return myInformation;
     }
 
-    /**
-     * コンストラクタ
-     *
-     * @param gameInfo
-     */
-    public BoardSurface(GameInfo gameInfo) {
+    /* ▼ singleton ▼ */
+    private static BoardSurface boardSurface = new BoardSurface();
+    private BoardSurface(){}
+    public static BoardSurface getInstance() {
+        if (!isInit) {
+            Log.fatal("BoardSurfaceが初期化されていません");
+        }
+        return boardSurface;
+    }
+    public static void initialize(GameInfo gameInfo) {
         // PlayerInfomationリストを作成
-        gameInfo.getAgentList();
         for (Agent agent :
                 gameInfo.getAgentList()) {
             if (agent == gameInfo.getAgent()) continue; // 自分自身の場合はスキップ
-            playerInformationList.add(new PlayerInformation(agent));
+            boardSurface.playerInformationList.add(new PlayerInformation(agent));
         }
         // 自分自身のプレイヤ情報作成
-        myInformation = new MyInformation(gameInfo.getAgent());
+        boardSurface.myInformation = new MyInformation(gameInfo.getAgent());
+        isInit = true;
     }
+    /* ▲ singleton ▲ */
 
     /**
      * プレイヤー情報リストからプレイヤー情報を返す

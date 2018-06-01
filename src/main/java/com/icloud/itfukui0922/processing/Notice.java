@@ -1,9 +1,6 @@
 package com.icloud.itfukui0922.processing;
 
 import com.icloud.itfukui0922.strategy.BoardSurface;
-import org.aiwolf.client.lib.Content;
-import org.aiwolf.client.lib.Topic;
-import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;
 
 import java.util.LinkedList;

@@ -1,8 +1,7 @@
 package com.icloud.itfukui0922.processing.state;
 
-import com.icloud.itfukui0922.dice.BoardSurface;
-import com.icloud.itfukui0922.dice.FlagManagement;
 import com.icloud.itfukui0922.log.Log;
+import com.icloud.itfukui0922.strategy.BoardSurface;
 import org.aiwolf.client.lib.*;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Species;
