@@ -5,7 +5,7 @@ import org.aiwolf.common.net.GameInfo;
 
 import java.util.LinkedList;
 
-public class Villager extends Role {
+public class Villager extends RoleState {
 
     public Villager(GameInfo gameInfo, BoardSurface boardSurface) {
         super(gameInfo, boardSurface);

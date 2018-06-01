@@ -1,9 +1,8 @@
 package com.icloud.itfukui0922.processing.state;
 
-import com.icloud.itfukui0922.log.Log;
-import com.icloud.itfukui0922.processing.nl.TransNL;
 import com.icloud.itfukui0922.dice.BoardSurface;
 import com.icloud.itfukui0922.dice.FlagManagement;
+import com.icloud.itfukui0922.log.Log;
 import org.aiwolf.client.lib.*;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Species;
@@ -15,12 +14,12 @@ import java.util.Map;
 /**
  * デザインパターン「State」
  */
-public abstract class Role {
+public abstract class RoleState {
 
     protected GameInfo gameInfo;
     protected BoardSurface boardSurface;
 
-    public Role(GameInfo gameInfo, BoardSurface boardSurface) {
+    public RoleState(GameInfo gameInfo, BoardSurface boardSurface) {
         this.gameInfo = gameInfo;
         this.boardSurface = boardSurface;
     }
@@ -54,16 +53,11 @@ public abstract class Role {
      * @param agent　自分自身
      * @return
      */
-    protected static String coming_out (Agent agent, org.aiwolf.common.data.Role role) {
+    protected static String comingOut(Agent agent, org.aiwolf.common.data.Role role) {
         if (!FlagManagement.getInstance().isComingOut()) {  // まだcoming　outしていなければ
             FlagManagement.getInstance().setComingOut(true);    // フラグセット
-            if (FlagManagement.getInstance().isNLSwitch()) {
-                String comingoutString = "私は" + TransNL.translateNL(role) + "です。";
-                return comingoutString;
-            } else {
-                ContentBuilder builder = new ComingoutContentBuilder(agent, role);
-                return new Content(builder).getText();
-            }
+            ContentBuilder builder = new ComingoutContentBuilder(agent, role);
+            return new Content(builder).getText();
         }
         // ここでnullが返却されないように上部処理を施すことを遵守するため，warningを出す
         Log.warn("予想しないnull返却");
@@ -82,14 +76,9 @@ public abstract class Role {
         Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap(); // 占い結果取得
         if (divinationResult != null) {
             FlagManagement.getInstance().setResultReport(true);
-            if (FlagManagement.getInstance().isNLSwitch()) {
-                String divinedString = divinationResult.getKey() + "は" + TransNL.translateNL(divinationResult.getValue()) + "でした。";
-                return divinedString;
-            } else {
-                ContentBuilder builder = new DivinedResultContentBuilder(divinationResult.getKey(), divinationResult.getValue());
-                Log.trace("占い結果報告 target: " + divinationResult.getKey() + " result: " + divinationResult.getValue());
-                return new Content(builder).getText();  // 占い結果報告
-            }
+            ContentBuilder builder = new DivinedResultContentBuilder(divinationResult.getKey(), divinationResult.getValue());
+            Log.trace("占い結果報告 target: " + divinationResult.getKey() + " result: " + divinationResult.getValue());
+            return new Content(builder).getText();  // 占い結果報告
         }
         return null;
     }
@@ -101,15 +90,8 @@ public abstract class Role {
      */
     protected  static String voteUtterance (Agent target) {
         if (!FlagManagement.getInstance().getVoteUtteranceMap(target)) { // 投票先発言をしたことがなければ
-            FlagManagement.getInstance().putVoteUtteranceMap(target, true);
-            if (FlagManagement.getInstance().isNLSwitch()) {
-                String voteString = target + "に投票しようと思う。";
-                return voteString;
-            } else {
-                ContentBuilder builder = new VoteContentBuilder(target);
-                Log.trace("投票先発言 target: " + target);
-                return new Content(builder).getText();  // 投票先発言
-            }
+
+
         }
         return null;
     }

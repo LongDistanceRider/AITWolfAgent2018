@@ -5,7 +5,7 @@ import org.aiwolf.common.net.GameInfo;
 
 import java.util.LinkedList;
 
-public class Bodyguard extends Role {
+public class Bodyguard extends RoleState {
     public Bodyguard(GameInfo gameInfo, BoardSurface boardSurface) {
         super(gameInfo, boardSurface);
     }

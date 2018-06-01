@@ -8,7 +8,7 @@ import org.aiwolf.common.net.GameInfo;
 
 import java.util.LinkedList;
 
-public class Werewolf extends Role {
+public class Werewolf extends RoleState {
 
     /**
      * コンストラクタ
@@ -38,7 +38,7 @@ public class Werewolf extends Role {
                 以下，大規模工事中
                 とりあえず，COしていなければCOするようにしておく
              ################################################################ */
-            String comingOutSeerString = coming_out(boardSurface.getMyInformation().getAgent(), org.aiwolf.common.data.Role.SEER);   // すでにCOして入ればnull返却
+            String comingOutSeerString = comingOut(boardSurface.getMyInformation().getAgent(), org.aiwolf.common.data.Role.SEER);   // すでにCOして入ればnull返却
             if (comingOutSeerString != null) {
                 talkQueue.add(comingOutSeerString);
             }

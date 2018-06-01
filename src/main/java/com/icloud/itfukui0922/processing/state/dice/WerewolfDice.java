@@ -113,8 +113,8 @@ public class WerewolfDice extends Dice  {
 //        int reward = 0;
 //        for (Agent agent :
 //                gameInfo.getAliveAgentList()) {
-//            Role role = gameInfo.getRoleMap().get(agent);
-//            if (role == Role.WEREWOLF) {    // 狼が生存していたら，狼勝利
+//            RoleState role = gameInfo.getRoleMap().get(agent);
+//            if (role == RoleState.WEREWOLF) {    // 狼が生存していたら，狼勝利
 //                reward += 100;
 //                break;
 //            }

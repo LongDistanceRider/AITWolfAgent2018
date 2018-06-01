@@ -42,7 +42,7 @@ public class AITWolf implements Player {
     /* 発言リスト */
     private LinkedList<String> talkQueue = new LinkedList<>();
     /* 自分自身の役職 */
-    private Role roleState = null;
+    private RoleState roleState = null;
 
     /**
      * コンストラクタ
@@ -261,7 +261,7 @@ public class AITWolf implements Player {
         Map<Agent, org.aiwolf.common.data.Role> agentMap = gameInfo.getRoleMap();
         for (Agent agent:
                 agentMap.keySet()){
-            Log.info(agent + " Role : " + agentMap.get(agent));
+            Log.info(agent + " RoleState : " + agentMap.get(agent));
         }
         // ----- ログ出力停止 -----
         // 勝敗結果をログ出力

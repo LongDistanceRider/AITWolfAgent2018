@@ -5,7 +5,7 @@ import org.aiwolf.common.net.GameInfo;
 
 import java.util.LinkedList;
 
-public class Medium extends Role {
+public class Medium extends RoleState {
 
     public Medium(GameInfo gameInfo, BoardSurface boardSurface) {
         super(gameInfo, boardSurface);
@@ -21,7 +21,7 @@ public class Medium extends Role {
     public LinkedList<String> talk(GameInfo gameInfo, BoardSurface boardSurface) {
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- coming out -----
-        String comingOutMediumString = coming_out(boardSurface.getMyInformation().getAgent(), org.aiwolf.common.data.Role.MEDIUM);
+        String comingOutMediumString = comingOut(boardSurface.getMyInformation().getAgent(), org.aiwolf.common.data.Role.MEDIUM);
         if (comingOutMediumString != null) {
             talkQueue.add(comingOutMediumString);
         }
