@@ -49,6 +49,9 @@ public abstract class RoleState {
 
 
     /**
+     * 対抗COしてきた相手
+     */
+    /**
      * coming out処理
      * @param agent　自分自身
      * @return

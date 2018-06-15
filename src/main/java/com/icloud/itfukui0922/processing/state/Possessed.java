@@ -6,6 +6,7 @@ import com.icloud.itfukui0922.strategy.FlagManagement;
 import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.common.data.Species;
 import org.aiwolf.common.net.GameInfo;
+import sun.jvm.hotspot.runtime.VM;
 
 import java.util.LinkedList;
 
@@ -29,6 +30,7 @@ public class Possessed extends RoleState {
     public LinkedList<String> talk(GameInfo gameInfo, BoardSurface boardSurface) {
         super.gameInfo = gameInfo;
         super.boardSurface = boardSurface;
+        FlagManagement flagManagement = FlagManagement.getInstance();
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- COするかしないかをダイスで決める　状況が変化していない場合は，COしない CO済みならダイスを降らない-----
         // --- 状況チェック ---

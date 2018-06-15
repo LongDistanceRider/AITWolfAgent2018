@@ -5,6 +5,9 @@ import org.aiwolf.common.data.Agent;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 多クラスに渡って参照されるフラグ管理
+ */
 public class FlagManagement {
 
     /* 0日目の挨拶 */

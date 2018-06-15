@@ -1,6 +1,5 @@
 package com.icloud.itfukui0922.processing.pro;
 
-import com.icloud.itfukui0922.processing.Notice;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.PlayerInformation;
 import org.aiwolf.client.lib.Content;
@@ -29,9 +28,8 @@ public class ProtocolProcessing {
         switch (content.getTopic()) {
             /* --- 意図表明に関する文 --- */
             case COMINGOUT:
-                playerInformation.setSelfCO(content.getRole()); // 宣言した役職を保管
-                // coming out した役職によって
-                Notice.comingOut(boardSurface, talk);
+                Role coRole = content.getRole();    // COした役職
+                playerInformation.setSelfCO(coRole); // 宣言した役職を保管
                 break;
             case ESTIMATE:
                 playerInformation.estimateOtherAgent(content.getTarget(), content.getRole());   // 他のプレイヤーの印象

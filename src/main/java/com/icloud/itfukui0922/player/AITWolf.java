@@ -41,6 +41,14 @@ public class AITWolf implements Player {
 
     /**
      * コンストラクタ
+     */
+    public AITWolf() {
+        Log.init(LogLevel.TRACE, LogLevel.TRACE);
+        FlagManagement.getInstance().setNLSwitch(false);
+    }
+
+    /**
+     * コンストラクタ
      * @param consoleLevel コンソール出力レベル
      * @param writeLevel ファイル出力レベル
      * @param NLSwitch 自然言語処理部門参加か

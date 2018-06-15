@@ -5,17 +5,17 @@ import com.icloud.itfukui0922.processing.state.dice.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import org.aiwolf.client.lib.*;
-import org.aiwolf.common.data.Agent;
-import org.aiwolf.common.data.Judge;
-import org.aiwolf.common.data.Role;
-import org.aiwolf.common.data.Species;
+import org.aiwolf.common.data.*;
 import org.aiwolf.common.net.GameInfo;
+import org.aiwolf.ui.TalkListRender;
 
 import java.util.*;
 
 public class Seer extends RoleState {
 
     private SeerDice seerDice;
+    /* フラグ */
+
 
     /**
      * コンストラクタ
@@ -92,7 +92,28 @@ public class Seer extends RoleState {
         }
 
         // ----- 偽占い師に対して投票発言とDISAGREE発言 -----
+        List<Agent> oppositionAgentList = boardSurface.getOppositionAgentList();    // 対抗エージェントの取得
+        if (!oppositionAgentList.isEmpty()) {   // 対抗エージェントがいるなら
+            for (Agent agent :
+                    oppositionAgentList) {
+                ContentBuilder builder = new VoteContentBuilder(agent);
+                String voteString = new Content(builder).getText(); // 投票発言
+                talkQueue.add(voteString);
+                Log.trace("投票先発言 target: " + agent);
 
+                List<Talk> talkList = boardSurface.getTalkList();   // talkリストを取得
+                for (Talk talk :
+                        talkList) {
+                    Content content = new Content(talk.getText());  // talkを分解
+                    if (content.getTopic().equals(Topic.COMINGOUT) && content.getRole().equals(Role.SEER)) {   // 占い師CO発言を取り出す
+                        ContentBuilder dissbuilder = new DisagreeContentBuilder(TalkType.TALK, talk.getDay(), talk.getIdx());
+                        String disagreeString = new Content(dissbuilder).getText();    // 非同意発言
+                        talkQueue.add(disagreeString);
+                        Log.trace("DISAGREE発言 target: " + talk.getAgent() + " ID: " + talk.getIdx());
+                    }
+                }
+            }
+        }
 
         return talkQueue;
     }

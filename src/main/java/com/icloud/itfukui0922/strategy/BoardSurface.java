@@ -38,6 +38,10 @@ public class BoardSurface {
     /* 被害者エージェントリスト */
     private List<Agent> biteAgentList = new ArrayList<>();
 
+    public List<Talk> getTalkList() {
+        return talkList;
+    }
+
     public List<Agent> getExecutedAgentList() {
         return executedAgentList;
     }
@@ -78,21 +82,8 @@ public class BoardSurface {
         boardSurface.myInformation = new MyInformation(gameInfo.getAgent());
         isInit = true;
     }
+
     /* ▲ singleton ▲ */
-
-    /**
-     * プレイヤー情報リストからプレイヤー情報を返す
-     * @param agent 欲しいプレイヤー情報
-     * @return プレイヤー情報
-     */
-    public PlayerInformation getPlayerInformation(Agent agent) {
-        for (PlayerInformation playerInformation :
-                playerInformationList) {
-            if (playerInformation.getAgent().equals(agent)) return playerInformation;
-        }
-        return null;
-    }
-
     /**
      * talkListへtalkを追加する
      *
@@ -110,6 +101,19 @@ public class BoardSurface {
      */
     public void putDivIdenMap(Agent target, Species result) {
         myInformation.putDivIdenMap(target, result);
+    }
+
+    /**
+     * プレイヤー情報リストからプレイヤー情報を返す
+     * @param agent 欲しいプレイヤー情報
+     * @return プレイヤー情報
+     */
+    public PlayerInformation getPlayerInformation(Agent agent) {
+        for (PlayerInformation playerInformation :
+                playerInformationList) {
+            if (playerInformation.getAgent().equals(agent)) return playerInformation;
+        }
+        return null;
     }
 
     /**
@@ -154,5 +158,16 @@ public class BoardSurface {
             }
         }
         return divinedAgentList;
+    }
+
+    /**
+     * 対抗しているエージェントを返す
+     * @return 対抗エージェントリスト
+     */
+    public List<Agent> getOppositionAgentList() {
+        List<Agent> oppositionAgentList = new ArrayList<>();
+        // 全てのエージェントの中から，対抗COを取り出す．
+        Role myRole = myInformation.getMyRole();
+        return comingoutRoleAgentList(myRole);
     }
 }
