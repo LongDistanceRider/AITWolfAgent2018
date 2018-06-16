@@ -31,9 +31,10 @@ public class Werewolf extends RoleState {
 
     @Override
     public LinkedList<String> talk(BoardSurface boardSurface) {
-        super.gameInfo = gameInfo;
         FlagManagement flagManagement = FlagManagement.getInstance();
         LinkedList<String> talkQueue = new LinkedList<>();
+
+
         // ----- COするかしないかをダイスで決める　状況が変化していない場合は，COしない CO済みならダイスを降らない-----
         // --- 状況チェック ---
         if (!flagManagement.isComingOut()) {  //CO していない

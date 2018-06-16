@@ -140,6 +140,7 @@ public class AITWolfPro implements Player{
             return voteAgent;
         }
 
+        // 黒出しされたエージェントを追放
         List<Agent> seerList = boardSurface.comingoutRoleAgentList(Role.SEER);// 占い師COしたエージェントリスト取得
         for (Agent agent :
                 seerList) {

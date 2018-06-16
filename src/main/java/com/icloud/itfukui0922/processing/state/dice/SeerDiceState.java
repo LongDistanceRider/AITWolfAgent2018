@@ -21,7 +21,7 @@ public class SeerDiceState extends DiceState{
     // ----- -----
     /* Q値 */
     private Map<String, Integer> qMap = new HashMap<>();
-    /* 繊維状態 */
+    /* 遷移状態 */
     private List<Map<String, Integer>> route = new ArrayList<>();
 
     public int getDay() {
