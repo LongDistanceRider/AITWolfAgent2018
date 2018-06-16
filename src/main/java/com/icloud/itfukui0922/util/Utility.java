@@ -3,10 +3,14 @@
  */
 package com.icloud.itfukui0922.util;
 
+import org.aiwolf.client.lib.Content;
+import org.aiwolf.client.lib.Topic;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Role;
+import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Utility {
@@ -56,4 +60,68 @@ public class Utility {
         return true;
     }
 
+    /**
+     * talkList内にあるtalkの検索を行う
+     * @param talkList
+     * @param topic 検索する話題
+     * @return topic話題の含むtalkのListを返す
+     */
+    public static List<Talk> searchTalk(List<Talk> talkList, Topic topic) {
+        List<Talk> reTalkList = new ArrayList<>();
+        for (Talk talk :
+                talkList) {
+            // TODO ここ自然言語処理対応していないから気をつけること
+            String text = talk.getText();
+            Content content = new Content(text);
+            if (content.getTopic().equals(topic)) {
+                reTalkList.add(talk);
+            }
+        }
+
+        return reTalkList;
+    }
+    /**
+     * talkList内にあるtalkの検索を行う
+     *
+     * @param day ゲーム日数
+     * @return dayで指定された分のtalkList null返却あり
+     */
+    public static List<Talk> searchTalk(List<Talk> talkList, int day) {
+        List<Talk> reTalkList = new ArrayList<>();
+        for (Talk talk :
+                reTalkList) {
+            if (talk.getDay() == day) {
+                reTalkList.add(talk);
+            }
+        }
+        return reTalkList;
+    }
+
+    /**
+     * talkList内にあるtalkの検索を行う
+     * @param agent submitエージェント
+     * @return 発言者agentがした発言をのtalkをListにして返す　null返却あり
+     */
+    public static List<Talk> searchTalk(List<Talk> talkList, Agent agent) {
+        List<Talk> reTalkList = new ArrayList<>();
+        for (Talk talk :
+                reTalkList) {
+            if (talk.getAgent().equals(agent)) {
+                reTalkList.add(talk);
+            }
+        }
+        return reTalkList;
+    }
+    
+    /**
+     * talkList内にあるtalkの検索を行う
+     * @param talkList
+     * @param day ゲーム日
+     * @param agent submitエージェント
+     * @return
+     */
+    public static List<Talk> searchTalk(List<Talk> talkList, int day, Agent agent) {
+        List<Talk> talkDayList = new ArrayList<>(searchTalk(talkList, day));
+        return new ArrayList<>(searchTalk(talkDayList, agent));
+    }
 }

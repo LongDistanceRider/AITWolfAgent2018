@@ -94,6 +94,7 @@ public class BoardSurface {
         return talkList.add(talk);
     }
 
+
     /**
      * 占い霊能結果の追加
      * @param target
@@ -127,7 +128,7 @@ public class BoardSurface {
     /**
      * 特定の役職をCOしたエージェントのリストを返す
      * @param role　調べたい役職
-     * @return COしたエージェントのリスト
+     * @return COしたエージェントのリスト（自分自身は含まない）
      */
     public List<Agent> comingoutRoleAgentList(Role role) {
         List<Agent> comingoutAgentList = new ArrayList<>();

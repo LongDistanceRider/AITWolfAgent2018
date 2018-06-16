@@ -8,8 +8,10 @@ import com.icloud.itfukui0922.processing.state.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import com.icloud.itfukui0922.util.Utility;
+import org.aiwolf.client.lib.Topic;
 import org.aiwolf.common.data.Agent;
 import org.aiwolf.common.data.Player;
+import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
@@ -41,6 +43,7 @@ public class AITWolf implements Player {
 
     /**
      * コンストラクタ
+     * 引数がない場合はログレベルをTRACEに，プロトコル部門エージェントとして動作
      */
     public AITWolf() {
         Log.init(LogLevel.TRACE, LogLevel.TRACE);
@@ -92,7 +95,9 @@ public class AITWolf implements Player {
             // Talk内容を読み取り，BoardSurfaceへ保管する
             for (String text :
                     textList) {
-                ProtocolProcessing.updateTalkInfo(talk, text, boardSurface);    // 処理する文を順々にいれていく
+                if (text != null) {
+                    ProtocolProcessing.updateTalkInfo(talk, text, boardSurface);    // 処理する文を順々にいれていく
+                }
             }
         }
         // talkListHeadの更新
@@ -193,6 +198,61 @@ public class AITWolf implements Player {
 
     @Override
     public Agent vote() {
+        BoardSurface boardSurface = BoardSurface.getInstance();
+        // 役職COしたプレイヤの中から追放先を決定する
+        // 人狼COしたプレイヤの中から追放する
+        List<Agent> werewolfList = boardSurface.comingoutRoleAgentList(Role.WEREWOLF);
+        if (!werewolfList.isEmpty()) {
+            Agent voteAgent = Utility.randomElementSelect(werewolfList);
+            Log.info("投票先: " + voteAgent);
+            return voteAgent;
+        }
+
+        // 霊能者COしたプレイヤから追放する
+        List<Agent> mediumList = boardSurface.comingoutRoleAgentList(Role.MEDIUM);
+
+        if (!mediumList.isEmpty()) {
+            int tmpTurn = 0;    // 発言順番をつけるため，一時変数を用意
+            int changeCount = 0;   // 発言順番に差があったか
+            Agent tmpAgent = null;
+            for (Agent agent :
+                    mediumList) {
+                List<Talk> talkDayAgentList = Utility.searchTalk(boardSurface.getTalkList(), gameInfo.getDay(), agent);
+                List<Talk> talkCO = Utility.searchTalk(talkDayAgentList, Topic.COMINGOUT); // 霊能者COしたプレイヤの霊能COTalkが手に入るはずだが，複数COしていると2つ入ってくる
+                int turn = talkCO.get(talkCO.size() - 1).getTurn();    // 最後にCOしたもののみを取ってくる
+                if (turn > tmpTurn) {
+                    tmpTurn = turn;
+                    tmpAgent = agent;
+                    changeCount += 1;   // 霊能者COがいる場合，ここは1度は呼ばれる
+                }
+            }
+            // change が2以上の時，ターンに差があったとして，tmpAgent(ターンが遅い人->後出しCO)に投票する
+            if (changeCount >= 2) {
+                Log.info("投票先: " + tmpAgent);
+                return tmpAgent;
+            }
+
+            Agent voteAgent = Utility.randomElementSelect(mediumList);
+            Log.info("投票先: " + voteAgent);
+            return voteAgent;
+        }
+
+        // 占い師COしたプレイヤから追放する
+        List<Agent> seerList = boardSurface.comingoutRoleAgentList(Role.SEER);
+        if (!seerList.isEmpty()) {
+            Agent voteAgent = Utility.randomElementSelect(seerList);
+            Log.info("投票先: " + voteAgent);
+            return voteAgent;
+        }
+
+        // 狩人COしたプレイヤから追放する
+        List<Agent> bodyguardList = boardSurface.comingoutRoleAgentList(Role.BODYGUARD);
+        if (!bodyguardList.isEmpty()) {
+            Agent voteAgent = Utility.randomElementSelect(bodyguardList);
+            Log.info("投票先: " + voteAgent);
+            return voteAgent;
+        }
+
         // 生存プレイヤー内（自分自身を除く）からランダムに投票
         Agent voteAgent = Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo));
         Log.info("投票先 : " + voteAgent);
