@@ -13,26 +13,21 @@ import java.util.*;
 
 public class Seer extends RoleState {
 
-    private SeerDice seerDice;
-    /* フラグ */
-
-
     /**
      * コンストラクタ
      * @param gameInfo  ゲーム情報
-     * @param boardSurface  盤面
      */
-    public Seer(GameInfo gameInfo, BoardSurface boardSurface) {
-        super(gameInfo, boardSurface);
-        seerDice = new SeerDice(new SeerDiceState(gameInfo, boardSurface));
+    public Seer(GameInfo gameInfo) {
+        super(gameInfo);
     }
 
     @Override
-    public void dayStart(GameInfo gameInfo, BoardSurface boardSurface) {
-        // ----- 最新状態に更新 -----
+    public void update(GameInfo gameInfo) {
         super.gameInfo = gameInfo;
-        super.boardSurface = boardSurface;
+    }
 
+    @Override
+    public void dayStart(BoardSurface boardSurface) {
         // ----- 占い結果の取り込み -----
         if (0 < gameInfo.getDay()) {    // 0日目は占い結果が取得できないため，回避
             // 占い結果の取り込み
@@ -51,27 +46,19 @@ public class Seer extends RoleState {
     }
 
     @Override
-    public LinkedList<String> talk(GameInfo gameInfo, BoardSurface boardSurface) {
+    public LinkedList<String> talk(BoardSurface boardSurface) {
         FlagManagement flagManagement = FlagManagement.getInstance();
         LinkedList<String> talkQueue = new LinkedList<>();
-        // ----- COするかしないかをダイスで決める　状況が変化していない場合は，COしない CO済みならダイスを降らない-----
-        // --- 状況チェック ---
-        if (!flagManagement.isComingOut()) {  //CO していない
-            /* ################################################################
-                以下，大規模工事中
-             ################################################################ */
-            if (seerDice.setDiceState(gameInfo, boardSurface)) {    // 状況が変化した
-                if (seerDice.shakeTheDice() > 0) {  // ダイスを振り，0以上が帰ってきたらCOする
-                    flagManagement.setComingOut(true);    // フラグセット
-                    ContentBuilder builder = new ComingoutContentBuilder(gameInfo.getAgent(), Role.SEER);  // CO発言生成
-                    String comingOutSeerString = new Content(builder).getText();    //CO発言
-                    talkQueue.add(comingOutSeerString); // 発言キューに追加
-                }
-            }
+        // 占い師はRCOする
+        if (!flagManagement.isComingOut()) {
+            flagManagement.setComingOut(true);    // フラグセット
+            ContentBuilder builder = new ComingoutContentBuilder(gameInfo.getAgent(), Role.SEER);  // CO発言生成
+            String comingOutSeerString = new Content(builder).getText();    //CO発言
+            talkQueue.add(comingOutSeerString); // 発言キューに追加
         }
 
         // ----- 占い結果報告 -----
-        if (flagManagement.isComingOut() && !flagManagement.isResultReport()) {  // COしていれば結果報告をする && 結果報告をしていない
+        if (!flagManagement.isResultReport()) {  // 結果報告をしていない
             flagManagement.setResultReport(true); // 結果報告のフラグセット
 
             Map.Entry<Agent, Species> divinationResult = boardSurface.peekDivIdenMap(); // 占い結果取得
@@ -118,11 +105,8 @@ public class Seer extends RoleState {
         return talkQueue;
     }
 
-    /**
-     * １ゲーム終了後に呼び出される予定
-     */
-    public void finish (GameInfo gameInfo, BoardSurface boardSurface) {
-        // 占い師ダイスのQテーブル更新
-        seerDice.updateQTable(gameInfo, boardSurface);
+    @Override
+    public void finish(BoardSurface boardSurface) {
+
     }
 }

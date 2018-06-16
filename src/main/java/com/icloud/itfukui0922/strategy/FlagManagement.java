@@ -91,10 +91,9 @@ public class FlagManagement {
     }
 
     /**
-     * finish()で呼ばれるメソッド
-     * 主にリセット
+     * インスタンスリセット
      */
-    public void finish() {
+    public void reset() {
         flagManagement = new FlagManagement();
     }
     /**

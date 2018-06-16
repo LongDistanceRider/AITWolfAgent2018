@@ -12,24 +12,23 @@ import java.util.LinkedList;
 
 public class Possessed extends RoleState {
 
-    /* 裏切り者ダイス */
-    private PossessedDice possessedDice;
-
-    public Possessed(GameInfo gameInfo, BoardSurface boardSurface) {
-        super(gameInfo, boardSurface);
-//        possessedDice = new SeerDice(new SeerDiceState(gameInfo, boardSurface));
+    public Possessed(GameInfo gameInfo) {
+        super(gameInfo);
     }
 
     @Override
-    public void dayStart(GameInfo gameInfo, BoardSurface boardSurface) {
+    public void update(GameInfo gameInfo) {
+        super.gameInfo = gameInfo;
+    }
+
+    @Override
+    public void dayStart(BoardSurface boardSurface) {
         // 偽占い結果を保管
         boardSurface.getMyInformation().putDivIdenMap(Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo)), Species.HUMAN);
     }
 
     @Override
-    public LinkedList<String> talk(GameInfo gameInfo, BoardSurface boardSurface) {
-        super.gameInfo = gameInfo;
-        super.boardSurface = boardSurface;
+    public LinkedList<String> talk(BoardSurface boardSurface) {
         FlagManagement flagManagement = FlagManagement.getInstance();
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- COするかしないかをダイスで決める　状況が変化していない場合は，COしない CO済みならダイスを降らない-----
@@ -55,11 +54,8 @@ public class Possessed extends RoleState {
         return talkQueue;
     }
 
-    /**
-     * １ゲーム終了後に呼び出される予定
-     */
-    public void finish (GameInfo gameInfo, BoardSurface boardSurface) {
-        // 裏切り者ダイスのQテーブル更新
-//        possessedDice.updateQTable(gameInfo, boardSurface);
+    @Override
+    public void finish(BoardSurface boardSurface) {
+
     }
 }

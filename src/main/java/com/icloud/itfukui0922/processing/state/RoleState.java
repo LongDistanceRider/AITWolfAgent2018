@@ -17,35 +17,34 @@ import java.util.Map;
 public abstract class RoleState {
 
     protected GameInfo gameInfo;
-    protected BoardSurface boardSurface;
 
-    public RoleState(GameInfo gameInfo, BoardSurface boardSurface) {
+    public RoleState(GameInfo gameInfo) {
         this.gameInfo = gameInfo;
-        this.boardSurface = boardSurface;
     }
 
     /**
+     * update処理
+     */
+    public abstract void update(GameInfo gameInfo);
+    /**
      * 一日の初めの処理
-     * @param gameInfo
      * @param boardSurface
      */
-    public abstract void dayStart(GameInfo gameInfo, BoardSurface boardSurface);
+    public abstract void dayStart(BoardSurface boardSurface);
 
     /**
      * 発言処理
-     * @param gameInfo
      * @param boardSurface
      * @return
      */
-    public abstract LinkedList<String> talk(GameInfo gameInfo, BoardSurface boardSurface);
+    public abstract LinkedList<String> talk(BoardSurface boardSurface);
 
     /**
      * ゲーム終了時に呼び出される処理
      * 主に状態の初期化と強化学習「ダイス」の評価
-     * @param gameInfo
      * @param boardSurface
      */
-    public abstract void finish(GameInfo gameInfo, BoardSurface boardSurface);
+    public abstract void finish(BoardSurface boardSurface);
 
 
     /**

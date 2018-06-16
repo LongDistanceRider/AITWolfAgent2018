@@ -52,13 +52,14 @@ public class AITWolfPro implements Player{
         Log.debug("initialize実行");
         this.gameInfo = gameInfo;
         BoardSurface.initialize(gameInfo);
-        FlagManagement.getInstance().setFinish(false); // finishフラグのリセット
+        BoardSurface.getInstance().reset();
+        BoardSurface.getInstance().reset();
     }
 
     @Override
     public void dayStart() {
         Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        Log.info("\t" + gameInfo.getDay() + "day start [ My number is " + gameInfo.getAgent().toString() + "]");
+        Log.info("\t" + gameInfo.getDay() + "day start : My number is " + gameInfo.getAgent().toString());
         Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         BoardSurface boardSurface = BoardSurface.getInstance();
         FlagManagement flagManagement = FlagManagement.getInstance();
@@ -69,7 +70,7 @@ public class AITWolfPro implements Player{
                 roleSet();  // 役職セット
                 boardSurface.getMyInformation().setMyRole(gameInfo.getRole());   // プレイヤ情報に保管
                 // ----- 各役職ごとの処理 -----
-                roleState.dayStart(gameInfo, boardSurface);
+                roleState.dayStart(boardSurface);
                 break;
             case 2: // 2日目
                 // 被投票者
@@ -91,7 +92,7 @@ public class AITWolfPro implements Player{
                     Log.info("被害者 : なし（GJ発生）");
                 }
                 // ----- 各役職ごとの処理 -----
-                roleState.dayStart(gameInfo, boardSurface);
+                roleState.dayStart(boardSurface);
                 break;
             default:
 
@@ -110,7 +111,7 @@ public class AITWolfPro implements Player{
             return "Over";
         }
         // ----- 各役職ごとの処理 -----
-        LinkedList<String> roleTalkQueue = roleState.talk(gameInfo, boardSurface); // nullが入ってくることがある
+        LinkedList<String> roleTalkQueue = roleState.talk(boardSurface); // nullが入ってくることがある
         if (roleTalkQueue != null) {
             talkQueue.addAll(roleTalkQueue);
         }
@@ -260,19 +261,18 @@ public class AITWolfPro implements Player{
 
     @Override
     public void finish() {
-        Log.debug("finish実行");
-        BoardSurface boardSurface = BoardSurface.getInstance();
         FlagManagement flagManagement = FlagManagement.getInstance();
         if (flagManagement.isFinish()) {  // finishが2回目に呼び出されるとき，処理をしない
             return;
         }
+        Log.debug("finish実行");
+        BoardSurface boardSurface = BoardSurface.getInstance();
         flagManagement.setFinish(true);
-        boardSurface.finish();
-        flagManagement.finish();
+
 
 
         // 役職finish()時の処理
-        roleState.finish(gameInfo, boardSurface);
+        roleState.finish(boardSurface);
 
         // 参加プレイヤのリザルト出力
         Map<Agent, Role> agentMap = gameInfo.getRoleMap();
@@ -287,34 +287,32 @@ public class AITWolfPro implements Player{
         } else {
             Log.info("勝敗結果: 人狼陣営 勝利");
         }
-
         Log.endLog();
     }
     /**
      * 役職セット
      */
     private void roleSet() {
-        BoardSurface boardSurface = BoardSurface.getInstance();
         org.aiwolf.common.data.Role role = gameInfo.getRole();
         Log.info("自分の役職 : " + role);
         switch (role) {
             case SEER:
-                roleState = new Seer(gameInfo, boardSurface);
+                roleState = new Seer(gameInfo);
                 break;
             case MEDIUM:
-                roleState = new Medium(gameInfo, boardSurface);
+                roleState = new Medium(gameInfo);
                 break;
             case BODYGUARD:
-                roleState = new Bodyguard(gameInfo, boardSurface);
+                roleState = new Bodyguard(gameInfo);
                 break;
             case POSSESSED:
-                roleState = new Possessed(gameInfo, boardSurface);
+                roleState = new Possessed(gameInfo);
                 break;
             case WEREWOLF:
-                roleState = new Werewolf(gameInfo, boardSurface);
+                roleState = new Werewolf(gameInfo);
                 break;
             default:
-                roleState = new Villager(gameInfo, boardSurface);
+                roleState = new Villager(gameInfo);
         }
     }
 }

@@ -7,18 +7,22 @@ import java.util.LinkedList;
 
 public class Medium extends RoleState {
 
-    public Medium(GameInfo gameInfo, BoardSurface boardSurface) {
-        super(gameInfo, boardSurface);
+    public Medium(GameInfo gameInfo) {
+        super(gameInfo);
     }
 
     @Override
-    public void dayStart(GameInfo gameInfo, BoardSurface boardSurface) {
+    public void update(GameInfo gameInfo) {
+        super.gameInfo = gameInfo;
+    }
 
+    @Override
+    public void dayStart(BoardSurface boardSurface) {
 
     }
 
     @Override
-    public LinkedList<String> talk(GameInfo gameInfo, BoardSurface boardSurface) {
+    public LinkedList<String> talk(BoardSurface boardSurface) {
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- coming out -----
         String comingOutMediumString = comingOut(boardSurface.getMyInformation().getAgent(), org.aiwolf.common.data.Role.MEDIUM);
@@ -29,7 +33,7 @@ public class Medium extends RoleState {
     }
 
     @Override
-    public void finish(GameInfo gameInfo, BoardSurface boardSurface) {
+    public void finish(BoardSurface boardSurface) {
 
     }
 }

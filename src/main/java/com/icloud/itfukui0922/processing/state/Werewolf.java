@@ -13,23 +13,25 @@ public class Werewolf extends RoleState {
     /**
      * コンストラクタ
      * @param gameInfo  ゲーム情報
-     * @param boardSurface  盤面
      */
-    public Werewolf(GameInfo gameInfo, BoardSurface boardSurface) {
-        super(gameInfo, boardSurface);
-//        super.dice = new WerewolfDice(gameInfo, boardSurface);
+    public Werewolf(GameInfo gameInfo) {
+        super(gameInfo);
     }
 
     @Override
-    public void dayStart(GameInfo gameInfo, BoardSurface boardSurface) {
+    public void update(GameInfo gameInfo) {
+        super.gameInfo = gameInfo;
+    }
+
+    @Override
+    public void dayStart(BoardSurface boardSurface) {
         // 偽占い結果を保管
         boardSurface.getMyInformation().putDivIdenMap(Utility.randomElementSelect(Utility.aliveAgentListRemoveMe(gameInfo)), Species.HUMAN);
     }
 
     @Override
-    public LinkedList<String> talk(GameInfo gameInfo, BoardSurface boardSurface) {
+    public LinkedList<String> talk(BoardSurface boardSurface) {
         super.gameInfo = gameInfo;
-        super.boardSurface = boardSurface;
         FlagManagement flagManagement = FlagManagement.getInstance();
         LinkedList<String> talkQueue = new LinkedList<>();
         // ----- COするかしないかをダイスで決める　状況が変化していない場合は，COしない CO済みならダイスを降らない-----
@@ -58,7 +60,7 @@ public class Werewolf extends RoleState {
     /**
      * １ゲーム終了後に呼び出される予定
      */
-    public void finish (GameInfo gameInfo, BoardSurface boardSurface) {
+    public void finish (BoardSurface boardSurface) {
         // 人狼ダイスのQテーブル更新
 //        dice.updateQTable(gameInfo, boardSurface);
     }

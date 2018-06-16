@@ -86,10 +86,10 @@ public class BoardSurface {
     /* ▲ singleton ▲ */
 
     /**
-     * finish()時に呼び出されるメソッド
+     * インスタンスリセット
      *
      */
-    public void finish() {
+    public void reset() {
         boardSurface = new BoardSurface();
         isInit = false;
     }

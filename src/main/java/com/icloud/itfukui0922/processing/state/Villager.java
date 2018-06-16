@@ -7,22 +7,27 @@ import java.util.LinkedList;
 
 public class Villager extends RoleState {
 
-    public Villager(GameInfo gameInfo, BoardSurface boardSurface) {
-        super(gameInfo, boardSurface);
+    public Villager(GameInfo gameInfo) {
+        super(gameInfo);
     }
 
     @Override
-    public void dayStart(GameInfo gameInfo, BoardSurface boardSurface) {
+    public void update(GameInfo gameInfo) {
+        super.gameInfo = gameInfo;
+    }
+
+    @Override
+    public void dayStart(BoardSurface boardSurface) {
 
     }
 
     @Override
-    public LinkedList<String> talk(GameInfo gameInfo, BoardSurface boardSurface) {
+    public LinkedList<String> talk(BoardSurface boardSurface) {
         return null;
     }
 
     @Override
-    public void finish(GameInfo gameInfo, BoardSurface boardSurface) {
+    public void finish(BoardSurface boardSurface) {
 
     }
 }
