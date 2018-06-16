@@ -6,6 +6,7 @@ import com.icloud.itfukui0922.processing.state.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
 import com.icloud.itfukui0922.strategy.PlayerInformation;
+import com.icloud.itfukui0922.strategy.WolfGroupExpectation;
 import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.client.lib.Topic;
 import org.aiwolf.common.data.*;
@@ -75,7 +76,7 @@ public class AITWolfPro implements Player{
             case 2: // 2日目
                 // 被投票者
                 Agent executedAgent = gameInfo.getExecutedAgent();
-                boardSurface.getExecutedAgentList().add(executedAgent);
+                boardSurface.addExecutedAgentList(executedAgent);
                 Log.info("追放者 : " + executedAgent);
                 // 被噛み　null の場合はGJ発生
                 Agent attackedAgent = null;
@@ -86,7 +87,8 @@ public class AITWolfPro implements Player{
                     }
                 }
                 if (attackedAgent != null) {
-                    boardSurface.getBiteAgentList().add(attackedAgent);
+                    boardSurface.addBiteAgentList(attackedAgent);
+                    WolfGroupExpectation.getInstance().deleteGroup(executedAgent);  // 噛まれたプレイヤはグループにいないはず　グループ削除
                     Log.info("被害者 : " + executedAgent);
                 } else {
                     Log.info("被害者 : なし（GJ発生）");

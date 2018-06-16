@@ -20,7 +20,6 @@ public class ProtocolProcessing {
      * @param boardSurface 現在の盤面状態
      */
     public static void updateTalkInfo(Talk talk, BoardSurface boardSurface) {
-        // TODO textを消します
         Content content = new Content(talk.getText());  // StringからContent型へ変換
         PlayerInformation playerInformation = boardSurface.getPlayerInformation(talk.getAgent());   // 発言者のプレイヤー情報を取得
 
@@ -38,6 +37,8 @@ public class ProtocolProcessing {
             case DIVINED:
                 playerInformation.putDivIdenMap(content.getTarget(), content.getResult()); // 宣言したターゲットと結果を保管
                 playerInformation.setSelfCO(Role.SEER); // 事実上のComing out
+                // 自分自身に黒出しした場合は偽占い師
+
                 break;
             case IDENTIFIED:
                 playerInformation.putDivIdenMap(content.getTarget(), content.getResult());   // 宣言したターゲットと結果を保管

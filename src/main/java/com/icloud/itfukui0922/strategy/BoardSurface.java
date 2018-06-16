@@ -46,16 +46,8 @@ public class BoardSurface {
         return executedAgentList;
     }
 
-    public void setExecutedAgentList(List<Agent> executedAgentList) {
-        this.executedAgentList = executedAgentList;
-    }
-
     public List<Agent> getBiteAgentList() {
         return biteAgentList;
-    }
-
-    public void setBiteAgentList(List<Agent> biteAgentList) {
-        this.biteAgentList = biteAgentList;
     }
 
     public MyInformation getMyInformation() {
@@ -92,6 +84,24 @@ public class BoardSurface {
     public void reset() {
         boardSurface = new BoardSurface();
         isInit = false;
+    }
+
+    /**
+     * 追放されたエージェントを追加する
+     * @param agent
+     * @return
+     */
+    public boolean addExecutedAgentList(Agent agent) {
+        return executedAgentList.add(agent);
+    }
+
+    /**
+     * 襲撃されたエージェントを追加する
+     * @param agent
+     * @return
+     */
+    public boolean addBiteAgentList(Agent agent) {
+        return biteAgentList.add(agent);
     }
     /**
      * talkListへtalkを追加する
