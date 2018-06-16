@@ -91,6 +91,13 @@ public class FlagManagement {
     }
 
     /**
+     * finish()で呼ばれるメソッド
+     * 主にリセット
+     */
+    public void finish() {
+        flagManagement = new FlagManagement();
+    }
+    /**
      * 日にちが変わるときにリセットするフィールドの処理
      */
     public void dayReset() {

@@ -8,10 +8,10 @@ import org.aiwolf.sample.lib.AbstractRoleAssignPlayer;
 public class AITWolfRoleAssignPlayer extends AbstractRoleAssignPlayer{
 
     public AITWolfRoleAssignPlayer() {
-        setSeerPlayer(new AITWolf());
-        setPossessedPlayer(new AITWolf());
-        setWerewolfPlayer(new AITWolf());
-        setVillagerPlayer(new AITWolf());
+        setSeerPlayer(new AITWolfPro());
+        setPossessedPlayer(new AITWolfPro());
+        setWerewolfPlayer(new AITWolfPro());
+        setVillagerPlayer(new AITWolfPro());
     }
     @Override
     public String getName() {

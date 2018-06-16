@@ -1,6 +1,7 @@
 package com.icloud.itfukui0922;
 
 import com.icloud.itfukui0922.log.LogLevel;
+import com.icloud.itfukui0922.player.AITWolfPro;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.TcpipClient;
@@ -55,7 +56,7 @@ public class ConnectClient {
         } else {
             client = new TcpipClient(host, port);
         }
-        Player player = new AITWolf(LogLevel.FATAL, LogLevel.FATAL, isNLP);
+        Player player = new AITWolfPro();
         client.connect(player);
         client.setName(player.getName());
     }

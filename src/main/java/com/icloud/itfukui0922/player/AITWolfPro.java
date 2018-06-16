@@ -5,12 +5,10 @@ import com.icloud.itfukui0922.processing.pro.ProtocolProcessing;
 import com.icloud.itfukui0922.processing.state.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
 import com.icloud.itfukui0922.strategy.FlagManagement;
+import com.icloud.itfukui0922.strategy.PlayerInformation;
 import com.icloud.itfukui0922.util.Utility;
 import org.aiwolf.client.lib.Topic;
-import org.aiwolf.common.data.Agent;
-import org.aiwolf.common.data.Player;
-import org.aiwolf.common.data.Role;
-import org.aiwolf.common.data.Talk;
+import org.aiwolf.common.data.*;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
 
@@ -37,9 +35,10 @@ public class AITWolfPro implements Player{
         BoardSurface boardSurface = BoardSurface.getInstance();
         this.gameInfo = gameInfo;
 
-        for (int i = talkListHead; i < gameInfo.getTalkList().size(); talkListHead++) {
+        for (int i = talkListHead; i < gameInfo.getTalkList().size(); i++) {
             Talk talk = gameInfo.getTalkList().get(i);
             boardSurface.addTalkList(talk); //  ログ上の全てのログが入る（自分自身の発言も）
+            Log.info(">> " + talk.getAgent() + " : " + talk.getText());
             if (talk.getAgent().equals(gameInfo.getAgent())) {  // 自分自身の発言はスキップ
                 continue;
             }
@@ -58,9 +57,9 @@ public class AITWolfPro implements Player{
 
     @Override
     public void dayStart() {
-        Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
-        Log.info("\t\t" + gameInfo.getDay() + "day start");
-        Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        Log.info("\t" + gameInfo.getDay() + "day start [ My number is " + gameInfo.getAgent().toString() + "]");
+        Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         BoardSurface boardSurface = BoardSurface.getInstance();
         FlagManagement flagManagement = FlagManagement.getInstance();
 
@@ -89,7 +88,6 @@ public class AITWolfPro implements Player{
                     boardSurface.getBiteAgentList().add(attackedAgent);
                     Log.info("被害者 : " + executedAgent);
                 } else {
-                    // TODO GJ発生時の処理を書くこと
                     Log.info("被害者 : なし（GJ発生）");
                 }
                 // ----- 各役職ごとの処理 -----
@@ -106,7 +104,11 @@ public class AITWolfPro implements Player{
 
     @Override
     public String talk() {
+        Log.debug("talk()実行");
         BoardSurface boardSurface = BoardSurface.getInstance();
+        if (gameInfo.getDay() == 0) {
+            return "Over";
+        }
         // ----- 各役職ごとの処理 -----
         LinkedList<String> roleTalkQueue = roleState.talk(gameInfo, boardSurface); // nullが入ってくることがある
         if (roleTalkQueue != null) {
@@ -126,6 +128,7 @@ public class AITWolfPro implements Player{
 
     @Override
     public Agent vote() {
+        Log.debug("vote()実行");
         BoardSurface boardSurface = BoardSurface.getInstance();
         // 役職COしたプレイヤの中から追放先を決定する
         // 人狼COしたプレイヤの中から追放する
@@ -136,10 +139,24 @@ public class AITWolfPro implements Player{
             return voteAgent;
         }
 
+        List<Agent> seerList = boardSurface.comingoutRoleAgentList(Role.SEER);// 占い師COしたエージェントリスト取得
+        for (Agent agent :
+                seerList) {
+            PlayerInformation pinfo = boardSurface.getPlayerInformation(agent);
+            Map<Agent, Species> divMap = pinfo.getDivIdenMap();
+            for (Map.Entry<Agent, Species> entry :
+                    divMap.entrySet()) {
+                if (entry.getValue().equals(Species.WEREWOLF)) {
+                    return entry.getKey();
+                }
+            }
+        }
+        
+
         // 霊能者COしたプレイヤから追放する
         List<Agent> mediumList = boardSurface.comingoutRoleAgentList(Role.MEDIUM);
 
-        if (!mediumList.isEmpty()) {
+        if (mediumList.size() >= 2) { // 2人以上の場合は優先的に追放
             int tmpTurn = 0;    // 発言順番をつけるため，一時変数を用意
             int changeCount = 0;   // 発言順番に差があったか
             Agent tmpAgent = null;
@@ -166,8 +183,7 @@ public class AITWolfPro implements Player{
         }
 
         // 占い師COしたプレイヤから追放する
-        List<Agent> seerList = boardSurface.comingoutRoleAgentList(Role.SEER);
-        if (!seerList.isEmpty()) {
+        if (seerList.size() >= 2) { // 2人以上の場合は優先的に追放
             Agent voteAgent = Utility.randomElementSelect(seerList);
             Log.info("投票先: " + voteAgent);
             return voteAgent;
@@ -175,7 +191,7 @@ public class AITWolfPro implements Player{
 
         // 狩人COしたプレイヤから追放する
         List<Agent> bodyguardList = boardSurface.comingoutRoleAgentList(Role.BODYGUARD);
-        if (!bodyguardList.isEmpty()) {
+        if (bodyguardList.size() >= 2) { // 2人以上の場合は優先的に追放
             Agent voteAgent = Utility.randomElementSelect(bodyguardList);
             Log.info("投票先: " + voteAgent);
             return voteAgent;
@@ -244,14 +260,15 @@ public class AITWolfPro implements Player{
 
     @Override
     public void finish() {
+        Log.debug("finish実行");
         BoardSurface boardSurface = BoardSurface.getInstance();
         FlagManagement flagManagement = FlagManagement.getInstance();
         if (flagManagement.isFinish()) {  // finishが2回目に呼び出されるとき，処理をしない
             return;
         }
         flagManagement.setFinish(true);
-        Log.debug("finish実行");
-        // TODO メモリ，フィールドの初期化
+        boardSurface.finish();
+        flagManagement.finish();
 
 
         // 役職finish()時の処理

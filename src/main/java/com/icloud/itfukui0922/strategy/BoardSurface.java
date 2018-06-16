@@ -84,6 +84,15 @@ public class BoardSurface {
     }
 
     /* ▲ singleton ▲ */
+
+    /**
+     * finish()時に呼び出されるメソッド
+     *
+     */
+    public void finish() {
+        boardSurface = new BoardSurface();
+        isInit = false;
+    }
     /**
      * talkListへtalkを追加する
      *
