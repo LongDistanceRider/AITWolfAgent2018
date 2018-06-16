@@ -22,8 +22,6 @@ public class AITWolfPro implements Player{
     private int talkListHead;
     /* ゲーム情報 */
     private GameInfo gameInfo;
-    /* ゲーム設定情報 */
-    private GameSetting gameSetting;
     /* 発言リスト */
     private LinkedList<String> talkQueue = new LinkedList<>();
     /* 自分自身の役職 */
@@ -37,7 +35,6 @@ public class AITWolfPro implements Player{
     @Override
     public void update(GameInfo gameInfo) {
         BoardSurface boardSurface = BoardSurface.getInstance();
-        FlagManagement flagManagement = FlagManagement.getInstance();
         this.gameInfo = gameInfo;
 
         for (int i = talkListHead; i < gameInfo.getTalkList().size(); talkListHead++) {
@@ -55,7 +52,6 @@ public class AITWolfPro implements Player{
     public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
         Log.debug("initialize実行");
         this.gameInfo = gameInfo;
-        this.gameSetting = gameSetting;
         BoardSurface.initialize(gameInfo);
         FlagManagement.getInstance().setFinish(false); // finishフラグのリセット
     }
@@ -111,7 +107,6 @@ public class AITWolfPro implements Player{
     @Override
     public String talk() {
         BoardSurface boardSurface = BoardSurface.getInstance();
-        FlagManagement flagManagement = FlagManagement.getInstance();
         // ----- 各役職ごとの処理 -----
         LinkedList<String> roleTalkQueue = roleState.talk(gameInfo, boardSurface); // nullが入ってくることがある
         if (roleTalkQueue != null) {
