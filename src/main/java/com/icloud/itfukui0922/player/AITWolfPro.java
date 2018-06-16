@@ -1,8 +1,6 @@
 package com.icloud.itfukui0922.player;
 
 import com.icloud.itfukui0922.log.Log;
-import com.icloud.itfukui0922.log.LogLevel;
-import com.icloud.itfukui0922.processing.nl.NaturalLanguageProcessing;
 import com.icloud.itfukui0922.processing.pro.ProtocolProcessing;
 import com.icloud.itfukui0922.processing.state.*;
 import com.icloud.itfukui0922.strategy.BoardSurface;
@@ -15,20 +13,10 @@ import org.aiwolf.common.data.Role;
 import org.aiwolf.common.data.Talk;
 import org.aiwolf.common.net.GameInfo;
 import org.aiwolf.common.net.GameSetting;
+
 import java.util.*;
 
-/**
- * AITWolfエージェント　メイン部分
- *
- * @author fukurou
- * @version 1.0
- *
- * 更新内容
- *  
- *  1.0 バージョン管理開始
- */
-
-public class AITWolf implements Player {
+public class AITWolfPro implements Player{
 
     /* トークリストをどこまで読み込んだか */
     private int talkListHead;
@@ -41,87 +29,45 @@ public class AITWolf implements Player {
     /* 自分自身の役職 */
     private RoleState roleState = null;
 
-    /**
-     * コンストラクタ
-     * 引数がない場合はログレベルをTRACEに，プロトコル部門エージェントとして動作
-     */
-    public AITWolf() {
-        Log.init(LogLevel.TRACE, LogLevel.TRACE);
-        FlagManagement.getInstance().setNLSwitch(false);
-    }
-
-    /**
-     * コンストラクタ
-     * @param consoleLevel コンソール出力レベル
-     * @param writeLevel ファイル出力レベル
-     * @param NLSwitch 自然言語処理部門参加か
-     */
-    public AITWolf(LogLevel consoleLevel, LogLevel writeLevel, boolean NLSwitch) {
-        // ----- ログ出力開始 -----
-        Log.init(consoleLevel, writeLevel);   // コンソール出力レベル, ファイル出力レベル
-        // ----- 自然言語処理実行か -----
-        FlagManagement.getInstance().setNLSwitch(NLSwitch);
-    }
-
     @Override
     public String getName() {
-        return "AITWolf";
-    }   // プレイヤ名を返す
+        return "AITWolfPro";
+    }
 
     @Override
     public void update(GameInfo gameInfo) {
-        FlagManagement flagManagement = FlagManagement.getInstance();
-        this.gameInfo = gameInfo;   // ゲーム情報更新
         BoardSurface boardSurface = BoardSurface.getInstance();
+        FlagManagement flagManagement = FlagManagement.getInstance();
+        this.gameInfo = gameInfo;
 
-        // 発言内容取得
-        for (int i = talkListHead; i < gameInfo.getTalkList().size(); i++) {
-            Talk talk = gameInfo.getTalkList().get(i);  // 新規Talkを取得
-            boardSurface.addTalkList(talk);     // 盤面クラスへtalkを保管（自分自身の発言が入る）
-            Log.info("発言内容 : " + talk.getAgent() + " > " + talk.getText()); // 「発言者 > 発言内容」をログ出力
-            if (talk.getAgent().equals(gameInfo.getAgent())) {  // 自分自身の発言は処理をしないため，スキップ
+        for (int i = talkListHead; i < gameInfo.getTalkList().size(); talkListHead++) {
+            Talk talk = gameInfo.getTalkList().get(i);
+            boardSurface.addTalkList(talk); //  ログ上の全てのログが入る（自分自身の発言も）
+            if (talk.getAgent().equals(gameInfo.getAgent())) {  // 自分自身の発言はスキップ
                 continue;
             }
-
-            List<String> textList = new ArrayList<>();  // 処理をする文を保管（プロトコルの場合は1つ，自然言語処理の場合は2文受け取る場合があるため，2つ以上はいる）
-            if (flagManagement.isNLSwitch()) {    // 自然言語処理をするか
-                // ----- NLP処理 -----
-                textList.addAll(NaturalLanguageProcessing.convertPro(gameInfo, boardSurface, talk));    // プロトコル文を返却
-            } else {
-                // ----- プロトコル部門のみの処理 -----
-                textList.add(talk.getText());   // 文をそのまま追加
-            }
-            // NLPとプロトコルの共通処理
-            // Talk内容を読み取り，BoardSurfaceへ保管する
-            for (String text :
-                    textList) {
-                if (text != null) {
-                    ProtocolProcessing.updateTalkInfo(talk, text, boardSurface);    // 処理する文を順々にいれていく
-                }
-            }
+            ProtocolProcessing.updateTalkInfo(talk, boardSurface);
         }
-        // talkListHeadの更新
         talkListHead = gameInfo.getTalkList().size();
     }
 
     @Override
     public void initialize(GameInfo gameInfo, GameSetting gameSetting) {
-
         Log.debug("initialize実行");
-        // ----- フィールド初期化処理 -----
-        this.gameInfo = gameInfo;   // ゲーム情報の初期化
-        this.gameSetting = gameSetting; // ゲーム設定の初期化
-        BoardSurface.initialize(gameInfo);  // 盤面クラスの初期化
-        FlagManagement.getInstance().setFinish(false);  // フィニッシュフラグをリセット
+        this.gameInfo = gameInfo;
+        this.gameSetting = gameSetting;
+        BoardSurface.initialize(gameInfo);
+        FlagManagement.getInstance().setFinish(false); // finishフラグのリセット
     }
 
     @Override
     public void dayStart() {
-        FlagManagement flagManagement = FlagManagement.getInstance();
-        BoardSurface boardSurface = BoardSurface.getInstance();
         Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         Log.info("\t\t" + gameInfo.getDay() + "day start");
         Log.info("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+        BoardSurface boardSurface = BoardSurface.getInstance();
+        FlagManagement flagManagement = FlagManagement.getInstance();
+
         // ----- 特定日時に実行させる処理 -----
         switch (gameInfo.getDay()) {
             case 1: // 1日目
@@ -159,32 +105,19 @@ public class AITWolf implements Player {
 
         // ----- 日をまたぐごとに初期化するフラグ -----
         flagManagement.dayReset();
+
     }
 
     @Override
     public String talk() {
         BoardSurface boardSurface = BoardSurface.getInstance();
         FlagManagement flagManagement = FlagManagement.getInstance();
-        // ----- 0日目挨拶 -----
-        if (gameInfo.getDay() == 0) {
-            if (flagManagement.isGreeting()) {
-                return "Over";
-            } else {
-                flagManagement.setGreeting(true);
-                return "こんにちは";
-            }
-        }
         // ----- 各役職ごとの処理 -----
         LinkedList<String> roleTalkQueue = roleState.talk(gameInfo, boardSurface); // nullが入ってくることがある
         if (roleTalkQueue != null) {
             talkQueue.addAll(roleTalkQueue);
         }
 
-//        if (flagManagement.isNLSwitch()) {
-//            // TODO 自然言語処理に関する処理をここに書く
-//        } else {
-//            // TODO プロトコル部門の処理に関する処理をここに書く
-//        }
         if (talkQueue != null &&!talkQueue.isEmpty()) { // nullチェックいらないかも
             return talkQueue.poll();
         }
@@ -330,7 +263,7 @@ public class AITWolf implements Player {
         roleState.finish(gameInfo, boardSurface);
 
         // 参加プレイヤのリザルト出力
-        Map<Agent, org.aiwolf.common.data.Role> agentMap = gameInfo.getRoleMap();
+        Map<Agent, Role> agentMap = gameInfo.getRoleMap();
         for (Agent agent:
                 agentMap.keySet()){
             Log.info(agent + " RoleState : " + agentMap.get(agent));
@@ -345,7 +278,6 @@ public class AITWolf implements Player {
 
         Log.endLog();
     }
-
     /**
      * 役職セット
      */
@@ -373,6 +305,4 @@ public class AITWolf implements Player {
                 roleState = new Villager(gameInfo, boardSurface);
         }
     }
-
-
 }

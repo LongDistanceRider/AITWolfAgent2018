@@ -1,7 +1,6 @@
 package com.icloud.itfukui0922;
 
 import com.icloud.itfukui0922.log.LogLevel;
-import com.icloud.itfukui0922.player.AITWolf;
 import org.aiwolf.common.data.Player;
 import org.aiwolf.common.data.Role;
 import org.aiwolf.common.net.TcpipClient;
